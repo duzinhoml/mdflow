@@ -1,5 +1,6 @@
 import { User } from '../models/index.js';
 import { signToken } from '../utils/auth.js';
+import bcrypt from 'bcryptjs';
 
 const resolvers = {
     Query: {
@@ -56,28 +57,33 @@ const resolvers = {
             const token = signToken(user._id, user.username);
             return { token, user };
         },
-        // updateUser: async (_, { userId, input }, context) => {
-        //     try {
-        //         if (!context.user) {
-        //             throw new Error('Not authenticated');
-        //         }
+        updateUser: async (_, { userId, input }, context) => {
+            try {
+                if (!context.user) {
+                    throw new Error('Not authenticated');
+                }
 
-        //         const user = await User.findOneAndUpdate(
-        //             { _id: userId },
-        //             { $set: input },
-        //             { new: true }
-        //         );
+                if (input.password) {
+                    const saltRounds = 10;
+                    input.password = await bcrypt.hash(input.password, saltRounds);
+                }
 
-        //         if (!user) {
-        //             throw new Error('User not found or update failed');
-        //         }
+                const user = await User.findOneAndUpdate(
+                    { _id: userId },
+                    { $set: input },
+                    { new: true }
+                );
 
-        //         return user;
-        //     } 
-        //     catch (err) {
-        //         throw new Error(`Error updating user: ${err.message}`);
-        //     }
-        // },
+                if (!user) {
+                    throw new Error('User not found or update failed');
+                }
+
+                return user;
+            } 
+            catch (err) {
+                throw new Error(`Error updating user: ${err.message}`);
+            }
+        },
         deleteUserById: async (_, { userId }) => {
             try {
                 const user = await User.findOne({ _id: userId });
