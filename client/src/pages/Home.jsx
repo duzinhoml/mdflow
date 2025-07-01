@@ -1,67 +1,24 @@
 import { useState, useEffect } from 'react';
 
 import { useQuery } from '@apollo/client'
-import { QUERY_USERS } from '../utils/queries'
+import { QUERY_USERS } from '../lib/utils/queries.js'
 
 import Nav from '../components/Nav.jsx';
 import InputPool from '../components/InputPool.jsx';
+
+import { INPUT_POOL, useWindowResize } from '../lib/constants.js';
 
 function Home() {
     const [visible, setVisible] = useState(false)
     const [currentTab, setCurrentTab] = useState(null);
 
-    // Screen Width
-    const [screenWidth, setScreenWidth] = useState(window.innerWidth);
-    useEffect(() => {
-        const handleResize = () => {
-            setScreenWidth(window.innerWidth);
-        }
-        window.addEventListener('resize', handleResize);
-        
-        return () => {
-            window.removeEventListener('resize', handleResize);
-        }
-    }, [screenWidth])
+    const screenWidth = useWindowResize();
 
     const { loading, data } = useQuery(QUERY_USERS);
 
     const users = data?.users;
 
     if (loading) return <div>Loading...</div>;
-    
-    // Test Data
-    const inputPool = [
-        { id: 1, label: 'Sections', children: [
-                { label: 'Intro', color: '#61a6ae' },
-                { label: 'Verse', color: '#7c79be' },
-                { label: 'Pre-Chorus', color: '#cdab4c' },
-                { label: 'Vamp', color: '#b75c52' },
-                { label: 'Chorus', color: '#d16a33' },
-                { label: 'Turnaround', color: '#8ab950' },
-                { label: 'Interlude', color: '#b75a52' },
-                { label: 'Instrumental', color: '#8ab950' },
-                { label: 'Bridge', color: '#b1727b' },
-                { label: 'Tag', color: '#d16a33' },
-                { label: 'Refrain', color: '#64a07c' },
-                { label: 'Outro', color: '#61a6ae' },
-            ]
-        },
-        { id: 2, label: 'Dynamics', children: [
-                { label: 'High', color: '#cccccc' },
-                { label: 'Low', color: '#cccccc' },
-                { label: 'Mid', color: '#cccccc' },
-                { label: 'All in', color: '#cccccc' },
-                { label: 'Soft', color: '#cccccc' }
-            ]
-        },
-        { id: 3, label: 'Instruments', children: [
-                { label: 'Guitar', color: '#cccccc' },
-                { label: 'Piano', color: '#cccccc' },
-                { label: 'Bass', color: '#cccccc' },
-                { label: 'Drums', color: '#cccccc' }
-            ]
-        }
-    ];
 
     return (
         <div className="vh-100">
@@ -71,14 +28,29 @@ function Home() {
                 <Nav visible={visible} setVisible={setVisible} />
 
                 {/* Drop Zone */}
-                <div className='bg-danger bg-gradient flex-grow-1 d-flex justify-content-between'>
-                    <span>Container 1</span>
+                <div className='bg-secondary flex-grow-1 d-flex'>
+                    <div className='d-flex border border-dark-subtle border-5 rounded-5 w-100 m-3'>
+                        <div className='border border-light-subtle border-5 rounded-4 m-3 p-3 text-center' style={{ minWidth: '15vw' }}>
+                            Chorus
+                        </div>
+                        <div className='d-flex flex-column border border-light-subtle border-5 rounded-4 m-3 p-3' style={{ minWidth: '15vw' }}>
+                            <p className='mb-3 bg-dark-subtle p-1 rounded-2 text-center'>Pre-Chorus</p>
+                            <div className='d-flex justify-content-between align-items-center btn btn-light p-1 px-2 mb-2 rounded-2 fs-6 text-start'>
+                                <span>Soft</span>
+                                <i class="fa-solid fa-trash"></i>
+                            </div>
+                            <div className='d-flex justify-content-between align-items-center btn btn-light p-1 px-2 rounded-2 fs-6 text-start'>
+                                <span>Drums in</span>
+                                <i class="fa-solid fa-trash"></i>
+                            </div>
+                        </div>
+                    </div>
                 </div>
 
                 {/* Draggable Zone */}
                 {visible && 
                     <InputPool 
-                        inputPool={inputPool} 
+                        inputPool={INPUT_POOL} 
                         currentTab={currentTab} 
                         setCurrentTab={setCurrentTab} 
                         screenWidth={screenWidth} 
