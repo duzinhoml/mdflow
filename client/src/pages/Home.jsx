@@ -6,19 +6,27 @@ import {
     useSensors,
     useSensor
 } from '@dnd-kit/core';
+import { arrayMove, SortableContext, sortableKeyboardCoordinates, horizontalListSortingStrategy } from '@dnd-kit/sortable';
 
 import { useQuery } from '@apollo/client'
 import { QUERY_USERS } from '../lib/utils/queries.js'
+import { INPUT_POOL } from '../lib/constants.js';
 
 import Nav from '../components/Nav.jsx';
 import InputPool from '../components/InputPool.jsx';
 
+import Droppable from '../dndComponents/Droppable.jsx';
+import SortableInput from '../dndComponents/SortableInput.jsx';
+
 function Home() {
-    const [visible, setVisible] = useState(false)
+    const [visible, setVisible] = useState(false);
+    const [dropZoneItems, setDropZoneItems] = useState([]);
 
     const sensors = useSensors(
         useSensor(PointerSensor),
-        useSensor(KeyboardSensor)
+        useSensor(KeyboardSensor, {
+            coordinateGetter: sortableKeyboardCoordinates
+        })
     );
 
     const { loading, data } = useQuery(QUERY_USERS);
@@ -27,9 +35,31 @@ function Home() {
 
     if (loading) return <div>Loading...</div>;
 
-    // WIP
     const handleDragEnd = (e) => {
-        console.log(e)
+        const { active, over } = e;
+        if (!over) return;
+
+        const isFromPool = 
+            INPUT_POOL
+                .find(input => input.id === 1)?.children?.find(child => child.label === active.id);
+
+        // If adding to drop zone
+        if (isFromPool && over.id === 'drop-zone') {
+            const newItem = {
+                id: `${isFromPool.label}-${Date.now()}`,
+                label: isFromPool.label,
+                color: isFromPool.color
+            };
+
+            setDropZoneItems(prevItems => [...prevItems, newItem]);
+            return;
+        }
+
+        // If moving within drop zone
+        const oldIndex = dropZoneItems.findIndex(item => item.id === active.id);
+        const newIndex = dropZoneItems.findIndex(item => item.id === over.id);
+
+        if (oldIndex !== -1 && newIndex !== -1) setDropZoneItems(prevItems => arrayMove(prevItems, oldIndex, newIndex));
     }
 
     return (
@@ -40,86 +70,24 @@ function Home() {
                 <Nav visible={visible} setVisible={setVisible} />
 
                 <DndContext sensors={sensors} onDragEnd={handleDragEnd}>
+
                     {/* Drop Zone */}
-                    <div className='bg-secondary flex-grow-1 d-flex overflow-x-auto'>
-                        <div className='d-flex border border-dark-subtle border-5 rounded-5 m-3' style={{ width: 'fit-content' }}>
-
-                            {/* Input 1 */}
-                            <div className='border border-light-subtle border-5 rounded-4 m-3 p-3' style={{ minWidth: '15vw' }}>
-                                <p className='mb-3 bg-dark-subtle p-1 rounded-2 text-center'>Chorus</p>
-                                <div className="d-flex justify-content-between align-items-center btn btn-light p-1 px-2 mb-2 rounded-2 fs-6 text-start">
-                                    <span>All in</span>
-                                    <i className="fa-solid fa-trash"></i>
-                                </div>
-                                <div className="d-flex justify-content-between align-items-center btn btn-light p-1 px-2 mb-2 rounded-2 fs-6 text-start">
-                                    <span>Full groove</span>
-                                    <i className="fa-solid fa-trash"></i>
-                                </div>
-                            </div>
-
-                            {/* Input 2 */}
-                            <div className='d-flex flex-column border border-light-subtle border-5 rounded-4 m-3 p-3' style={{ minWidth: '15vw' }}>
-                                <p className='mb-3 bg-dark-subtle p-1 rounded-2 text-center'>Pre-Chorus</p>
-                                <div className='d-flex justify-content-between align-items-center btn btn-light p-1 px-2 mb-2 rounded-2 fs-6 text-start'>
-                                    <span>Soft</span>
-                                    <i className="fa-solid fa-trash"></i>
-                                </div>
-                                <div className='d-flex justify-content-between align-items-center btn btn-light p-1 px-2 rounded-2 fs-6 text-start'>
-                                    <span>Drums in</span>
-                                    <i className="fa-solid fa-trash"></i>
-                                </div>
-                            </div>
-
-                            <div className='d-flex flex-column border border-light-subtle border-5 rounded-4 m-3 p-3' style={{ minWidth: '15vw' }}>
-                                <p className='mb-3 bg-dark-subtle p-1 rounded-2 text-center'>Pre-Chorus</p>
-                                <div className='d-flex justify-content-between align-items-center btn btn-light p-1 px-2 mb-2 rounded-2 fs-6 text-start'>
-                                    <span>Soft</span>
-                                    <i className="fa-solid fa-trash"></i>
-                                </div>
-                                <div className='d-flex justify-content-between align-items-center btn btn-light p-1 px-2 rounded-2 fs-6 text-start'>
-                                    <span>Drums in</span>
-                                    <i className="fa-solid fa-trash"></i>
-                                </div>
-                            </div>
-
-                            <div className='d-flex flex-column border border-light-subtle border-5 rounded-4 m-3 p-3' style={{ minWidth: '15vw' }}>
-                                <p className='mb-3 bg-dark-subtle p-1 rounded-2 text-center'>Pre-Chorus</p>
-                                <div className='d-flex justify-content-between align-items-center btn btn-light p-1 px-2 mb-2 rounded-2 fs-6 text-start'>
-                                    <span>Soft</span>
-                                    <i className="fa-solid fa-trash"></i>
-                                </div>
-                                <div className='d-flex justify-content-between align-items-center btn btn-light p-1 px-2 rounded-2 fs-6 text-start'>
-                                    <span>Drums in</span>
-                                    <i className="fa-solid fa-trash"></i>
-                                </div>
-                            </div>
-
-                            <div className='d-flex flex-column border border-light-subtle border-5 rounded-4 m-3 p-3' style={{ minWidth: '15vw' }}>
-                                <p className='mb-3 bg-dark-subtle p-1 rounded-2 text-center'>Pre-Chorus</p>
-                                <div className='d-flex justify-content-between align-items-center btn btn-light p-1 px-2 mb-2 rounded-2 fs-6 text-start'>
-                                    <span>Soft</span>
-                                    <i className="fa-solid fa-trash"></i>
-                                </div>
-                                <div className='d-flex justify-content-between align-items-center btn btn-light p-1 px-2 rounded-2 fs-6 text-start'>
-                                    <span>Drums in</span>
-                                    <i className="fa-solid fa-trash"></i>
-                                </div>
-                            </div>
-
-                            <div className='d-flex flex-column border border-light-subtle border-5 rounded-4 m-3 p-3' style={{ minWidth: '15vw' }}>
-                                <p className='mb-3 bg-dark-subtle p-1 rounded-2 text-center'>Pre-Chorus</p>
-                                <div className='d-flex justify-content-between align-items-center btn btn-light p-1 px-2 mb-2 rounded-2 fs-6 text-start'>
-                                    <span>Soft</span>
-                                    <i className="fa-solid fa-trash"></i>
-                                </div>
-                                <div className='d-flex justify-content-between align-items-center btn btn-light p-1 px-2 rounded-2 fs-6 text-start'>
-                                    <span>Drums in</span>
-                                    <i className="fa-solid fa-trash"></i>
-                                </div>
-                            </div>
-
-                        </div>
-                    </div>
+                    <Droppable id='drop-zone' className='d-flex border border-dark-subtle border-5 rounded-5 m-3'>
+                        <SortableContext items={dropZoneItems} strategy={horizontalListSortingStrategy}>
+                            {dropZoneItems.length ? 
+                                dropZoneItems.map(item => (
+                                    <SortableInput 
+                                        key={item.id} 
+                                        id={item.id} 
+                                        className='border border-light-subtle border-5 rounded-4 m-3 p-3'
+                                        inputStyle={{ border: `3px solid ${item.color}` }}
+                                    >
+                                        {item.label}
+                                    </SortableInput>
+                                )) : 'No items in drop zone.'
+                            }
+                        </SortableContext>
+                    </Droppable>
 
                     {/* Draggable Zone */}
                     {visible && 
