@@ -12,6 +12,8 @@ import { useQuery } from '@apollo/client'
 import { QUERY_USERS } from '../lib/utils/queries.js'
 import { INPUT_POOL } from '../lib/constants.js';
 
+import { useDragging } from '../contexts/IsDraggingContext.jsx';
+
 import Nav from '../components/Nav.jsx';
 import InputPool from '../components/InputPool.jsx';
 
@@ -21,14 +23,31 @@ import SortableInput from '../dndComponents/SortableInput.jsx';
 function Home() {
     const [visible, setVisible] = useState(false);
     const [dropZoneItems, setDropZoneItems] = useState([]);
+    
+    const { draggingId } = useDragging();
 
+    useEffect(() => {
+        if (draggingId) {
+            const newItem = {
+                id: 'placeholder',
+                label: '',
+                color: 'white'
+            }
+
+            setDropZoneItems(prevItems => [...prevItems, newItem]);
+        }
+        else { 
+            setDropZoneItems(prevItems => prevItems.filter(item => item.id !== 'placeholder'));
+        }
+    }, [draggingId]);
+    
     const sensors = useSensors(
         useSensor(PointerSensor),
         useSensor(KeyboardSensor, {
             coordinateGetter: sortableKeyboardCoordinates
         })
     );
-
+    
     const { loading, data } = useQuery(QUERY_USERS);
 
     const users = data?.users;
@@ -72,7 +91,7 @@ function Home() {
                 <DndContext sensors={sensors} onDragEnd={handleDragEnd}>
 
                     {/* Drop Zone */}
-                    <Droppable id='drop-zone' className='d-flex border border-dark-subtle border-5 rounded-5 m-3'>
+                    <Droppable id='drop-zone' items={dropZoneItems} className='d-flex border border-dark-subtle border-5 rounded-5 m-3'>
                         <SortableContext items={dropZoneItems} strategy={horizontalListSortingStrategy}>
                             {dropZoneItems.length ? 
                                 dropZoneItems.map(item => (
@@ -84,7 +103,14 @@ function Home() {
                                     >
                                         {item.label}
                                     </SortableInput>
-                                )) : 'No items in drop zone.'
+                                )) : (
+                                    <SortableInput 
+                                        className='border border-light-subtle border-5 rounded-4 m-3 p-3' 
+                                        inputStyle={{ width: '12vw' }}
+                                    >
+                                        Add your elements here
+                                    </SortableInput>
+                                )
                             }
                         </SortableContext>
                     </Droppable>
@@ -92,6 +118,7 @@ function Home() {
                     {/* Draggable Zone */}
                     {visible && 
                         <InputPool/>}
+
                 </DndContext>
 
             </div>
