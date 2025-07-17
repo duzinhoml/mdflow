@@ -24,7 +24,11 @@ const userSchema = new Schema(
             type: String,
             required: true,
             trim: true
-        }
+        },
+        songs: [{
+            type: Schema.Types.ObjectId,
+            ref: 'Song'
+        }]
     },
     {
         toJSON: {

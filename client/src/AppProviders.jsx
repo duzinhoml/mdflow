@@ -1,35 +1,17 @@
-import { ApolloClient, InMemoryCache, ApolloProvider, createHttpLink } from '@apollo/client';
-import { setContext } from '@apollo/client/link/context';
+import { ApolloProvider } from '@apollo/client';
 
-import { IsDraggingProvider } from './contexts/IsDraggingContext';
+import { UserProvider } from './contexts/UserContext';
 
-const httpLink = createHttpLink({
-  uri: process.env.NODE_ENV === 'production' ? '/graphql' : 'http://localhost:3001/graphql'
-});
-
-const authLink = setContext((_, { headers }) => {
-  const token = localStorage.getItem('id_token');
-
-  return {
-    headers: {
-      ...headers,
-      authorization: token ? `Bearer ${token}` : ''
-    }
-  };
-});
-
-const client = new ApolloClient({
-  link: authLink.concat(httpLink),
-  cache: new InMemoryCache()
-});
+import { useApolloProvider } from './lib/constants.js';
 
 function AppProviders({ children }) {
+    const { client } = useApolloProvider();
 
     return (
         <ApolloProvider client={client}>
-            <IsDraggingProvider>
-                {children}
-            </IsDraggingProvider>
+          <UserProvider>
+            {children}
+          </UserProvider>
         </ApolloProvider>
     );
 };
