@@ -1,9 +1,6 @@
 import Login from "../components/LoginRegister/Login.jsx";
 import Dashboard from "../components/Dashboard.jsx";
 
-import { ToggleInputPoolProvider } from "../contexts/ToggleInputPoolContext.jsx";
-import { CurrentSongProvider } from "../contexts/CurrentSongContext.jsx";
-
 import { useLoginCheck } from "../lib/constants.js";
 
 function Home() {
@@ -16,11 +13,7 @@ function Home() {
             {!loginCheck ? (
                 <Login />
             ) : (
-                <ToggleInputPoolProvider>
-                    <CurrentSongProvider>
-                        <Dashboard />
-                    </CurrentSongProvider>
-                </ToggleInputPoolProvider>
+                <Dashboard />
             )}
         </>
     )

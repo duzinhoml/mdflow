@@ -1,20 +1,21 @@
 import Auth from '../lib/utils/auth.js';
 
 import { useUser } from '../contexts/UserContext.jsx';
-import { useCurrentSong } from '../contexts/CurrentSongContext.jsx';
-
 import { useToggleInputPool } from '../contexts/ToggleInputPoolContext.jsx';
+import { useCurrentSong } from '../contexts/CurrentSongContext.jsx';
+import { useEditing } from '../contexts/EditingContext.jsx';
 
 function Nav() {
     const { user } = useUser();
-    const { currentSong, handleSetCurrentSong } = useCurrentSong();
-
     const { visible, toggleInputPool } = useToggleInputPool();
+    const { currentSong, handleSetCurrentSong } = useCurrentSong();
+    const { isEditing, setIsEditing } = useEditing();
 
     return (
         <nav className="navbar bg-warning-subtle px-2">
             <div className='d-flex'>
-                <span className='navbar-brand'>MDFlow</span>
+                <span className='navbar-brand me-2'>MDFlow</span>
+
                 <div className="dropdown">
                     <button className="btn btn-secondary dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false">
                         Dropdown
@@ -33,9 +34,17 @@ function Nav() {
                         ))}
                     </ul>
                 </div>
+
+                <button className={`btn btn-primary ${isEditing && 'active'} ms-2`} disabled={currentSong ? false : true} onClick={() => setIsEditing(prev => !prev)}>Edit</button>
+
             </div>
 
-            <span>{currentSong ? currentSong.title : user?.username}</span>
+            <span>
+                {currentSong && isEditing ? 
+                    `Editing: ${currentSong.title}` 
+                    : currentSong ? 
+                    currentSong.title : user?.username}
+            </span>
 
             <div>
                 <button onClick={() => toggleInputPool()} className="btn btn-primary">{!visible ? 'Open' : 'Close'}</button>

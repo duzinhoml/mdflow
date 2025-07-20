@@ -9,11 +9,13 @@ import SortableInput from '../dndComponents/SortableInput.jsx';
 import Layout from './Layout.jsx';
 
 import { useToggleInputPool } from '../contexts/ToggleInputPoolContext.jsx';
+import { useEditing } from '../contexts/EditingContext.jsx';
 
 import { useDndSensors, useDrag } from '../lib/constants.js';
 
 function Dashboard() {
     const { visible } = useToggleInputPool();
+    const { isEditing } = useEditing();
     const { currentSections, setCurrentSections, currentSong, handleDragEnd } = useDrag();
 
     useEffect(() => {
@@ -29,18 +31,18 @@ function Dashboard() {
                 {/* Nav */}
                 <Nav />
 
-                <DndContext sensors={sensors} onDragEnd={handleDragEnd}>
+                <DndContext sensors={sensors} onDragEnd={isEditing ? handleDragEnd : null}>
 
                     {/* Drop Zone */}
                     <Layout>
-                        <SortableContext items={currentSections.map(section => section._id.toString())} strategy={horizontalListSortingStrategy}>
+                        <SortableContext items={isEditing ? currentSections.map(section => section._id.toString()) : []} strategy={horizontalListSortingStrategy}>
                             {currentSections.length ? 
                                 currentSections?.map(section => (
                                     <SortableInput 
                                         key={section._id.toString()} 
                                         id={section._id.toString()} 
                                         className='border border-light-subtle border-5 rounded-4 m-3 p-3'
-                                        inputStyle={{ border: `3px solid ${section.color}` }}
+                                        inputStyle={{ border: `3px solid ${section.color}`, cursor: 'pointer' }}
                                     >
                                         {section.label}
                                     </SortableInput>
