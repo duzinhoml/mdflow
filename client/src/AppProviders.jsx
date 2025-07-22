@@ -4,11 +4,12 @@ import { UserProvider } from './contexts/UserContext.jsx';
 import { ToggleInputPoolProvider } from "./contexts/ToggleInputPoolContext.jsx";
 import { EditingProvider } from './contexts/EditingContext.jsx';
 import { CurrentSongProvider } from "./contexts/CurrentSongContext.jsx";
+import { CurrentSectionsProvider } from './contexts/CurrentSectionsContext.jsx';
 
 import { useApolloProvider } from './lib/constants.js';
 
 function AppProviders({ children }) {
-    const { client } = useApolloProvider();
+    const client = useApolloProvider();
 
     return (
         <ApolloProvider client={client}>
@@ -16,7 +17,9 @@ function AppProviders({ children }) {
             <ToggleInputPoolProvider>
               <EditingProvider>
                 <CurrentSongProvider>
-                  {children}
+                  <CurrentSectionsProvider>
+                    {children}
+                  </CurrentSectionsProvider>
                 </CurrentSongProvider>
               </EditingProvider>
             </ToggleInputPoolProvider>

@@ -6,7 +6,7 @@ function InputPool() {
     const [currentTab, setCurrentTab] = useState(null);
     const screenWidth = useWindowResize();
 
-    const { handleCreateSection } = useCreateSection();
+    const handleCreateSection = useCreateSection();
     
     return (
         <div className='bg-dark mb-2' style={{ minHeight: '25vh' }}>

@@ -6,13 +6,15 @@ import { arrayMove, sortableKeyboardCoordinates } from '@dnd-kit/sortable';
 
 import { useUser } from '../contexts/UserContext.jsx';
 import { useCurrentSong } from '../contexts/CurrentSongContext.jsx';
+import { useCurrentSections } from '../contexts/CurrentSectionsContext.jsx';
 
 import Auth from './utils/auth.js';
 
 import { useMutation } from '@apollo/client';
 import { CREATE_SECTION } from './utils/mutations.js';
-import { UPDATE_SECTION_ORDER } from './utils/mutations.js';
+import { UPDATE_SECTION_ORDER, DELETE_SECTION_BY_ID } from './utils/mutations.js';
 import { QUERY_ME } from './utils/queries';
+import { useEditing } from '../contexts/EditingContext.jsx';
 
 // Test Data
 export const INPUT_POOL = [
@@ -67,12 +69,16 @@ export function useWindowResize() {
 // Adding a Section
 export function useCreateSection() {
     const [createSection] = useMutation(CREATE_SECTION, { refetchQueries: [QUERY_ME] });
-    const { currentSong, setCurrentSong } = useCurrentSong();
+
+    const { isEditing } = useEditing();
+    const { currentSong } = useCurrentSong();
+    const { setCurrentSections } = useCurrentSections();
 
     const handleCreateSection = async (e, child) => {
         e.preventDefault();
 
         try {
+            if (!isEditing) return;
             if (!currentSong) return;
 
             const { data } = await createSection({
@@ -85,18 +91,34 @@ export function useCreateSection() {
                 }
             });
             if (!data) return;
-    
-            setCurrentSong(prevSong => ({
-                ...prevSong,
-                sections: [...prevSong.sections, data.createSection]
-            }))
+
+            setCurrentSections(prevSections => [...prevSections, data.createSection]);
         } 
         catch (err) {
             console.error(err);
         }
     };
 
-    return { handleCreateSection };
+    return handleCreateSection;
+}
+
+// Deleting a Section
+export function useDeleteSection() {
+    const { setCurrentSections } = useCurrentSections();
+    const [deleteSectionById] = useMutation(DELETE_SECTION_BY_ID, {
+        refetchQueries: [QUERY_ME]
+    });
+
+    const handleDeleteSection = async (sectionId) => {
+        setCurrentSections(prev => prev.filter(section => section._id != sectionId))
+        await deleteSectionById({
+            variables: {
+                sectionId
+            }
+        });
+    }
+
+    return handleDeleteSection;
 }
 
 // Input Change
@@ -131,7 +153,7 @@ export function useDndSensors() {
 
 // Drag Function
 export function useDrag() {
-    const [currentSections, setCurrentSections] = useState([]);
+    const { currentSections, setCurrentSections } = useCurrentSections();
     const { currentSong } = useCurrentSong();
 
     const [updateSectionOrder] = useMutation(UPDATE_SECTION_ORDER, {
@@ -159,7 +181,7 @@ export function useDrag() {
         };
     };
 
-    return { currentSections, setCurrentSections, currentSong, handleDragEnd };
+    return handleDragEnd;
 };
 
 // Authentication Render
@@ -196,5 +218,5 @@ export function useApolloProvider() {
       cache: new InMemoryCache()
     });
 
-    return { client };
+    return client;
 }

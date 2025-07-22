@@ -10,13 +10,18 @@ import Layout from './Layout.jsx';
 
 import { useToggleInputPool } from '../contexts/ToggleInputPoolContext.jsx';
 import { useEditing } from '../contexts/EditingContext.jsx';
+import { useCurrentSong } from '../contexts/CurrentSongContext.jsx';
+import { useCurrentSections } from '../contexts/CurrentSectionsContext.jsx';
 
 import { useDndSensors, useDrag } from '../lib/constants.js';
 
 function Dashboard() {
     const { visible } = useToggleInputPool();
     const { isEditing } = useEditing();
-    const { currentSections, setCurrentSections, currentSong, handleDragEnd } = useDrag();
+    const { currentSong } = useCurrentSong();
+    const { currentSections, setCurrentSections } = useCurrentSections();
+
+    const handleDragEnd = useDrag();
 
     useEffect(() => {
         currentSong?.sections ? setCurrentSections(currentSong.sections) : setCurrentSections([]);
@@ -42,7 +47,7 @@ function Dashboard() {
                                         key={section._id.toString()} 
                                         id={section._id.toString()} 
                                         className='border border-light-subtle border-5 rounded-4 m-3 p-3'
-                                        inputStyle={{ border: `3px solid ${section.color}`, cursor: 'pointer' }}
+                                        inputStyle={{ border: `3px solid ${section.color}` }}
                                     >
                                         {section.label}
                                     </SortableInput>
