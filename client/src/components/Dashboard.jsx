@@ -36,7 +36,7 @@ function Dashboard() {
 
                 <DndContext sensors={sensors} onDragEnd={handleDragEnd}>
 
-                    {/* Drop Zone */}
+                    {/* Sections */}
                     <SongLayout>
                         <SortableContext items={currentSections.map(section => section._id)} strategy={horizontalListSortingStrategy}>
                             {currentSections.length ? 
@@ -61,7 +61,7 @@ function Dashboard() {
                         </SortableContext>
                     </SongLayout>
 
-                    {/* Draggable Zone */}
+                    {/* Input Pool */}
                     {visible && 
                         <InputPool/>}
 

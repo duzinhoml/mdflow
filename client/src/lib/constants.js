@@ -12,7 +12,7 @@ import { useCurrentSections } from '../contexts/CurrentSectionsContext.jsx';
 import Auth from './utils/auth.js';
 
 import { useMutation } from '@apollo/client';
-import { CREATE_SECTION, UPDATE_SECTION_ORDER, DELETE_SECTION_BY_ID, UPDATE_SONG_TITLE } from './utils/mutations.js';
+import { CREATE_SECTION, UPDATE_SECTION_ORDER, DELETE_SECTION_BY_ID, UPDATE_SONG_TITLE, CREATE_SONG } from './utils/mutations.js';
 import { QUERY_ME } from './utils/queries';
 
 // Test Data
@@ -90,16 +90,17 @@ export function usePlaceholder() {
     return handlePlaceholder;
 }
 
-// Creating a Song
-
 // Updating Song Title
 export function useUpdateTitle() {
+    const { setUserData } = useUser();
     const { songData, setSongData } = useSongData();
     const { currentSong, setCurrentSong } = useCurrentSong();
+    const [createSong] = useMutation(CREATE_SONG, { refetchQueries: [QUERY_ME] });
     const [updateSongTitle] = useMutation(UPDATE_SONG_TITLE, { refetchQueries: [QUERY_ME] });
 
     useEffect(() => {
-        if (currentSong?.title) setSongData(prev => ({ ...prev, title: currentSong.title}));
+        if (currentSong?.title) setSongData(prev => ({ ...prev, title: currentSong.title}))
+        else setSongData(prev => ({ ...prev, title: ""}));
     }, [currentSong]);
     
     const handleInputChange = (e) => {
@@ -112,6 +113,26 @@ export function useUpdateTitle() {
 
         const debounceTimeout = setTimeout(async () => {
             try {
+                if (!currentSong) {
+                    const { data: newSongData} = await createSong({
+                        variables: {
+                            input: {
+                                title: songData.title,
+                                sections: []
+                            }
+                        }
+                    });
+                    const newSong = newSongData.createSong;
+
+                    setUserData(prev => ({
+                        ...prev,
+                        songs: [...prev.songs, newSong]
+                    }));
+
+                    setCurrentSong(newSong);
+                    return;
+                }
+
                 setCurrentSong(prev => ({ ...prev, title: songData.title }));
                 await updateSongTitle({
                     variables: {
@@ -119,6 +140,14 @@ export function useUpdateTitle() {
                         title: songData.title
                     }
                 });
+
+                setUserData(prev => ({
+                    ...prev,
+                    songs: prev.songs.map(song => song._id === currentSong._id ?
+                        { ...song, title: songData.title }
+                        : song
+                    )
+                }));
             } 
             catch (err) {
                 console.error(err);
@@ -133,13 +162,58 @@ export function useUpdateTitle() {
 
 // Adding a Section
 export function useCreateSection() {
+    const { setUserData } = useUser();
     const [createSection] = useMutation(CREATE_SECTION, { refetchQueries: [QUERY_ME] });
+    const [createSong] = useMutation(CREATE_SONG, { refetchQueries: [QUERY_ME] });
 
-    const { currentSong } = useCurrentSong();
+    const { currentSong, setCurrentSong } = useCurrentSong();
     const { setCurrentSections } = useCurrentSections();
 
     const handleCreateSection = async (child) => {
         try {
+            if (!currentSong) {
+
+                // Create Song
+                const { data: songData } = await createSong({
+                    variables: {
+                        input: {
+                            title: "Untitled Song",
+                            sections: []
+                        }
+                    }
+                });
+                if (!songData) return;
+                const newSong = songData.createSong
+
+                // Add section to new Song
+                const { data: sectionData } = await createSection({
+                    variables: {
+                        songId: songData.createSong?._id,
+                        input: {
+                            label: child.label,
+                            color: child.color
+                        }
+                    }
+                });
+                if (!sectionData) return;
+                const newSection = sectionData.createSection
+
+                // Update User Data
+                const updatedSong = {
+                    ...newSong,
+                    sections: [newSection]
+                };
+
+                setCurrentSong(updatedSong);
+                setCurrentSections([newSection]);
+
+                setUserData(prev => ({ 
+                    ...prev, 
+                    songs: [...prev.songs, updatedSong]
+                }))
+                return;
+            }
+
             const { data } = await createSection({
                 variables: {
                     songId: currentSong?._id,
@@ -150,8 +224,16 @@ export function useCreateSection() {
                 }
             });
             if (!data) return;
+            const newSection = data.createSection
 
-            setCurrentSections(prev => [...prev, data.createSection]);
+            setCurrentSections(prev => [...prev, newSection]);
+            setUserData(prev => ({
+                ...prev,
+                songs: prev.songs.map(song => song._id === currentSong._id
+                    ? { ...song, sections: [ ...song.sections || [], newSection] }
+                    : song
+                )
+            }));
         } 
         catch (err) {
             console.error(err);

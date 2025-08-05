@@ -6,13 +6,20 @@ import { useSongData } from '../contexts/SongDataContext.jsx';
 import { useCurrentSong } from '../contexts/CurrentSongContext.jsx';
 
 import { useUpdateTitle } from '../lib/constants.js';
+import { useEffect } from 'react';
 
 function Nav() {
-    const { user } = useUser();    
+    const { user, userData, setUserData } = useUser();    
     const { visible, toggleInputPool } = useToggleInputPool();
     const { songData } = useSongData();
     const { currentSong, handleSetCurrentSong } = useCurrentSong();
     const handleInputChange = useUpdateTitle();
+
+    useEffect(() => {
+        if (!userData) {
+            setUserData(user)
+        };
+    }, []);
 
     return (
         <nav className="navbar bg-dark px-2">
@@ -24,7 +31,7 @@ function Nav() {
                         Dropdown
                     </button>
                     <ul className="dropdown-menu">
-                        {user?.songs.map(song => (
+                        {userData?.songs.map(song => (
                             <li key={song._id}>
                                 <button 
                                     className="dropdown-item" 
@@ -52,8 +59,22 @@ function Nav() {
                         cursor: 'text'
                     }}
                 /> 
-            )
-                : <span className='text-light'>{user?.username}</span>}
+            ) : (
+                <input 
+                    type="text" 
+                    className='text-light text-center p-1 border-2 border-primary rounded'
+                    placeholder='Song Title'
+                    onChange={handleInputChange} 
+                    value={songData.title}
+                    style={{ 
+                        border: 'none',
+                        backgroundColor: 'transparent',
+                        outlineColor: 'grey',
+                        cursor: 'text'
+                    }}
+                /> 
+            )}
+                {/* : <span className='text-light'>{user?.username}</span>} */}
 
             <div>
                 <button onClick={() => toggleInputPool()} className="btn btn-primary">{!visible ? 'Open' : 'Close'}</button>
