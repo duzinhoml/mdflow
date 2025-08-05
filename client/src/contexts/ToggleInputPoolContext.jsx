@@ -10,7 +10,7 @@ export const ToggleInputPoolProvider = ({ children }) => {
     };
 
     return (
-        <ToggleInputPoolContext.Provider value={{ visible, toggleInputPool }}>
+        <ToggleInputPoolContext.Provider value={{ visible, setVisible, toggleInputPool }}>
             {children}
         </ToggleInputPoolContext.Provider>
     );

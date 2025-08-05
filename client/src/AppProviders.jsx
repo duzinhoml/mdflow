@@ -2,7 +2,7 @@ import { ApolloProvider } from '@apollo/client';
 
 import { UserProvider } from './contexts/UserContext.jsx';
 import { ToggleInputPoolProvider } from "./contexts/ToggleInputPoolContext.jsx";
-import { EditingProvider } from './contexts/EditingContext.jsx';
+import { SongDataProvider } from './contexts/SongDataContext.jsx';
 import { CurrentSongProvider } from "./contexts/CurrentSongContext.jsx";
 import { CurrentSectionsProvider } from './contexts/CurrentSectionsContext.jsx';
 
@@ -15,13 +15,13 @@ function AppProviders({ children }) {
         <ApolloProvider client={client}>
           <UserProvider>
             <ToggleInputPoolProvider>
-              <EditingProvider>
+              <SongDataProvider>
                 <CurrentSongProvider>
                   <CurrentSectionsProvider>
                     {children}
                   </CurrentSectionsProvider>
                 </CurrentSongProvider>
-              </EditingProvider>
+              </SongDataProvider>
             </ToggleInputPoolProvider>
           </UserProvider>
         </ApolloProvider>

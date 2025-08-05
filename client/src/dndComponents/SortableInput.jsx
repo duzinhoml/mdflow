@@ -2,15 +2,12 @@ import { useState } from 'react';
 import { useSortable } from '@dnd-kit/sortable';
 import { CSS } from '@dnd-kit/utilities';
 
-import { useEditing } from '../contexts/EditingContext';
-
 import { useDeleteSection } from '../lib/constants';
 
 function SortableInput({ id, className, inputStyle, children }) {
     const [isHovered, setIsHovered] = useState(false);
-    const [allowDrag, setAllowDrag] = useState(true)
+    const [allowDrag, setAllowDrag] = useState(true);
     const { attributes, listeners, setNodeRef, transform, transition } = useSortable({ id, disabled: !allowDrag });
-    const { isEditing } = useEditing();
 
     const style = {
         transform: CSS.Transform.toString(transform),
@@ -20,10 +17,8 @@ function SortableInput({ id, className, inputStyle, children }) {
     }
 
     const handleHoverEffect = (state) => {
-        if (isEditing) {
-            setIsHovered(state);
-            setAllowDrag(!state)
-        };
+        setIsHovered(state);
+        setAllowDrag(!state);
     };
 
     const handleDeleteSection = useDeleteSection();
@@ -40,7 +35,7 @@ function SortableInput({ id, className, inputStyle, children }) {
                 {isHovered ? (
                     <span>
                         Delete
-                        <i class="fa-solid fa-trash ms-2"></i>
+                        <i className="fa-solid fa-trash ms-2"></i>
                     </span>
                 ) : children}
             </div>

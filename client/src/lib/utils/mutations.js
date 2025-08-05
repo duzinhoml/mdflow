@@ -12,12 +12,30 @@ export const LOGIN_USER = gql`
     }
 `;
 
+export const CREATE_SONG = gql`
+    mutation createSong($input: CreateSongInput!) {
+        createSong(input: $input) {
+            _id
+            title
+        }
+    }
+`;
+
 export const CREATE_SECTION = gql`
     mutation createSection($songId: ID!, $input: CreateSectionInput!) {
         createSection(songId: $songId, input: $input) {
             _id
             label
             color
+        }
+    }
+`;
+
+export const UPDATE_SONG_TITLE = gql`
+    mutation updateSongTitle($songId: ID!, $title: String!) {
+        updateSongTitle(songId: $songId, title: $title) {
+            _id
+            title
         }
     }
 `;

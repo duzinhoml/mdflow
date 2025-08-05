@@ -1,17 +1,18 @@
 import { useState, useContext, createContext } from 'react';
-import { useEditing } from './EditingContext';
 
 const CurrentSongContext = createContext();
 
 export const CurrentSongProvider = ({ children }) => {
     const [currentSong, setCurrentSong] = useState(null);
-    const { setIsEditing } = useEditing();
 
     const handleSetCurrentSong = (song) => {
+        if (song._id === 'createSong') {
+            setCurrentSong(null)
+            return;
+        }
+
         if (currentSong?._id === song._id) setCurrentSong(null);
         else setCurrentSong(song);
-
-        setIsEditing(false);
     }
 
     return (

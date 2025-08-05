@@ -1,6 +1,6 @@
 
 
-function Layout({ children }) {
+function SongLayout({ children }) {
 
     return (
         <div className="flex-grow-1 d-flex overflow-x-auto" style={{ backgroundColor: '#6c757d' }}>
@@ -11,4 +11,4 @@ function Layout({ children }) {
     );
 };
 
-export default Layout;
+export default SongLayout;

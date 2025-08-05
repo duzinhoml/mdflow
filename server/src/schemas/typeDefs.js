@@ -52,6 +52,7 @@ const typeDefs = `
         me: User
         songs: [Song]
         song(songId: ID!): Song
+        sections: [Section]
     }
 
     type Mutation {
@@ -61,6 +62,7 @@ const typeDefs = `
         createSection(songId: ID!, input: CreateSectionInput!): Section
 
         updateUser(userId: ID!, input: UpdateUserInput!): User
+        updateSongTitle(songId: ID!, title: String!): Song
         updateSectionOrder(songId: ID!, sectionIds: [ID!]!): Song
 
         deleteUserById(userId: ID!): String

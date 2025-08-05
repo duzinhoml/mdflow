@@ -6,10 +6,9 @@ import Nav from './Nav.jsx';
 import InputPool from './InputPool.jsx';
 
 import SortableInput from '../dndComponents/SortableInput.jsx';
-import Layout from './Layout.jsx';
+import SongLayout from './SongLayout.jsx';
 
 import { useToggleInputPool } from '../contexts/ToggleInputPoolContext.jsx';
-import { useEditing } from '../contexts/EditingContext.jsx';
 import { useCurrentSong } from '../contexts/CurrentSongContext.jsx';
 import { useCurrentSections } from '../contexts/CurrentSectionsContext.jsx';
 
@@ -17,7 +16,6 @@ import { useDndSensors, useDrag } from '../lib/constants.js';
 
 function Dashboard() {
     const { visible } = useToggleInputPool();
-    const { isEditing } = useEditing();
     const { currentSong } = useCurrentSong();
     const { currentSections, setCurrentSections } = useCurrentSections();
 
@@ -28,7 +26,7 @@ function Dashboard() {
     }, [currentSong]);
 
     const { sensors } = useDndSensors();
-    
+
     return (
         <div className="vh-100">
             <div className='h-100 d-flex flex-column'>
@@ -36,11 +34,11 @@ function Dashboard() {
                 {/* Nav */}
                 <Nav />
 
-                <DndContext sensors={sensors} onDragEnd={isEditing ? handleDragEnd : null}>
+                <DndContext sensors={sensors} onDragEnd={handleDragEnd}>
 
                     {/* Drop Zone */}
-                    <Layout>
-                        <SortableContext items={isEditing ? currentSections.map(section => section._id.toString()) : []} strategy={horizontalListSortingStrategy}>
+                    <SongLayout>
+                        <SortableContext items={currentSections.map(section => section._id)} strategy={horizontalListSortingStrategy}>
                             {currentSections.length ? 
                                 currentSections?.map(section => (
                                     <SortableInput 
@@ -61,7 +59,7 @@ function Dashboard() {
                                 )
                             }
                         </SortableContext>
-                    </Layout>
+                    </SongLayout>
 
                     {/* Draggable Zone */}
                     {visible && 

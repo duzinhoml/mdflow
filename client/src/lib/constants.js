@@ -5,16 +5,15 @@ import { useSensors, useSensor, PointerSensor, KeyboardSensor } from '@dnd-kit/c
 import { arrayMove, sortableKeyboardCoordinates } from '@dnd-kit/sortable';
 
 import { useUser } from '../contexts/UserContext.jsx';
+import { useSongData } from '../contexts/SongDataContext.jsx';
 import { useCurrentSong } from '../contexts/CurrentSongContext.jsx';
 import { useCurrentSections } from '../contexts/CurrentSectionsContext.jsx';
 
 import Auth from './utils/auth.js';
 
 import { useMutation } from '@apollo/client';
-import { CREATE_SECTION } from './utils/mutations.js';
-import { UPDATE_SECTION_ORDER, DELETE_SECTION_BY_ID } from './utils/mutations.js';
+import { CREATE_SECTION, UPDATE_SECTION_ORDER, DELETE_SECTION_BY_ID, UPDATE_SONG_TITLE } from './utils/mutations.js';
 import { QUERY_ME } from './utils/queries';
-import { useEditing } from '../contexts/EditingContext.jsx';
 
 // Test Data
 export const INPUT_POOL = [
@@ -65,22 +64,82 @@ export function useWindowResize() {
 };
 
 // Placeholder
+export function usePlaceholder() {
+    const { setSongData } = useSongData();
+    const { setCurrentSections } = useCurrentSections();
+
+    const handlePlaceholder = async (child) => {
+        try {
+            const newItem = {
+                _id: `${Date.now()}`,
+                label: child.label,
+                color: child.color
+            };
+
+            setCurrentSections(prevSections => [...prevSections, newItem])
+            setSongData(prev => ({ 
+                ...prev, 
+                sections: [...prev.sections, { label: newItem.label, color: newItem.color }]
+            }));
+        } 
+        catch (err) {
+            console.error(err);
+        }
+    };
+
+    return handlePlaceholder;
+}
+
+// Creating a Song
+
+// Updating Song Title
+export function useUpdateTitle() {
+    const { songData, setSongData } = useSongData();
+    const { currentSong, setCurrentSong } = useCurrentSong();
+    const [updateSongTitle] = useMutation(UPDATE_SONG_TITLE, { refetchQueries: [QUERY_ME] });
+
+    useEffect(() => {
+        if (currentSong?.title) setSongData(prev => ({ ...prev, title: currentSong.title}));
+    }, [currentSong]);
+    
+    const handleInputChange = (e) => {
+        const { value } = e.target;
+        setSongData(prev =>  ({ ...prev, title: value }))
+    };
+    
+    useEffect(() => {
+        if (!songData.title || songData.title === currentSong?.title) return;
+
+        const debounceTimeout = setTimeout(async () => {
+            try {
+                setCurrentSong(prev => ({ ...prev, title: songData.title }));
+                await updateSongTitle({
+                    variables: {
+                        songId: currentSong?._id,
+                        title: songData.title
+                    }
+                });
+            } 
+            catch (err) {
+                console.error(err);
+            }
+        }, 500);
+
+        return () => clearTimeout(debounceTimeout);
+    }, [songData.title]);
+
+    return handleInputChange;
+}
 
 // Adding a Section
 export function useCreateSection() {
     const [createSection] = useMutation(CREATE_SECTION, { refetchQueries: [QUERY_ME] });
 
-    const { isEditing } = useEditing();
     const { currentSong } = useCurrentSong();
     const { setCurrentSections } = useCurrentSections();
 
-    const handleCreateSection = async (e, child) => {
-        e.preventDefault();
-
+    const handleCreateSection = async (child) => {
         try {
-            if (!isEditing) return;
-            if (!currentSong) return;
-
             const { data } = await createSection({
                 variables: {
                     songId: currentSong?._id,
@@ -92,7 +151,7 @@ export function useCreateSection() {
             });
             if (!data) return;
 
-            setCurrentSections(prevSections => [...prevSections, data.createSection]);
+            setCurrentSections(prev => [...prev, data.createSection]);
         } 
         catch (err) {
             console.error(err);
@@ -105,23 +164,51 @@ export function useCreateSection() {
 // Deleting a Section
 export function useDeleteSection() {
     const { setCurrentSections } = useCurrentSections();
-    const [deleteSectionById] = useMutation(DELETE_SECTION_BY_ID, {
-        refetchQueries: [QUERY_ME]
-    });
+    const [deleteSectionById] = useMutation(DELETE_SECTION_BY_ID, { refetchQueries: [QUERY_ME] });
 
     const handleDeleteSection = async (sectionId) => {
-        setCurrentSections(prev => prev.filter(section => section._id != sectionId))
-        await deleteSectionById({
-            variables: {
-                sectionId
-            }
-        });
+        try {
+            setCurrentSections(prev => prev.filter(section => section._id != sectionId))
+            await deleteSectionById({
+                variables: {
+                    sectionId
+                }
+            });
+        } 
+        catch (err) {
+            console.error(err)
+        }
     }
 
     return handleDeleteSection;
 }
 
-// Input Change
+// Save Song Update
+export function useUpdateSong() {
+    const { setSongData } = useSongData();
+    const { currentSong } = useCurrentSong();
+
+    // Update Title
+    const { handleTitleChange, handleInputChange } = useUpdateTitle();
+
+    useEffect(() => {
+        if (currentSong?.title) setSongData(prev => ({ ...prev, title: currentSong.title}));
+    }, [currentSong]);
+
+    // Add Section
+    const handleCreateSection = useCreateSection();
+
+    const handleUpdateSong = async () => {
+        if (!currentSong) return;
+
+        await handleTitleChange();
+        await handleCreateSection();
+    };
+
+    return { handleUpdateSong, handleInputChange };
+}
+
+// Login Input Change
 export const useInputChange = () => {
     const [formData, setFormData] = useState({
         username: '',

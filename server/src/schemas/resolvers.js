@@ -38,6 +38,9 @@ const resolvers = {
             if (!song) throw new Error('Song not found');
 
             return song;
+        },
+        sections: async () => {
+            return await Section.find({});
         }
     },
     Mutation: {
@@ -94,17 +97,18 @@ const resolvers = {
             if (!context.user) throw new Error('Not authenticated');
 
             try {
-                const section = await Section.create({ ...input });
-                if (!section) throw new Error('Section creation failed');
+                const newSection = await Section.create({ ...input })
 
                 const updatedSong = await Song.findOneAndUpdate(
                     { _id: songId },
-                    { $push: { sections: section._id } },
+                    { $push: { 
+                        sections: newSection._id
+                    } },
                     { new: true }
                 );
                 if (!updatedSong) throw new Error('Song update failed');
 
-                return section;
+                return newSection;
             } 
             catch (err) {
                 throw new Error(`Error creating section: ${err.message}`);
@@ -131,6 +135,24 @@ const resolvers = {
             } 
             catch (err) {
                 throw new Error(`Error updating user: ${err.message}`);
+            }
+        },
+        updateSongTitle: async (_, { songId, title }, context) => {
+            try {
+                if (!context.user) throw new Error('Not authenticated');
+
+                const updatedSong = await Song.findOneAndUpdate(
+                    { _id: songId },
+                    { $set: { title }},
+                    { new: true }
+                );
+
+                if (!updatedSong) throw new Error('Song not found or update failed');
+
+                return updatedSong.populate('sections');
+            } 
+            catch (err) {
+                throw new Error(`Error updating song title: ${err.message}`);
             }
         },
         updateSectionOrder: async (_, { songId, sectionIds }, context) => {

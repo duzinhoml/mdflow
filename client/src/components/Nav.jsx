@@ -2,19 +2,22 @@ import Auth from '../lib/utils/auth.js';
 
 import { useUser } from '../contexts/UserContext.jsx';
 import { useToggleInputPool } from '../contexts/ToggleInputPoolContext.jsx';
+import { useSongData } from '../contexts/SongDataContext.jsx';
 import { useCurrentSong } from '../contexts/CurrentSongContext.jsx';
-import { useEditing } from '../contexts/EditingContext.jsx';
+
+import { useUpdateTitle } from '../lib/constants.js';
 
 function Nav() {
-    const { user } = useUser();
+    const { user } = useUser();    
     const { visible, toggleInputPool } = useToggleInputPool();
+    const { songData } = useSongData();
     const { currentSong, handleSetCurrentSong } = useCurrentSong();
-    const { isEditing, setIsEditing } = useEditing();
+    const handleInputChange = useUpdateTitle();
 
     return (
-        <nav className="navbar bg-warning-subtle px-2">
+        <nav className="navbar bg-dark px-2">
             <div className='d-flex'>
-                <span className='navbar-brand me-2'>MDFlow</span>
+                <span className='navbar-brand me-2 text-light'>MDFlow</span>
 
                 <div className="dropdown">
                     <button className="btn btn-secondary dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false">
@@ -34,17 +37,23 @@ function Nav() {
                         ))}
                     </ul>
                 </div>
-
-                <button className={`btn btn-primary ${isEditing && 'active'} ms-2`} disabled={currentSong ? false : true} onClick={() => setIsEditing(prev => !prev)}>Edit</button>
-
             </div>
 
-            <span>
-                {currentSong && isEditing ? 
-                    `Editing: ${currentSong.title}` 
-                    : currentSong ? 
-                    currentSong.title : user?.username}
-            </span>
+            {currentSong ? (
+                <input 
+                    type="text" 
+                    className='text-light text-center p-1 border-2 border-primary rounded'
+                    onChange={handleInputChange} 
+                    value={songData.title}
+                    style={{ 
+                        border: 'none',
+                        backgroundColor: 'transparent',
+                        outlineColor: 'grey',
+                        cursor: 'text'
+                    }}
+                /> 
+            )
+                : <span className='text-light'>{user?.username}</span>}
 
             <div>
                 <button onClick={() => toggleInputPool()} className="btn btn-primary">{!visible ? 'Open' : 'Close'}</button>
