@@ -8,7 +8,7 @@ function InputPool() {
     const handleCreateSection = useCreateSection();
     
     return (
-        <div className='bg-dark mb-2' style={{ minHeight: '25vh' }}>
+        <div className='bg-dark' style={{ minHeight: '25vh' }}>
             <div className='justify-content-center my-3 mx-0 px-2 row'>
                 {INPUT_POOL.map(input => (
                     <button 

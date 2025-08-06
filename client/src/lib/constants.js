@@ -12,7 +12,7 @@ import { useCurrentSections } from '../contexts/CurrentSectionsContext.jsx';
 import Auth from './utils/auth.js';
 
 import { useMutation } from '@apollo/client';
-import { CREATE_SECTION, UPDATE_SECTION_ORDER, DELETE_SECTION_BY_ID, UPDATE_SONG_TITLE, CREATE_SONG } from './utils/mutations.js';
+import { CREATE_SECTION, UPDATE_SECTION_ORDER, DELETE_SECTION_BY_ID, UPDATE_SONG_TITLE, CREATE_SONG, DELETE_SONG_BY_ID } from './utils/mutations.js';
 import { QUERY_ME } from './utils/queries';
 
 // Test Data
@@ -133,7 +133,7 @@ export function useUpdateTitle() {
                     return;
                 }
 
-                setCurrentSong(prev => ({ ...prev, title: songData.title }));
+                setCurrentSong(prev => ({ ...prev, title: songData.title, sections: prev.sections }));
                 await updateSongTitle({
                     variables: {
                         songId: currentSong?._id,
@@ -227,6 +227,10 @@ export function useCreateSection() {
             const newSection = data.createSection
 
             setCurrentSections(prev => [...prev, newSection]);
+            setCurrentSong(prev => ({
+                ...prev,
+                sections: [...(prev?.sections || []), newSection]
+            }));
             setUserData(prev => ({
                 ...prev,
                 songs: prev.songs.map(song => song._id === currentSong._id
@@ -241,6 +245,39 @@ export function useCreateSection() {
     };
 
     return handleCreateSection;
+}
+
+// Delete Song
+export function useDeleteSong() {
+    const { setUserData } = useUser();
+    const { setSongData } = useSongData();
+    const { setCurrentSections } = useCurrentSections();
+    const { currentSong, setCurrentSong } = useCurrentSong();
+    const [deleteSongById] = useMutation(DELETE_SONG_BY_ID, { refetchQueries: [QUERY_ME] });
+
+    const handleDeleteSong = async (songId) => {
+        try {
+            if (currentSong && songId === currentSong._id) setCurrentSong(null);
+            await deleteSongById({
+                variables: {
+                    songId
+                }
+            });
+
+            setUserData(prev => ({
+                ...prev,
+                songs: prev.songs.filter(song => song._id !== songId)
+            }));
+
+            setSongData({ title: '', sections: [] });
+            setCurrentSections([]);
+        } 
+        catch (err) {
+            console.error(err);
+        }
+    };
+
+    return handleDeleteSong;
 }
 
 // Deleting a Section
@@ -322,6 +359,7 @@ export function useDndSensors() {
 
 // Drag Function
 export function useDrag() {
+    const { setUserData } = useUser();
     const { currentSections, setCurrentSections } = useCurrentSections();
     const { currentSong } = useCurrentSong();
 
@@ -339,6 +377,12 @@ export function useDrag() {
 
         if (oldIndex !== -1 && newIndex !== -1) {
             const reorderedSections = arrayMove([...currentSections], oldIndex, newIndex);
+            setUserData(prev => ({
+                ...prev,
+                songs: prev.songs.map(song => song._id === currentSong._id ?
+                    { ...song, sections: reorderedSections } : song
+                )
+            }));
             setCurrentSections(reorderedSections);
                 
             await updateSectionOrder({

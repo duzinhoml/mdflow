@@ -54,6 +54,12 @@ export const UPDATE_SECTION_ORDER = gql`
     }
 `;
 
+export const DELETE_SONG_BY_ID = gql`
+    mutation deleteSongById($songId: ID!) {
+        deleteSongById(songId: $songId)
+    }
+`;
+
 export const DELETE_SECTION_BY_ID = gql`
     mutation deleteSectionById($sectionId: ID!) {
         deleteSectionById(sectionId: $sectionId)
