@@ -282,11 +282,13 @@ export function useDeleteSong() {
 
 // Deleting a Section
 export function useDeleteSection() {
+    const { currentSong } = useCurrentSong();
     const { setCurrentSections } = useCurrentSections();
     const [deleteSectionById] = useMutation(DELETE_SECTION_BY_ID, { refetchQueries: [QUERY_ME] });
 
     const handleDeleteSection = async (sectionId) => {
         try {
+            if (!currentSong) return;
             setCurrentSections(prev => prev.filter(section => section._id != sectionId))
             await deleteSectionById({
                 variables: {
@@ -396,6 +398,25 @@ export function useDrag() {
 
     return handleDragEnd;
 };
+
+// Search Songs
+export function useSearch() {
+    const [searchTerm, setSearchTerm] = useState('');
+    const { userData } = useUser();
+
+    const handleSearch = (e) => {
+        const { value } = e.target;
+        setSearchTerm(value);
+    }
+
+    const clearSearch = () => {
+        if (searchTerm) setSearchTerm('');
+    };
+
+    const searchedSongs = userData?.songs.filter(song => song.title.toLowerCase().includes(searchTerm.toLowerCase()));
+
+    return { searchTerm, searchedSongs, handleSearch, clearSearch };
+}
 
 // Authentication Render
 export function useLoginCheck() {

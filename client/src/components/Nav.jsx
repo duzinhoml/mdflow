@@ -6,6 +6,8 @@ import { useCurrentSong } from '../contexts/CurrentSongContext.jsx';
 
 import { useUpdateTitle } from '../lib/constants.js';
 
+import '../index.css';
+
 function Nav() {  
     const { visible, toggleVisible } = useToggleVisible();
     const { songData } = useSongData();
@@ -13,10 +15,24 @@ function Nav() {
     const handleInputChange = useUpdateTitle();
 
     return (
-        <nav className="navbar bg-dark px-2">
+        <nav className="navbar px-2 mx-2 temp-bg">
             <div className='d-flex'>
                 <span className='navbar-brand me-2 text-light'>MDFlow</span>
-                <button className='btn btn-info ms-2' onClick={() => toggleVisible('sidebar')}>Sidebar</button>
+                <div class="dropend">
+                    <button class="btn btn-secondary dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false">
+                        Tools
+                    </button>
+                    <ul class="dropdown-menu bg-secondary">
+                        <button className='dropdown-item d-flex align-items-center justify-content-between' onClick={() => toggleVisible('sidebar')}>
+                            <span>Sidebar</span>
+                            <i class={`fa-solid fa-toggle-${visible.sidebar ? 'on' : 'off'}`}></i>
+                        </button>
+                        <button class="dropdown-item d-flex align-items-center justify-content-between" onClick={() => toggleVisible('inputPool')}>
+                            <span>Inputs</span>
+                            <i class={`fa-solid fa-toggle-${visible.inputPool ? 'on' : 'off'}`}></i>
+                        </button>
+                    </ul>
+                </div>
             </div>
 
             {currentSong ? (
@@ -47,12 +63,7 @@ function Nav() {
                     }}
                 /> 
             )}
-                {/* : <span className='text-light'>{user?.username}</span>} */}
-
-            <div>
-                <button onClick={() => toggleVisible('inputPool')} className="btn btn-primary" style={{ minWidth: '67px' }}>{!visible.inputPool ? 'Open' : 'Close'}</button>
-                <button onClick={() => Auth.logout()} className='btn btn-danger ms-2'>Log Out</button>
-            </div>
+            <button onClick={() => Auth.logout()} className='btn btn-danger ms-2'>Log Out</button>
         </nav>
     );
 };

@@ -4,6 +4,8 @@ import { CSS } from '@dnd-kit/utilities';
 
 import { useDeleteSection } from '../lib/constants';
 
+import { useCurrentSong } from '../contexts/CurrentSongContext';
+
 function SortableInput({ id, className, inputStyle, children }) {
     const [isHovered, setIsHovered] = useState(false);
     const [allowDrag, setAllowDrag] = useState(true);
@@ -13,7 +15,8 @@ function SortableInput({ id, className, inputStyle, children }) {
         transform: CSS.Transform.toString(transform),
         transition,
         touchAction: 'none',
-        minWidth: '15vw'
+        minWidth: '15vw',
+        boxShadow: 'inset 0 2px 4px black'
     }
 
     const handleHoverEffect = (state) => {
@@ -22,17 +25,18 @@ function SortableInput({ id, className, inputStyle, children }) {
     };
 
     const handleDeleteSection = useDeleteSection();
+    const { currentSong } = useCurrentSong();
 
     return (
         <div ref={setNodeRef} style={style} className={className} {...attributes} {...listeners}>
             <div 
-                className='mb-3 p-1 rounded-2 text-center' 
-                style={{ ...inputStyle, backgroundColor: isHovered ? 'tomato' : null }}
+                className='mb-3 p-1 rounded-2 text-center text-light' 
+                style={{ ...inputStyle, backgroundColor: isHovered && currentSong ? 'tomato' : null }}
                 onMouseEnter={() => handleHoverEffect(true)}
                 onMouseLeave={() => handleHoverEffect(false)}
                 onClick={() => handleDeleteSection(id)}
             >
-                {isHovered ? (
+                {isHovered && currentSong ? (
                     <span>
                         Delete
                         <i className="fa-solid fa-trash ms-2"></i>
