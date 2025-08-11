@@ -5,6 +5,7 @@ import { ToggleVisibleProvider } from "./contexts/ToggleVisibleContext.jsx";
 import { SongDataProvider } from './contexts/SongDataContext.jsx';
 import { CurrentSongProvider } from "./contexts/CurrentSongContext.jsx";
 import { CurrentSectionsProvider } from './contexts/CurrentSectionsContext.jsx';
+import { CurrentSectionProvider } from './contexts/CurrentSectionContext.jsx'
 
 import { useApolloProvider } from './lib/constants.js';
 
@@ -18,7 +19,9 @@ function AppProviders({ children }) {
               <SongDataProvider>
                 <CurrentSongProvider>
                   <CurrentSectionsProvider>
-                    {children}
+                    <CurrentSectionProvider>
+                      {children}
+                    </CurrentSectionProvider>
                   </CurrentSectionsProvider>
                 </CurrentSongProvider>
               </SongDataProvider>

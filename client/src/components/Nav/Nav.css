@@ -1,0 +1,39 @@
+.tools {
+    background-color: #A86FFF;
+
+    &:hover {
+        background-color: hsl(264, 100%, 67%);
+    }
+
+    &:active {
+        background-color: hsl(264, 100%, 62%) !important;
+        border-color: hsl(264, 100%, 62%) !important;
+    }
+
+    + ul {
+        background-color: hsl(208, 7%, 46%);
+
+        > button {
+            .current {
+                color: hsl(210, 11%, 0%);
+            }
+
+            &:hover {
+                color: hsl(210, 11%, 10%);
+                background-color: hsl(208, 7%, 56%);
+            }
+
+            &:active {
+                color: hsl(210, 11%, 5%);
+                background-color: hsl(208, 7%, 61%);
+            }
+        }
+    }
+}
+
+
+
+.btn.show {
+    background-color: hsl(264, 100%, 62%) !important;
+    border-color: hsl(264, 100%, 62%) !important
+}

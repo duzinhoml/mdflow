@@ -17,6 +17,13 @@ const typeDefs = `
         _id: ID!
         label: String!
         color: String!
+        notes: [Note]
+    }
+
+    type Note {
+        _id: ID!
+        label: String!
+        color: String!
     }
 
     type Auth {
@@ -41,6 +48,11 @@ const typeDefs = `
         color: String!
     }
 
+    input CreateNoteInput {
+        label: String!
+        color: String!
+    }
+
     input UpdateUserInput {
         username: String
         password: String
@@ -60,6 +72,7 @@ const typeDefs = `
         login(username: String!, password: String!): Auth
         createSong(input: CreateSongInput!): Song
         createSection(songId: ID!, input: CreateSectionInput!): Section
+        createNote(sectionId: ID!, input: CreateNoteInput!): Note
 
         updateUser(userId: ID!, input: UpdateUserInput!): User
         updateSongTitle(songId: ID!, title: String!): Song
@@ -68,6 +81,7 @@ const typeDefs = `
         deleteUserById(userId: ID!): String
         deleteSongById(songId: ID!): String
         deleteSectionById(sectionId: ID!): String
+        deleteNoteById(noteId: ID!): String
     }
 `;
 

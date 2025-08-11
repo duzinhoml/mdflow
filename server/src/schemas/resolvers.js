@@ -1,4 +1,4 @@
-import { User, Song, Section } from '../models/index.js';
+import { User, Song, Section, Note } from '../models/index.js';
 import { signToken } from '../utils/auth.js';
 import bcrypt from 'bcryptjs';
 
@@ -25,13 +25,22 @@ const resolvers = {
             return await User.findOne({ _id: context.user._id }).populate(
                 { path: 'songs',
                     populate: {
-                        path: 'sections'
+                        path: 'sections',
+                            populate: {
+                                path: 'notes'
+                            }
                     }
                 }
             );
         },
         songs: async () => {
-            return await Song.find({}).populate('sections');
+            return await Song.find({}).populate(
+                { path: 'sections',
+                    populate: {
+                        path: 'notes'
+                    }
+                }
+            );
         },
         song: async (_, { songId }) => {
             const song = await Song.findOne({ _id: songId }).populate('sections');
@@ -112,6 +121,27 @@ const resolvers = {
             } 
             catch (err) {
                 throw new Error(`Error creating section: ${err.message}`);
+            }
+        },
+        createNote: async (_, { sectionId, input }, context) => {
+            if (!context.user) throw new Error('Not authenticated');
+
+            try {
+                const newNote = await Note.create({ ...input });
+
+                const updatedSection = await Section.findOneAndUpdate(
+                    { _id: sectionId },
+                    { $push: {
+                        notes: newNote._id
+                    } },
+                    { new: true }
+                );
+                if (!updatedSection) throw new Error('Section update failed');
+
+                return newNote;
+            } 
+            catch (err) {
+                throw new Error(`Error creating note: ${err.message}`);
             }
         },
         updateUser: async (_, { userId, input }, context) => {

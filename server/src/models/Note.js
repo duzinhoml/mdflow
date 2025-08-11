@@ -1,6 +1,6 @@
 import { Schema, model } from 'mongoose';
 
-const sectionSchema = new Schema(
+const noteSchema = new Schema(
     {
         label: {
             type: String,
@@ -11,11 +11,7 @@ const sectionSchema = new Schema(
             type: String,
             required: true,
             trim: true
-        },
-        notes: [{
-            type: Schema.Types.ObjectId,
-            ref: 'Note'
-        }]
+        }
     },
     {
         toJSON: {
@@ -25,6 +21,6 @@ const sectionSchema = new Schema(
     }
 );
 
-const Section = model('Section', sectionSchema);
+const Note = model('Note', noteSchema);
 
-export default Section;
+export default Note;

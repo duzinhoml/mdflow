@@ -16,7 +16,7 @@ function Sidebar() {
         visible.sidebar && 
             <div 
                 className='bg-secondary position-absolute end-0 d-flex flex-column overflow-hidden' 
-                style={{ width: '25vw', height: 'calc(100% - 56px)', borderTopLeftRadius: '6px', borderBottomLeftRadius: '6px' }}
+                style={{ width: '25vw', height: 'calc(100% - 60px)', borderTopLeftRadius: '6px', borderBottomLeftRadius: '6px' }}
             >
                 {/* Search Bar */}
                 <div className="mt-3 mx-3">

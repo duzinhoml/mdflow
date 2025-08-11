@@ -1,9 +1,27 @@
+:root {
+    --bg-color-primary: #262731;
+    --color-primary: #A86FFF;
+    --border-color: #3A3B47;
+    --bg-color-hover: #C09AFF;
+}
+
 html, body {
     height: 100%;
     margin: 0;
     font-family: "Rubik";
-    background-color: hsl(210, 11%, 15%)
+    background-color: #262731;
+    /* background-color: hsl(210, 11%, 15%) */
     /* overflow-y: hidden; */
+}
+
+.temp-bg { /* TEMP */
+    background-color: #262731;
+}
+
+.note-hover { /* TEMP */
+    &:hover {
+        background-color: hotpink;
+    }
 }
 
 /* Media Queries */

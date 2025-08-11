@@ -25,6 +25,11 @@ export const QUERY_ME = gql`
                     _id
                     label
                     color
+                    notes {
+                        _id
+                        label
+                        color
+                    }
                 }
             }
         }

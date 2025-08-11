@@ -27,6 +27,21 @@ export const CREATE_SECTION = gql`
             _id
             label
             color
+            notes {
+                _id
+                label
+                color
+            }
+        }
+    }
+`;
+
+export const CREATE_NOTE = gql`
+    mutation createNote($sectionId: ID!, $input: CreateNoteInput!) {
+        createNote(sectionId: $sectionId, input: $input) {
+            _id
+            label
+            color
         }
     }
 `;

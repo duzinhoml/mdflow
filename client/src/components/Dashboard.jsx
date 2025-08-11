@@ -2,7 +2,7 @@ import { useEffect } from 'react';
 import { DndContext } from '@dnd-kit/core';
 import { SortableContext, horizontalListSortingStrategy } from '@dnd-kit/sortable';
 
-import Nav from './Nav.jsx';
+import Nav from './Nav/Nav.jsx';
 import Sidebar from './Sidebar.jsx';
 import InputPool from './InputPool.jsx';
 
@@ -41,7 +41,8 @@ function Dashboard() {
 
                 {/* Nav */}
                 <Nav />
-
+                <div className="rounded-bottom-2" style={{ borderBottom: '4px solid #3a3b47'}}></div>
+                
                 <DndContext sensors={sensors} onDragEnd={handleDragEnd}>
                     <div className='d-flex flex-grow-1'>
                         <Sidebar />
@@ -54,14 +55,15 @@ function Dashboard() {
                                             key={section._id.toString()} 
                                             id={section._id.toString()} 
                                             className='border border-light-subtle border-5 rounded-4 m-3 p-3'
-                                            inputStyle={{ border: `3px solid ${section.color}` }}
+                                            inputStyle={{ border: `3px solid ${section.color}`, textShadow: '2px 2px 4px black', boxShadow: 'inset 0px 2px 4px black', backgroundColor: '#262731' }}
+                                            notes={section.notes || []}
                                         >
                                             {section.label}
                                         </SortableInput>
                                     )) : (
                                         <SortableInput 
                                             className='border border-light-subtle border-5 rounded-4 m-3 p-3' 
-                                            inputStyle={{ width: '12vw' }}
+                                            inputStyle={{ width: '12vw', textShadow: '2px 2px 4px black' }}
                                         >
                                             Create your song
                                         </SortableInput>

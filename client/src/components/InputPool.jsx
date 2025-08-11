@@ -5,11 +5,11 @@ import { INPUT_POOL, useWindowResize, useCreateSection } from "../lib/constants.
 function InputPool() {
     const [currentTab, setCurrentTab] = useState(null);
     const screenWidth = useWindowResize();
-    const handleCreateSection = useCreateSection();
+    const handleInputSelection = useCreateSection();
     
     return (
-        <div className='bg-dark' style={{ minHeight: '25vh' }}>
-            <div className='justify-content-center my-3 mx-0 px-2 row'>
+        <div className='bg-dark rounded-top-2' style={{ minHeight: '25vh' }}>
+            <div className='justify-content-center my-3 mx-0 px-2 row gap-2'>
                 {INPUT_POOL.map(input => (
                     <button 
                         key={input.id}
@@ -19,7 +19,7 @@ function InputPool() {
                         data-bs-target={`#collapseExample${input.id}`} 
                         aria-expanded="false" 
                         aria-controls="collapseExample"
-                        style={{ fontSize: screenWidth >= 768 ? '20px' : '16px' }}
+                        style={{ fontSize: screenWidth >= 768 ? '20px' : '16px', textShadow: '2px 2px 4px black' }}
                     >
                         {input.label}
                     </button>
@@ -37,9 +37,10 @@ function InputPool() {
                             style={{
                                 color: child.color,
                                 borderColor: child.color,
-                                fontSize: screenWidth >= 768 ? '20px' : '16px'
+                                fontSize: screenWidth >= 768 ? '20px' : '16px',
+                                textShadow: '2px 2px 4px black'
                             }}
-                            onClick={() => handleCreateSection(child)}
+                            onClick={() => handleInputSelection(currentTab, child)}
                         >
                             {child.label}
                         </button>

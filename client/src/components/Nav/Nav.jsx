@@ -1,12 +1,13 @@
-import Auth from '../lib/utils/auth.js';
+import Auth from '../../lib/utils/auth.js';
 
-import { useToggleVisible } from '../contexts/ToggleVisibleContext.jsx';
-import { useSongData } from '../contexts/SongDataContext.jsx';
-import { useCurrentSong } from '../contexts/CurrentSongContext.jsx';
+import { useToggleVisible } from '../../contexts/ToggleVisibleContext.jsx';
+import { useSongData } from '../../contexts/SongDataContext.jsx';
+import { useCurrentSong } from '../../contexts/CurrentSongContext.jsx';
 
-import { useUpdateTitle } from '../lib/constants.js';
+import { useUpdateTitle } from '../../lib/constants.js';
 
-import '../index.css';
+import '../../index.css';
+import './Nav.css';
 
 function Nav() {  
     const { visible, toggleVisible } = useToggleVisible();
@@ -19,17 +20,17 @@ function Nav() {
             <div className='d-flex'>
                 <span className='navbar-brand me-2 text-light'>MDFlow</span>
                 <div class="dropend">
-                    <button class="btn btn-secondary dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false">
+                    <button class="btn text-light dropdown-toggle tools" type="button" data-bs-toggle="dropdown" aria-expanded="false">
                         Tools
                     </button>
-                    <ul class="dropdown-menu bg-secondary">
+                    <ul class="dropdown-menu">
                         <button className='dropdown-item d-flex align-items-center justify-content-between' onClick={() => toggleVisible('sidebar')}>
-                            <span>Sidebar</span>
-                            <i class={`fa-solid fa-toggle-${visible.sidebar ? 'on' : 'off'}`}></i>
+                            <span className={`${visible.sidebar ? 'current' : ''}`}>Sidebar</span>
+                            <i class={`fa-solid fa-toggle-${visible.sidebar ? 'on current' : 'off'}`}></i>
                         </button>
                         <button class="dropdown-item d-flex align-items-center justify-content-between" onClick={() => toggleVisible('inputPool')}>
-                            <span>Inputs</span>
-                            <i class={`fa-solid fa-toggle-${visible.inputPool ? 'on' : 'off'}`}></i>
+                            <span className={`${visible.inputPool ? 'current' : ''}`}>Inputs</span>
+                            <i class={`fa-solid fa-toggle-${visible.inputPool ? 'on current' : 'off'}`}></i>
                         </button>
                     </ul>
                 </div>
