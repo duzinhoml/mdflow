@@ -7,12 +7,11 @@ import { useDeleteSection, useDeleteNote, useHoverEffect } from '../lib/constant
 import { useCurrentSong } from '../contexts/CurrentSongContext';
 import { useCurrentSections } from '../contexts/CurrentSectionsContext';
 import { useCurrentSection } from '../contexts/CurrentSectionContext';
-import { useCurrentNote } from '../contexts/CurrentNoteContext';
 
 import '../index.css'
 
 function SortableInput({ id, className, inputStyle, notes, children }) {
-    const { currentNote, setCurrentNote } = useCurrentNote();
+    const [currentNote, setCurrentNote] = useState(null);
     const { isCurrentSection, hoverBg, isHovered, allowDrag, handleHoverEffect } = useHoverEffect();
     const { attributes, listeners, setNodeRef, transform, transition } = useSortable({ id, disabled: !allowDrag });
 
