@@ -2,7 +2,7 @@ import { useState } from 'react';
 import { useSortable } from '@dnd-kit/sortable';
 import { CSS } from '@dnd-kit/utilities';
 
-import { useDeleteSection } from '../lib/constants';
+import { useDeleteSection, useDeleteNote } from '../lib/constants';
 
 import { useCurrentSong } from '../contexts/CurrentSongContext';
 import { useCurrentSections } from '../contexts/CurrentSectionsContext';
@@ -13,12 +13,14 @@ import '../index.css'
 function SortableInput({ id, className, inputStyle, notes, children }) {
     const [isHovered, setIsHovered] = useState({
         card: false,
-        label: false
+        label: false,
+        notes: false
     });
     const [allowDrag, setAllowDrag] = useState(true);
     const { attributes, listeners, setNodeRef, transform, transition } = useSortable({ id, disabled: !allowDrag });
 
     const handleDeleteSection = useDeleteSection();
+    const handleDeleteNote = useDeleteNote();
     const { currentSong } = useCurrentSong();
     const { currentSections } = useCurrentSections();
     const { currentSection, setCurrentSection } = useCurrentSection();
@@ -26,7 +28,7 @@ function SortableInput({ id, className, inputStyle, notes, children }) {
     const isCurrentSection = (currentSection?._id === id && currentSection !== null);
     const hoverBg = () => {
         if (isCurrentSection) return "#3c3d4eff";
-        else if (isHovered.card && isHovered.label) return "transparent";
+        else if (isHovered.card && (isHovered.label || isHovered.notes)) return "transparent";
         else if (isHovered.card) return "#3c3d4eff";
         else return "transparent"
     }
@@ -47,8 +49,8 @@ function SortableInput({ id, className, inputStyle, notes, children }) {
         setIsHovered(prev => {
             const updated = { ...prev, [area]: state };
             
-            if (updated.label) setAllowDrag(false);
-            else if (updated.card && !updated.label) setAllowDrag(true);
+            if (updated.label || updated.notes) setAllowDrag(false);
+            else if (updated.card && (!updated.label && !updated.notes)) setAllowDrag(true);
             
             return updated;
         });
@@ -91,7 +93,15 @@ function SortableInput({ id, className, inputStyle, notes, children }) {
                 ) : (isCurrentSection ? `Editing: ${children}` : children)}
             </div>
             {notes?.map(note => (
-                <div key={note._id} className='text-light text-center border border-3 border-danger rounded-2 mb-2 p-1 w-100 note-hover'>{note.label}</div>
+                <div 
+                    key={note._id} 
+                    className='text-light text-center border border-3 border-danger rounded-2 mb-2 p-1 w-100 note-hover'
+                    onMouseEnter={() => handleHoverEffect("notes", true)}
+                    onMouseLeave={() => handleHoverEffect("notes", false)}
+                    onClick={() => handleDeleteNote(note._id, id)}
+                >
+                    {note.label}
+                </div>
             ))}
         </div>
     );

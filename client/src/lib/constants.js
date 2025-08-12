@@ -13,7 +13,7 @@ import { useCurrentSection } from '../contexts/CurrentSectionContext.jsx';
 import Auth from './utils/auth.js';
 
 import { useMutation } from '@apollo/client';
-import { CREATE_SONG, CREATE_SECTION, CREATE_NOTE, UPDATE_SONG_TITLE, UPDATE_SECTION_ORDER, DELETE_SONG_BY_ID, DELETE_SECTION_BY_ID } from './utils/mutations.js';
+import { CREATE_SONG, CREATE_SECTION, CREATE_NOTE, UPDATE_SONG_TITLE, UPDATE_SECTION_ORDER, DELETE_SONG_BY_ID, DELETE_SECTION_BY_ID, DELETE_NOTE_BY_ID } from './utils/mutations.js';
 import { QUERY_ME } from './utils/queries';
 
 // Test Data
@@ -340,6 +340,31 @@ export function useDeleteSection() {
     }
 
     return handleDeleteSection;
+}
+
+// Deleting a Note
+export function useDeleteNote() {
+    const { setCurrentSong } = useCurrentSong();
+    const [deleteNoteById] = useMutation(DELETE_NOTE_BY_ID, { refetchQueries: [QUERY_ME] });
+
+    const handleDeleteNote = async (noteId, sectionId) => {
+        try {
+            await deleteNoteById({ variables: { noteId } });
+
+            setCurrentSong(prev => ({
+                ...prev,
+                sections: prev.sections.map(section => section._id === sectionId
+                    ? { ...section, notes: section.notes.filter(note => note._id !== noteId) }
+                    : section
+                )
+            }));
+        } 
+        catch (err) {
+            console.error(err);
+        }
+    };
+
+    return handleDeleteNote;
 }
 
 // Login Input Change

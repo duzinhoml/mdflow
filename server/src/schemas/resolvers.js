@@ -50,6 +50,9 @@ const resolvers = {
         },
         sections: async () => {
             return await Section.find({});
+        },
+        notes: async () => {
+            return await Note.find({});
         }
     },
     Mutation: {
@@ -244,6 +247,20 @@ const resolvers = {
             } 
             catch (err) {
                 throw new Error(`Error deleting section: ${err.message}`);
+            }
+        },
+        deleteNoteById: async (_, { noteId }, context) => {
+            if (!context.user) throw new Error("Not authenticated");
+
+            try {
+                const note = await Note.findOne({ _id: noteId });
+                if (!note) throw new Error("Section not found");
+
+                await Note.findOneAndDelete({ _id: noteId });
+                return `Note titled "${note.label}" has been deleted successfully.`;
+            } 
+            catch (err) {
+                console.error(err);
             }
         }
     }

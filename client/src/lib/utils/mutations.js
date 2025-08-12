@@ -80,3 +80,9 @@ export const DELETE_SECTION_BY_ID = gql`
         deleteSectionById(sectionId: $sectionId)
     }
 `;
+
+export const DELETE_NOTE_BY_ID = gql`
+    mutation deleteNoteById($noteId: ID!) {
+        deleteNoteById(noteId: $noteId)
+    }
+`;

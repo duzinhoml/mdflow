@@ -65,6 +65,7 @@ const typeDefs = `
         songs: [Song]
         song(songId: ID!): Song
         sections: [Section]
+        notes: [Note]
     }
 
     type Mutation {
