@@ -18,9 +18,11 @@ html, body {
     background-color: #262731;
 }
 
-.note-hover { /* TEMP */
+.section-note { /* TEMP */
+    background-color: #262731;
+
     &:hover {
-        background-color: hotpink;
+        background-color: #3c3d4eff;
     }
 }
 

@@ -6,6 +6,7 @@ import { SongDataProvider } from './contexts/SongDataContext.jsx';
 import { CurrentSongProvider } from "./contexts/CurrentSongContext.jsx";
 import { CurrentSectionsProvider } from './contexts/CurrentSectionsContext.jsx';
 import { CurrentSectionProvider } from './contexts/CurrentSectionContext.jsx'
+import { SearchTermProvider } from './contexts/SearchTermContext.jsx';
 
 import { useApolloProvider } from './lib/constants.js';
 
@@ -20,7 +21,9 @@ function AppProviders({ children }) {
                 <CurrentSongProvider>
                   <CurrentSectionsProvider>
                     <CurrentSectionProvider>
-                      {children}
+                      <SearchTermProvider>
+                        {children}
+                      </SearchTermProvider>
                     </CurrentSectionProvider>
                   </CurrentSectionsProvider>
                 </CurrentSongProvider>

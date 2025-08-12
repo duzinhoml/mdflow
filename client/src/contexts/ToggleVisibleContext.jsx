@@ -4,7 +4,7 @@ const ToggleVisibleContext = createContext();
 
 export const ToggleVisibleProvider = ({ children }) => {
     const [visible, setVisible] = useState({
-        inputPool: false,
+        selector: false,
         sidebar: false
     });
 
@@ -14,8 +14,8 @@ export const ToggleVisibleProvider = ({ children }) => {
             [element]: !prev[element]
         }));
 
-        if (element === 'inputPool') setVisible(prev => ({ ...prev, sidebar: false}))
-        if (element === 'sidebar') setVisible(prev => ({ ...prev, inputPool: false}))
+        if (element === 'selector') setVisible(prev => ({ ...prev, sidebar: false}))
+        if (element === 'sidebar') setVisible(prev => ({ ...prev, selector: false}))
     };
 
     return (

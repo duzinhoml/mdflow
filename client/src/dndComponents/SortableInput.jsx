@@ -2,21 +2,18 @@ import { useState } from 'react';
 import { useSortable } from '@dnd-kit/sortable';
 import { CSS } from '@dnd-kit/utilities';
 
-import { useDeleteSection, useDeleteNote } from '../lib/constants';
+import { useDeleteSection, useDeleteNote, useHoverEffect } from '../lib/constants';
 
 import { useCurrentSong } from '../contexts/CurrentSongContext';
 import { useCurrentSections } from '../contexts/CurrentSectionsContext';
 import { useCurrentSection } from '../contexts/CurrentSectionContext';
+import { useCurrentNote } from '../contexts/CurrentNoteContext';
 
 import '../index.css'
 
 function SortableInput({ id, className, inputStyle, notes, children }) {
-    const [isHovered, setIsHovered] = useState({
-        card: false,
-        label: false,
-        notes: false
-    });
-    const [allowDrag, setAllowDrag] = useState(true);
+    const { currentNote, setCurrentNote } = useCurrentNote();
+    const { isCurrentSection, hoverBg, isHovered, allowDrag, handleHoverEffect } = useHoverEffect();
     const { attributes, listeners, setNodeRef, transform, transition } = useSortable({ id, disabled: !allowDrag });
 
     const handleDeleteSection = useDeleteSection();
@@ -25,13 +22,6 @@ function SortableInput({ id, className, inputStyle, notes, children }) {
     const { currentSections } = useCurrentSections();
     const { currentSection, setCurrentSection } = useCurrentSection();
 
-    const isCurrentSection = (currentSection?._id === id && currentSection !== null);
-    const hoverBg = () => {
-        if (isCurrentSection) return "#3c3d4eff";
-        else if (isHovered.card && (isHovered.label || isHovered.notes)) return "transparent";
-        else if (isHovered.card) return "#3c3d4eff";
-        else return "transparent"
-    }
     
     const style = {
         transform: CSS.Transform.toString(transform),
@@ -42,25 +32,13 @@ function SortableInput({ id, className, inputStyle, notes, children }) {
         display: 'flex',
         flexDirection: 'column',
         alignItems: 'center',
-        backgroundColor: hoverBg()
+        backgroundColor: hoverBg(id)
     }
-    
-    const handleHoverEffect = (area, state) => {
-        setIsHovered(prev => {
-            const updated = { ...prev, [area]: state };
-            
-            if (updated.label || updated.notes) setAllowDrag(false);
-            else if (updated.card && (!updated.label && !updated.notes)) setAllowDrag(true);
-            
-            return updated;
-        });
-    };
 
     const handleSelectSection = (id) => {
         if (currentSections.find(section => section._id === id) === currentSection) setCurrentSection(null);
         else setCurrentSection(currentSections.find(section => section._id === id))
     };
-
 
     return (
         <div 
@@ -90,17 +68,26 @@ function SortableInput({ id, className, inputStyle, notes, children }) {
                         </span>
                     </div>
                     
-                ) : (isCurrentSection ? `Editing: ${children}` : children)}
+                ) : isCurrentSection(id) ? `Editing: ${children}` : children}
             </div>
             {notes?.map(note => (
                 <div 
                     key={note._id} 
-                    className='text-light text-center border border-3 border-danger rounded-2 mb-2 p-1 w-100 note-hover'
-                    onMouseEnter={() => handleHoverEffect("notes", true)}
+                    className='text-light text-center border border-3 rounded-2 mb-2 p-1 w-100 section-note position-relative'
+                    onMouseEnter={() => { handleHoverEffect("notes", true); setCurrentNote(note) }}
                     onMouseLeave={() => handleHoverEffect("notes", false)}
-                    onClick={() => handleDeleteNote(note._id, id)}
+                    style={{ borderColor: note.color }}
                 >
-                    {note.label}
+                    <span>{note.label}</span>
+                    {isHovered.notes && note._id === currentNote?._id && (
+                        <button 
+                            className="btn btn-sm btn-outline-danger position-absolute top-0 end-0 m-1 fs-6"
+                            onClick={() => handleDeleteNote(note._id, id)}
+                            style={{ backgroundColor: "#262731", padding: '2px 6px' }}
+                        >
+                            <i className="fa-solid fa-trash"></i>
+                        </button>
+                    )}
                 </div>
             ))}
         </div>

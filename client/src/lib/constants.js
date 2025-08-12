@@ -244,6 +244,20 @@ export function useCreateSection() {
             if (!data) return;
             const newNote = data.createNote;
 
+            setUserData(prev => ({
+                ...prev,
+                songs: prev.songs.map(song => song._id === currentSong._id
+                    ? {
+                        ...song,
+                        sections: song.sections.map(section => section._id === currentSection._id
+                            ? { ...section, notes: [...section.notes || [], newNote] }
+                            : section
+                        )
+                    }
+                    : song
+                )
+            }));
+
             setCurrentSections(prev => 
                 prev.map(section => section._id === currentSection._id
                     ? { ...section, notes: [...section.notes || [], newNote] }
@@ -344,12 +358,28 @@ export function useDeleteSection() {
 
 // Deleting a Note
 export function useDeleteNote() {
-    const { setCurrentSong } = useCurrentSong();
+    const { setUserData } = useUser();
+    const { currentSong, setCurrentSong } = useCurrentSong();
+
     const [deleteNoteById] = useMutation(DELETE_NOTE_BY_ID, { refetchQueries: [QUERY_ME] });
 
     const handleDeleteNote = async (noteId, sectionId) => {
         try {
             await deleteNoteById({ variables: { noteId } });
+
+            setUserData(prev => ({
+                ...prev,
+                songs: prev.songs.map(song => song._id === currentSong._id
+                    ? {
+                        ...song,
+                        sections: song.sections.map(section => section._id === sectionId
+                            ? { ...section, notes: section.notes.filter(note => note._id !== noteId) }
+                            : section
+                        )
+                    }
+                    : song
+                )
+            }));
 
             setCurrentSong(prev => ({
                 ...prev,
@@ -400,8 +430,8 @@ export function useDndSensors() {
 // Drag Function
 export function useDrag() {
     const { userData, setUserData } = useUser();
+    const { currentSong, setCurrentSong } = useCurrentSong();
     const { currentSections, setCurrentSections } = useCurrentSections();
-    const { currentSong } = useCurrentSong();
 
     const [updateSectionOrder] = useMutation(UPDATE_SECTION_ORDER, {
         refetchQueries: [QUERY_ME],
@@ -427,6 +457,10 @@ export function useDrag() {
                         { ...song, sections: reorderedSections } : song
                     )
                 }));
+                setCurrentSong(prev => ({
+                    ...prev,
+                    sections: reorderedSections
+                }));
                 setCurrentSections(reorderedSections);
                     
                 await updateSectionOrder({
@@ -447,23 +481,40 @@ export function useDrag() {
     return handleDragEnd;
 };
 
-// Search Songs
-export function useSearch() {
-    const [searchTerm, setSearchTerm] = useState('');
-    const { userData } = useUser();
+// Hover over Sections/Notes
+export function useHoverEffect() {
+    const [isHovered, setIsHovered] = useState({
+        card: false,
+        label: false,
+        notes: false
+    });
+    const [allowDrag, setAllowDrag] = useState(true);
+    const { currentSection } = useCurrentSection();
 
-    const handleSearch = (e) => {
-        const { value } = e.target;
-        setSearchTerm(value);
-    }
-
-    const clearSearch = () => {
-        if (searchTerm) setSearchTerm('');
+    const handleHoverEffect = (area, state) => {
+        setIsHovered(prev => {
+            const updated = { ...prev, [area]: state };
+            
+            if (updated.label || updated.notes) setAllowDrag(false);
+            else if (updated.card && (!updated.label && !updated.notes)) setAllowDrag(true);
+            
+            return updated;
+        });
     };
 
-    const searchedSongs = userData?.songs.filter(song => song.title.toLowerCase().includes(searchTerm.toLowerCase()));
+    const isCurrentSection = (id) => {
+        return currentSection?._id === id && currentSection !== null
+    }
+    
+    const hoverBg = (id) => {
+        if (!id) return "transparent";
+        else if (isCurrentSection(id)) return "#3c3d4eff";
+        else if (isHovered.card && (isHovered.label || isHovered.notes)) return "transparent";
+        else if (isHovered.card) return "#3c3d4eff";
+        else return "transparent"
+    }
 
-    return { searchTerm, searchedSongs, handleSearch, clearSearch };
+    return { isCurrentSection, hoverBg, isHovered, setIsHovered, allowDrag, handleHoverEffect };
 }
 
 // Authentication Render
