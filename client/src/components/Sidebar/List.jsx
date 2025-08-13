@@ -1,14 +1,14 @@
 import { useDeleteSong } from "../../lib/constants.js";
 
 import { useUser } from "../../contexts/UserContext";
-import { useCurrentSong } from "../../contexts/CurrentSongContext.jsx";
+import { useSong } from "../../contexts/SongContext.jsx";
 import { useSearch } from "../../contexts/SearchTermContext.jsx";
 
 function List() {
     const handleDeleteSong = useDeleteSong();
 
     const { userData } = useUser();
-    const { handleSetCurrentSong } = useCurrentSong();
+    const { handleSetCurrentSong } = useSong();
     const { searchTerm, searchedSongs } = useSearch();
 
     return (

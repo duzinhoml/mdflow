@@ -14,11 +14,7 @@ function Dashboard() {
     const { user, userData, setUserData } = useUser();
     const { visible } = useToggleVisible();
 
-    useEffect(() => {
-        if (!userData) {
-            setUserData(user)
-        };
-    }, []);
+    useEffect(() => { if (!userData) setUserData(user) }, []);
     
     const handleDragEnd = useDrag();
     const { sensors } = useDndSensors();

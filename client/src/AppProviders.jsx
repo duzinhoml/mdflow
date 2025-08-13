@@ -3,9 +3,7 @@ import { ApolloProvider } from '@apollo/client';
 import { UserProvider } from './contexts/UserContext.jsx';
 import { ToggleVisibleProvider } from "./contexts/ToggleVisibleContext.jsx";
 import { SongDataProvider } from './contexts/SongDataContext.jsx';
-import { CurrentSongProvider } from "./contexts/CurrentSongContext.jsx";
-import { CurrentSectionsProvider } from './contexts/CurrentSectionsContext.jsx';
-import { CurrentSectionProvider } from './contexts/CurrentSectionContext.jsx'
+import { SongProvider } from './contexts/SongContext.jsx';
 import { SearchTermProvider } from './contexts/SearchTermContext.jsx';
 
 import { useApolloProvider } from './lib/constants.js';
@@ -18,15 +16,11 @@ function AppProviders({ children }) {
           <UserProvider>
             <ToggleVisibleProvider>
               <SongDataProvider>
-                <CurrentSongProvider>
-                  <CurrentSectionsProvider>
-                    <CurrentSectionProvider>
-                      <SearchTermProvider>
-                        {children}
-                      </SearchTermProvider>
-                    </CurrentSectionProvider>
-                  </CurrentSectionsProvider>
-                </CurrentSongProvider>
+                <SongProvider>
+                  <SearchTermProvider>
+                    {children}
+                  </SearchTermProvider>
+                </SongProvider>
               </SongDataProvider>
             </ToggleVisibleProvider>
           </UserProvider>

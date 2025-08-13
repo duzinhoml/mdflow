@@ -4,23 +4,22 @@ import { CSS } from '@dnd-kit/utilities';
 
 import { useDeleteSection, useDeleteNote, useHoverEffect } from '../lib/constants';
 
-import { useCurrentSong } from '../contexts/CurrentSongContext';
-import { useCurrentSections } from '../contexts/CurrentSectionsContext';
-import { useCurrentSection } from '../contexts/CurrentSectionContext';
+import { useSong } from '../contexts/SongContext';
 
 import '../index.css'
 
 function SortableInput({ id, className, inputStyle, notes, children }) {
-    const [currentNote, setCurrentNote] = useState(null);
+    const [toDelete, setToDelete] = useState({
+        message: false,
+        item: null
+    });
+
     const { isCurrentSection, hoverBg, isHovered, allowDrag, handleHoverEffect } = useHoverEffect();
     const { attributes, listeners, setNodeRef, transform, transition } = useSortable({ id, disabled: !allowDrag });
 
     const handleDeleteSection = useDeleteSection();
     const handleDeleteNote = useDeleteNote();
-    const { currentSong } = useCurrentSong();
-    const { currentSections } = useCurrentSections();
-    const { currentSection, setCurrentSection } = useCurrentSection();
-
+    const { currentSong, currentSections, currentSection, setCurrentSection } = useSong();
     
     const style = {
         transform: CSS.Transform.toString(transform),
@@ -39,6 +38,15 @@ function SortableInput({ id, className, inputStyle, notes, children }) {
         else setCurrentSection(currentSections.find(section => section._id === id))
     };
 
+    const confirmDelete = (item) => {
+        if (item._id === toDelete.item?._id) {
+            setToDelete({ message: false, item: null });
+            return;
+        }
+
+        setToDelete({ message: true, item });
+    };
+
     return (
         <div 
             ref={setNodeRef} 
@@ -55,35 +63,33 @@ function SortableInput({ id, className, inputStyle, notes, children }) {
                 onMouseEnter={() => handleHoverEffect("label", true)}
                 onMouseLeave={() => handleHoverEffect("label", false)}
             >
-                {isHovered.label && currentSong && currentSections.length ? (
+                {isHovered?.label && currentSong && currentSections?.length ? (
                     <div className='d-flex justify-space-between'>
                         <span className='w-50 bg-danger' onClick={() => handleDeleteSection(id)}>
                             Delete
                             <i className="fa-solid fa-trash ms-2"></i>
                         </span>
-                        <span className='w-50 bg-secondary' onClick={() => handleSelectSection(id)}>
-                            Edit
-                            <i className="fa-solid fa-pen-to-square ms-2"></i>
+                        <span className={`w-50 bg-${currentSection?._id === id ? "success" : "secondary"}`} onClick={() => handleSelectSection(id)}>
+                            {currentSection?._id === id ? "Done" : "Edit"}
+                            <i className={`fa-solid fa-${currentSection?._id === id ? "circle-check" : "pen-to-square"} ms-2`}></i>
                         </span>
                     </div>
                     
                 ) : isCurrentSection(id) ? `Editing: ${children}` : children}
             </div>
             {notes?.map(note => (
-                <div 
-                    key={note._id} 
-                    className='text-light text-center border border-3 rounded-2 mb-2 p-1 w-100 section-note position-relative'
-                    onMouseEnter={() => { handleHoverEffect("notes", true); setCurrentNote(note) }}
-                    onMouseLeave={() => handleHoverEffect("notes", false)}
-                    style={{ borderColor: note.color }}
-                >
-                    <span>{note.label}</span>
-                    {isHovered.notes && note._id === currentNote?._id && (
-                        <button 
-                            className="btn btn-sm btn-outline-danger position-absolute top-0 end-0 m-1 fs-6"
-                            onClick={() => handleDeleteNote(note._id, id)}
-                            style={{ backgroundColor: "#262731", padding: '2px 6px' }}
-                        >
+                <div key={note._id} className='w-100 d-flex align-items-center'>
+                    <div 
+                        className='text-light text-center border border-3 rounded-2 mb-2 p-1 w-100 section-note position-relative'
+                        onMouseEnter={() => handleHoverEffect("notes", true)}
+                        onMouseLeave={() => handleHoverEffect("notes", false)}
+                        onClick={() => confirmDelete(note)}
+                        style={{ borderColor: note.color }}
+                    >
+                        <span>{note.label}</span>
+                    </div>
+                    {(toDelete.item?._id === note._id && toDelete.message && currentSection?._id === id) && (
+                        <button className="btn btn-danger text-center mb-2 py-1 px-2 ms-2" onClick={() => { handleHoverEffect("notes", true); handleDeleteNote(note._id, id)}}>
                             <i className="fa-solid fa-trash"></i>
                         </button>
                     )}

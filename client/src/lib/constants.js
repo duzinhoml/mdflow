@@ -6,9 +6,7 @@ import { arrayMove, sortableKeyboardCoordinates } from '@dnd-kit/sortable';
 
 import { useUser } from '../contexts/UserContext.jsx';
 import { useSongData } from '../contexts/SongDataContext.jsx';
-import { useCurrentSong } from '../contexts/CurrentSongContext.jsx';
-import { useCurrentSections } from '../contexts/CurrentSectionsContext.jsx';
-import { useCurrentSection } from '../contexts/CurrentSectionContext.jsx';
+import { useSong } from '../contexts/SongContext.jsx';
 
 import Auth from './utils/auth.js';
 
@@ -68,7 +66,7 @@ export function useWindowResize() {
 export function useUpdateTitle() {
     const { setUserData } = useUser();
     const { songData, setSongData } = useSongData();
-    const { currentSong, setCurrentSong } = useCurrentSong();
+    const { currentSong, setCurrentSong } = useSong();
     const [createSong] = useMutation(CREATE_SONG, { refetchQueries: [QUERY_ME] });
     const [updateSongTitle] = useMutation(UPDATE_SONG_TITLE, { refetchQueries: [QUERY_ME] });
 
@@ -114,7 +112,7 @@ export function useUpdateTitle() {
                         title: songData.title
                     }
                 });
-
+                
                 setUserData(prev => ({
                     ...prev,
                     songs: prev.songs.map(song => song._id === currentSong._id ?
@@ -141,9 +139,7 @@ export function useCreateSection() {
     const [createSection] = useMutation(CREATE_SECTION, { refetchQueries: [QUERY_ME] });
     const [createNote] = useMutation(CREATE_NOTE, { refetchQueries: [QUERY_ME] });
 
-    const { currentSong, setCurrentSong } = useCurrentSong();
-    const { currentSections, setCurrentSections } = useCurrentSections();
-    const { currentSection } = useCurrentSection();
+    const { currentSong, setCurrentSong, currentSections, setCurrentSections, currentSection } = useSong();
     
     // Create Section
     const handleCreateSection = async (child) => {
@@ -289,8 +285,7 @@ export function useCreateSection() {
 export function useDeleteSong() {
     const { setUserData } = useUser();
     const { setSongData } = useSongData();
-    const { setCurrentSections } = useCurrentSections();
-    const { currentSong, setCurrentSong } = useCurrentSong();
+    const { currentSong, setCurrentSong, setCurrentSections } = useSong();
     const [deleteSongById] = useMutation(DELETE_SONG_BY_ID, { refetchQueries: [QUERY_ME] });
 
     const handleDeleteSong = async (songId) => {
@@ -323,8 +318,7 @@ export function useDeleteSong() {
 // Deleting a Section
 export function useDeleteSection() {
     const { setUserData } = useUser();
-    const { currentSong, setCurrentSong } = useCurrentSong();
-    const { currentSections, setCurrentSections } = useCurrentSections();
+    const { currentSong, setCurrentSong, currentSections, setCurrentSections } = useSong();
     const [deleteSectionById] = useMutation(DELETE_SECTION_BY_ID, { refetchQueries: [QUERY_ME] });
 
     const handleDeleteSection = async (sectionId) => {
@@ -339,7 +333,6 @@ export function useDeleteSection() {
                 ...prev, 
                 sections: prev.sections.filter(section => section._id !== sectionId)
             }));
-
             setUserData(prev => ({
                 ...prev,
                 songs: prev.songs.map(song => song._id === currentSong._id
@@ -359,11 +352,13 @@ export function useDeleteSection() {
 // Deleting a Note
 export function useDeleteNote() {
     const { setUserData } = useUser();
-    const { currentSong, setCurrentSong } = useCurrentSong();
+    const { currentSong, setCurrentSong, currentSection } = useSong();
 
     const [deleteNoteById] = useMutation(DELETE_NOTE_BY_ID, { refetchQueries: [QUERY_ME] });
 
     const handleDeleteNote = async (noteId, sectionId) => {
+        if (currentSection?._id !== sectionId) return;
+
         try {
             await deleteNoteById({ variables: { noteId } });
 
@@ -430,8 +425,7 @@ export function useDndSensors() {
 // Drag Function
 export function useDrag() {
     const { userData, setUserData } = useUser();
-    const { currentSong, setCurrentSong } = useCurrentSong();
-    const { currentSections, setCurrentSections } = useCurrentSections();
+    const { currentSong, setCurrentSong, currentSections, setCurrentSections } = useSong();
 
     const [updateSectionOrder] = useMutation(UPDATE_SECTION_ORDER, {
         refetchQueries: [QUERY_ME],
@@ -489,12 +483,17 @@ export function useHoverEffect() {
         notes: false
     });
     const [allowDrag, setAllowDrag] = useState(true);
-    const { currentSection } = useCurrentSection();
+    const { currentSection } = useSong();
 
     const handleHoverEffect = (area, state) => {
         setIsHovered(prev => {
             const updated = { ...prev, [area]: state };
-            
+
+            if (updated.notes) {
+                setAllowDrag(false);
+                return;
+            }
+
             if (updated.label || updated.notes) setAllowDrag(false);
             else if (updated.card && (!updated.label && !updated.notes)) setAllowDrag(true);
             
@@ -509,12 +508,12 @@ export function useHoverEffect() {
     const hoverBg = (id) => {
         if (!id) return "transparent";
         else if (isCurrentSection(id)) return "#3c3d4eff";
-        else if (isHovered.card && (isHovered.label || isHovered.notes)) return "transparent";
-        else if (isHovered.card) return "#3c3d4eff";
+        else if (isHovered?.card && (isHovered?.label || isHovered?.notes)) return "transparent";
+        else if (isHovered?.card) return "#3c3d4eff";
         else return "transparent"
     }
 
-    return { isCurrentSection, hoverBg, isHovered, setIsHovered, allowDrag, handleHoverEffect };
+    return { isCurrentSection, hoverBg, isHovered, setIsHovered, allowDrag, setAllowDrag, handleHoverEffect };
 }
 
 // Authentication Render

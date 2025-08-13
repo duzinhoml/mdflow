@@ -1,16 +1,14 @@
 import { useEffect } from 'react';
 import { SortableContext, horizontalListSortingStrategy } from '@dnd-kit/sortable';
 
-import { useCurrentSong } from '../contexts/CurrentSongContext.jsx';
-import { useCurrentSections } from '../contexts/CurrentSectionsContext';
+import { useSong } from '../contexts/SongContext.jsx';
 
 import Sidebar from "../components/Sidebar/index.jsx";
 import SongLayout from "../components/SongLayout.jsx";
 import SortableInput from './SortableInput.jsx';
 
 function DndDashboard() {
-    const { currentSong } = useCurrentSong();
-    const { currentSections, setCurrentSections } = useCurrentSections();
+    const { currentSong, currentSections, setCurrentSections } = useSong();
 
     useEffect(() => {
         currentSong?.sections ? setCurrentSections(currentSong.sections) : setCurrentSections([]);

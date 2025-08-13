@@ -1,10 +1,10 @@
 import { useSongData } from '../../contexts/SongDataContext.jsx';
-import { useCurrentSong } from '../../contexts/CurrentSongContext.jsx';
+import { useSong } from '../../contexts/SongContext.jsx';
 import { useUpdateTitle } from '../../lib/constants.js';
 
 function SongTitle() {
     const { songData } = useSongData();
-    const { currentSong } = useCurrentSong();
+    const { currentSong } = useSong();
     const handleInputChange = useUpdateTitle();
 
     return (
