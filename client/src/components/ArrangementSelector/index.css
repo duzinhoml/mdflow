@@ -1,0 +1,18 @@
+.selector {
+    transition: opacity 0.3s ease-in-out, transform 0.3s ease-in-out;
+
+    &.show {
+        opacity: 1;
+        transform: translateY(0);
+        pointer-events: all;
+        position: relative;
+    }
+
+    &.hide {
+        opacity: 0;
+        pointer-events: none;
+        position: absolute;
+        bottom: 0;
+        width: 100%;
+    }
+}

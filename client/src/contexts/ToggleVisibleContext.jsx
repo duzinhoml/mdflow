@@ -4,6 +4,7 @@ const ToggleVisibleContext = createContext();
 
 export const ToggleVisibleProvider = ({ children }) => {
     const [visible, setVisible] = useState({
+        tools: false,
         selector: false,
         sidebar: false
     });

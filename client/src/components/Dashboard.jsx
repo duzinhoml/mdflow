@@ -2,7 +2,6 @@ import { useEffect } from 'react';
 import { DndContext } from '@dnd-kit/core';
 
 import { useUser } from '../contexts/UserContext.jsx';
-import { useToggleVisible } from '../contexts/ToggleVisibleContext.jsx';
 
 import { useDndSensors, useDrag } from '../lib/constants.js';
 
@@ -12,7 +11,6 @@ import DndDashboard from '../dndComponents/DndDashboard.jsx';
 
 function Dashboard() {
     const { user, userData, setUserData } = useUser();
-    const { visible } = useToggleVisible();
 
     useEffect(() => { if (!userData) setUserData(user) }, []);
     
@@ -31,8 +29,7 @@ function Dashboard() {
                     <DndDashboard />
 
                     {/* Input Pool */}
-                    {visible.selector && 
-                        <ArrangementSelector/>}
+                    <ArrangementSelector/>
 
                 </DndContext>
             </div>

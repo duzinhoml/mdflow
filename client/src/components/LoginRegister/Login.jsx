@@ -29,7 +29,7 @@ function Login() {
                 <div className="col-12 col-md-5 d-flex justify-content-center align-items-center text-center text-md-start pe-md-5">
                     <div className="text-center">
                         <h1 className='text-light'>MDFlow</h1>
-                        <p style={{ color: '#F63366' }}>Nest Your Ideas, Watch Them Grow</p> 
+                        <p style={{ color: '#A86FFF' }}>Nest Your Ideas, Watch Them Grow</p> 
                     </div>
                 </div>
 
@@ -80,7 +80,7 @@ function Login() {
 
                             <div className="col-12">
                                 <p className="text-center text-light">
-                                    Don't have an account? <span style={{ cursor: 'pointer', textDecoration: 'underline', color: '#F63366' }}>Sign up</span>
+                                    Don't have an account? <span style={{ cursor: 'pointer', textDecoration: 'underline', color: '#A86FFF' }}>Sign up</span>
                                 </p>
                                 {error && <div className="login-error-feedback mt-3 mb-2">{error.message}</div>}
                             </div>

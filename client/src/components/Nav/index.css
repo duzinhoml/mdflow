@@ -1,5 +1,5 @@
-.tools {
-    background-color: #A86FFF;
+.tools-btn {
+    background-color: hsl(264, 100%, 72%);
 
     &:hover {
         background-color: hsl(264, 100%, 67%);
@@ -9,29 +9,54 @@
         background-color: hsl(264, 100%, 62%) !important;
         border-color: hsl(264, 100%, 62%) !important;
     }
+}
 
-    + ul {
-        background-color: hsl(208, 7%, 46%);
+.tools {
+    transition: opacity 0.3s ease-in-out;
 
-        > button {
-            .current {
-                color: hsl(210, 11%, 0%);
+    &.show {
+        opacity: 1;
+        pointer-events: all;
+    }
+
+    &.hide {
+        opacity: 0;
+        pointer-events: none;
+    }
+
+    > button {
+        color: hsl(210, 17%, 88%);
+        background-color: #3a3b47;
+        /* transition: opacity 0.3s ease-in-out; */
+
+        .current {
+            color: hsl(210, 17%, 98%);
+        }
+
+        &:hover {
+            color: hsl(210, 17%, 83%);
+            background-color: hsl(235, 10%, 20%);
+        }
+
+        &:active {
+            color: hsl(210, 17%, 78%) !important;
+            background-color: hsl(235, 10%, 17%) !important;
+            border-color: hsl(235, 10%, 17%) !important;
+        }
+
+        > i {
+            transition: color 0.3s ease-in-out;
+
+            &.show {
+                color: hsl(210, 17%, 98%);
             }
 
-            &:hover {
-                color: hsl(210, 11%, 10%);
-                background-color: hsl(208, 7%, 56%);
-            }
-
-            &:active {
-                color: hsl(210, 11%, 5%);
-                background-color: hsl(208, 7%, 61%);
+            &.hide {
+                opacity: hsl(210, 17%, 88%);
             }
         }
     }
 }
-
-
 
 .btn.show {
     background-color: hsl(264, 100%, 62%) !important;
