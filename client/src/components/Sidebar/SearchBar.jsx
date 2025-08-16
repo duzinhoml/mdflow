@@ -6,7 +6,7 @@ function SearchBar() {
     return (
         <div className="mt-3 mx-3">
             <div className="d-flex">
-                <span className="input-group-text rounded-end-0" style={{ cursor: 'pointer' }} onClick={clearSearch}>
+                <span className="input-group-text rounded-end-0" style={{ cursor: 'pointer', maxWidth: '38px' }} onClick={clearSearch}>
                     {searchTerm ? <i className="fa-solid fa-xmark"></i> : <i className="fa-solid fa-magnifying-glass"></i>}
                 </span>
                 <input 

@@ -1,0 +1,70 @@
+.notes {
+    color: hsl(210, 17%, 88%);
+    background-color: hsl(235, 13%, 17%);
+    border-color: hsl(235, 13%, 52%) !important;
+    text-shadow: 2px 2px 4px black;
+    transition: color 0.3s ease-in-out, background-color 0.3s ease-in-out, border-color 0.3s ease-in-out;
+
+    &:hover {
+        color: hsl(210, 17%, 93%);
+        background-color: hsl(237, 13%, 22%);
+        border-color: hsl(235, 13%, 57%) !important;
+    }
+
+    &:active {
+        color: hsl(210, 17%, 98%) !important;
+        background-color: hsl(237, 13%, 27%) !important;
+        border-color: hsl(235, 10%, 62%) !important;
+    }
+}
+
+.delete {
+    color: hsl(210, 17%, 98%);
+    background-color: hsl(354, 70%, 54%);
+    text-shadow: none;
+    transition: background-color 0.3s ease-in-out, color 0.3s ease-in-out;
+
+    &:hover {
+        color: hsl(210, 17%, 91%);
+        background-color: hsl(354, 70%, 47%);
+    }
+
+    &:active {
+        color: hsl(210, 17%, 84%);
+        background-color: hsl(354, 70%, 40%);
+    }
+}
+
+.edit {
+    color: hsl(210, 17%, 98%);
+    background-color: hsl(235, 10%, 45%);
+    text-shadow: none;
+    transition: background-color 0.3s ease-in-out, color 0.3s ease-in-out;
+
+    &:hover {
+        color: hsl(210, 17%, 91%);
+        background-color: hsl(235, 10%, 38%);
+    }
+
+    &:active {
+        color: hsl(210, 17%, 84%);
+        background-color: hsl(235, 10%, 31%);
+    }
+}
+
+.done {
+    color: hsl(210, 17%, 98%);
+    background-color: hsl(152, 69%, 31%);
+    text-shadow: none;
+    transition: background-color 0.3s ease-in-out, color 0.3s ease-in-out;
+
+    &:hover {
+        color: hsl(210, 17%, 91%);
+        background-color: hsl(152, 69%, 24%);
+    }
+
+    &:active {
+        color: hsl(210, 17%, 84%);
+        background-color: hsl(152, 69%, 17%);
+    }
+}

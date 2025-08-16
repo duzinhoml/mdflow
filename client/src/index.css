@@ -18,14 +18,6 @@ html, body {
     background-color: #262731;
 }
 
-.section-note { /* TEMP */
-    background-color: #262731;
-
-    &:hover {
-        background-color: #3c3d4eff;
-    }
-}
-
 /* Media Queries */
 
 @media (min-width: 768px) {

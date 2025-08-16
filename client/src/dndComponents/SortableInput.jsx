@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { useSortable } from '@dnd-kit/sortable';
 import { CSS } from '@dnd-kit/utilities';
 
@@ -6,7 +6,7 @@ import { useDeleteSection, useDeleteNote, useHoverEffect } from '../lib/constant
 
 import { useSong } from '../contexts/SongContext';
 
-import '../index.css'
+import './index.css'
 
 function SortableInput({ id, className, inputStyle, notes, children }) {
     const [toDelete, setToDelete] = useState({
@@ -23,7 +23,10 @@ function SortableInput({ id, className, inputStyle, notes, children }) {
     
     const style = {
         transform: CSS.Transform.toString(transform),
-        transition,
+        transition: [
+            transition,
+            'background-color 0.3s ease-in-out'
+        ],
         touchAction: 'none',
         minWidth: '20vw',
         boxShadow: 'inset 0 4px 4px black',
@@ -47,6 +50,8 @@ function SortableInput({ id, className, inputStyle, notes, children }) {
         setToDelete({ message: true, item });
     };
 
+    useEffect(() => setToDelete({ message: false, item: null }), [currentSection]);
+
     return (
         <div 
             ref={setNodeRef} 
@@ -65,11 +70,11 @@ function SortableInput({ id, className, inputStyle, notes, children }) {
             >
                 {isHovered?.label && currentSong && currentSections?.length ? (
                     <div className='d-flex justify-space-between'>
-                        <span className='w-50 bg-danger' onClick={() => handleDeleteSection(id)}>
+                        <span className='w-50 delete' onClick={() => handleDeleteSection(id)}>
                             Delete
                             <i className="fa-solid fa-trash ms-2"></i>
                         </span>
-                        <span className={`w-50 bg-${currentSection?._id === id ? "success" : "secondary"}`} onClick={() => handleSelectSection(id)}>
+                        <span className={`w-50 ${currentSection?._id === id ? "done" : "edit"}`} onClick={() => handleSelectSection(id)}>
                             {currentSection?._id === id ? "Done" : "Edit"}
                             <i className={`fa-solid fa-${currentSection?._id === id ? "circle-check" : "pen-to-square"} ms-2`}></i>
                         </span>
@@ -80,11 +85,10 @@ function SortableInput({ id, className, inputStyle, notes, children }) {
             {notes?.map(note => (
                 <div key={note._id} className='w-100 d-flex align-items-center'>
                     <div 
-                        className='text-light text-center border border-3 rounded-2 mb-2 p-1 w-100 section-note position-relative'
+                        className={`text-center border border-3 rounded-2 mb-2 p-1 w-100 position-relative notes`}
                         onMouseEnter={() => handleHoverEffect("notes", true)}
                         onMouseLeave={() => handleHoverEffect("notes", false)}
                         onClick={() => confirmDelete(note)}
-                        style={{ borderColor: note.color }}
                     >
                         <span>{note.label}</span>
                     </div>

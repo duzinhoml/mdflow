@@ -1,8 +1,17 @@
 .tools-btn {
-    background-color: hsl(264, 100%, 72%);
+    background-color: transparent;
+    border-color: hsl(210, 17%, 88%);
+    transition: background-color 0.3s ease-in-out, border-color 0.3s ease-in-out;
+
+    &.toggled {
+        background-color: #a970ff;
+        border-color: #a970ff;
+    }
 
     &:hover {
         background-color: hsl(264, 100%, 67%);
+        border-color: hsl(264, 100%, 67%);
+
     }
 
     &:active {
@@ -27,7 +36,7 @@
     > button {
         color: hsl(210, 17%, 88%);
         background-color: #3a3b47;
-        /* transition: opacity 0.3s ease-in-out; */
+        transition: color 0.3s ease-in-out, background-color 0.3s ease-in-out;
 
         .current {
             color: hsl(210, 17%, 98%);
@@ -52,7 +61,7 @@
             }
 
             &.hide {
-                opacity: hsl(210, 17%, 88%);
+                color: hsl(210, 17%, 88%);
             }
         }
     }

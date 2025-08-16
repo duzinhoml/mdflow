@@ -224,9 +224,12 @@ const resolvers = {
             if (!context.user) throw new Error('Not authenticated');
 
             try {
-                const song = await Song.findOne({ _id: songId });
+                const song = await Song.findOne({ _id: songId }).populate('sections');
                 if (!song) throw new Error('Song not found');
 
+                const noteIds = song.sections.flatMap(section => section.notes);
+                
+                await Note.deleteMany({ _id: { $in: noteIds }});
                 await Section.deleteMany({ _id: { $in: song.sections } });
                 await Song.findOneAndDelete({ _id: songId });
                 return `Song titled "${song.title}" has been deleted successfully.`;

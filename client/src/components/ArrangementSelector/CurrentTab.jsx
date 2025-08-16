@@ -1,28 +1,70 @@
-import { useCreateSection } from "../../lib/constants";
+import { useState, useEffect } from "react";
+import { useSectionNoteCreator } from "../../lib/constants";
 
 function CurrentTab({ currentTab, screenWidth }) {
-    const handleInputSelection = useCreateSection();
+    const [openSection, setOpenSection] = useState({
+        state: false,
+        section: null
+    });
+
+    useEffect(() => setOpenSection({ state: false, section: null }), [currentTab]);
+
+    const handleOpenSection = (child) => {
+        if (openSection.section?.label === child.label) setOpenSection({ state: false, section: null });
+        else setOpenSection({ state: true, section: child });
+    }
+
+    const handleInputSelection = useSectionNoteCreator();
 
     return (
         <div className="collapse" id={`collapseExample${currentTab?.id}`}>
-            <div className="p-2 row m-0 pt-0">
+            <div className={`p-2 m-0 pt-0 row`}>
                 {currentTab?.children.map(child => (
                     <button 
                         key={child.label} 
                         type="submit"
-                        className="btn btn-dark m-1 flex-grow-1 col-3" 
+                        className={`btn btn-dark m-1 flex-grow-1 col-${currentTab?.id === 3 ? '2' : '3'}`}
                         style={{
                             color: child.color,
                             borderColor: child.color,
                             fontSize: screenWidth >= 768 ? '20px' : '16px',
                             textShadow: '2px 2px 4px black'
                         }}
-                        onClick={() => handleInputSelection(currentTab, child)}
+                        onClick={() => { 
+                            if (currentTab?.id !== 3) handleInputSelection(currentTab, child); 
+                            handleOpenSection(child);
+                        }}
                     >
                         {child.label}
                     </button>
                 ))}
             </div>
+
+            {(openSection.state && currentTab?.id === 3) && (
+                <div className="p-2 m-0 pt-0 row">
+                    {currentTab?.children.map(child => (
+                        (openSection.section?.label === child.label) && (
+                            child.children?.map(grandChild => (
+                                <button 
+                                    key={grandChild.label} 
+                                    type="submit"
+                                    className={`btn btn-dark m-1 col-${currentTab?.id === 3 ? '2' : '3'}`}
+                                    style={{
+                                        color: grandChild.color,
+                                        borderColor: grandChild.color,
+                                        fontSize: screenWidth >= 768 ? '20px' : '16px',
+                                        textShadow: '2px 2px 4px black'
+                                    }}
+                                    onClick={() => handleInputSelection(currentTab, grandChild)}
+                                >
+                                    {grandChild.label}
+                                </button>
+                            ))
+                        )
+                    ))}
+                </div>
+            )}
+
         </div>
     );
 };

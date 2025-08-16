@@ -18,7 +18,7 @@ export const SongProvider = ({ children }) => {
     }
     
     useEffect(() => {
-        if (!currentSong?.sections.find(section => section._id === currentSection?._id)) setCurrentSection(null);
+        if (!currentSong?.sections?.find(section => section._id === currentSection?._id)) setCurrentSection(null);
     }, [currentSong]);
 
     const value = {

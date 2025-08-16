@@ -40,10 +40,24 @@ export const INPUT_POOL = [
         ]
     },
     { id: 3, label: 'Instruments', children: [
-            { label: 'Guitar', color: '#cccccc' },
-            { label: 'Piano', color: '#cccccc' },
-            { label: 'Bass', color: '#cccccc' },
-            { label: 'Drums', color: '#cccccc' }
+            { label: 'Percussion', color: '#cccccc', children: [
+                { label: 'Drums', color: '#cccccc' },
+                { label: 'Perc', color: '#cccccc' },
+                { label: 'Loop', color: '#cccccc' }
+            ] },
+            { label: 'Bass', color: '#cccccc', children: [
+                { label: 'Bass', color: '#cccccc' },
+                { label: 'Synth Bass', color: '#cccccc' }
+            ] },
+            { label: 'Guitar', color: '#cccccc', children: [
+                { label: 'Acoustic Guitar', color: '#cccccc' },
+                { label: 'Electric Guitar', color: '#cccccc' }
+            ] },
+            { label: 'Keys', color: '#cccccc', children: [
+                { label: 'Piano', color: '#cccccc' },
+                { label: 'Organ', color: '#cccccc' },
+                { label: 'Keys', color: '#cccccc' }
+            ] },
         ]
     }
 ];
@@ -133,7 +147,7 @@ export function useUpdateTitle() {
 }
 
 // Adding a Section || Note
-export function useCreateSection() {
+export function useSectionNoteCreator() {
     const { setUserData } = useUser();
     const [createSong] = useMutation(CREATE_SONG, { refetchQueries: [QUERY_ME] });
     const [createSection] = useMutation(CREATE_SECTION, { refetchQueries: [QUERY_ME] });
@@ -491,7 +505,7 @@ export function useHoverEffect() {
 
             if (updated.notes) {
                 setAllowDrag(false);
-                return;
+                return updated;
             }
 
             if (updated.label || updated.notes) setAllowDrag(false);
@@ -501,9 +515,7 @@ export function useHoverEffect() {
         });
     };
 
-    const isCurrentSection = (id) => {
-        return currentSection?._id === id && currentSection !== null
-    }
+    const isCurrentSection = (id) => currentSection?._id === id && currentSection !== null;
     
     const hoverBg = (id) => {
         if (!id) return "transparent";
