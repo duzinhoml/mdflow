@@ -23,10 +23,7 @@ function SortableInput({ id, className, inputStyle, notes, children }) {
     
     const style = {
         transform: CSS.Transform.toString(transform),
-        transition: [
-            transition,
-            'background-color 0.3s ease-in-out'
-        ],
+        transition: [transition, 'background-color 0.3s ease-in-out'].filter(Boolean).join(', '),
         touchAction: 'none',
         minWidth: '20vw',
         boxShadow: 'inset 0 4px 4px black',
