@@ -1,9 +1,8 @@
 .selector {
-    transition: opacity 0.3s ease-in-out, transform 0.3s ease-in-out;
+    transition: opacity 0.3s ease-in-out;
 
     &.show {
         opacity: 1;
-        transform: translateY(0);
         pointer-events: all;
         position: relative;
     }
