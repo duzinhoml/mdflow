@@ -12,6 +12,15 @@ export const LOGIN_USER = gql`
     }
 `;
 
+export const CREATE_SETLIST = gql`
+    mutation createSetlist($input: CreateSetlistInput!) {
+        createSetlist(input: $input) {
+            _id
+            title
+        }
+    }
+`;
+
 export const CREATE_SONG = gql`
     mutation createSong($input: CreateSongInput!) {
         createSong(input: $input) {

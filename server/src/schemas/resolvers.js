@@ -1,4 +1,4 @@
-import { User, Song, Section, Note } from '../models/index.js';
+import { User, Setlist, Song, Section, Note } from '../models/index.js';
 import { signToken } from '../utils/auth.js';
 import bcrypt from 'bcryptjs';
 
@@ -6,9 +6,9 @@ const resolvers = {
     Query: {
         users: async () => {
             return await User.find({}).populate(
-                { path: 'songs', 
+                { path: 'setlists', 
                     populate: {
-                        path: 'sections'
+                        path: 'songs'
                     }
                 }
             );
@@ -23,15 +23,32 @@ const resolvers = {
             if (!context.user) throw new Error('Not authenticated');
 
             return await User.findOne({ _id: context.user._id }).populate(
-                { path: 'songs',
+                { 
+                    path: 'setlists',
                     populate: {
-                        path: 'sections',
+                        path: 'songs',
+                        populate: {
+                            path: 'sections',
                             populate: {
                                 path: 'notes'
                             }
+                        }
                     }
                 }
             );
+        },
+        setlists: async () => {
+            return await Setlist.find({}).populate(
+                { 
+                    path: 'songs',
+                    populate: { 
+                        path: 'sections',
+                        populate: {
+                            path: 'notes'
+                        }
+                    }
+                }
+            )
         },
         songs: async () => {
             return await Song.find({}).populate(
@@ -83,23 +100,45 @@ const resolvers = {
             const token = signToken(user._id, user.username);
             return { token, user };
         },
-        createSong: async (_, { input }, context) => {
-            if (!context.user) throw new Error('Not authenticated');
+        createSetlist: async (_, { input }, context) => {
+            if (!context.user) throw new Error("Not Authenticated");
 
             try {
                 const { title } = input;
-                const song = await Song.create({ title });
-                if (!song) throw new Error('Song creation failed');
+                const newSetlist = await Setlist.create({ title });
+                if (!newSetlist) throw new Error('Song creation failed');
 
                 const updatedUser = await User.findOneAndUpdate(
                     { _id: context.user._id },
-                    { $push: { songs: song._id } },
+                    { $push: { setlists: newSetlist._id } },
                     { new: true }
                 );
 
                 if (!updatedUser) throw new Error('User update failed');
+
+                return newSetlist;
+            } 
+            catch (err) {
+                throw new Error(`Error creating setlist: ${err.message}`);
+            }
+        },
+        createSong: async (_, { setlistId, input }, context) => {
+            if (!context.user) throw new Error('Not authenticated');
+
+            try {
+                const { title } = input;
+                const newSong = await Song.create({ title });
+                if (!newSong) throw new Error('Song creation failed');
+
+                const updatedSetlist = await Setlist.findOneAndUpdate(
+                    { _id: setlistId },
+                    { $push: { songs: newSong._id } },
+                    { new: true }
+                );
+
+                if (!updatedSetlist) throw new Error('Setlist update failed');
                 
-                return song;
+                return newSong;
             } 
             catch (err) {
                 throw new Error(`Error creating song: ${err.message}`);
@@ -113,9 +152,7 @@ const resolvers = {
 
                 const updatedSong = await Song.findOneAndUpdate(
                     { _id: songId },
-                    { $push: { 
-                        sections: newSection._id
-                    } },
+                    { $push: { sections: newSection._id } },
                     { new: true }
                 );
                 if (!updatedSong) throw new Error('Song update failed');
@@ -218,6 +255,36 @@ const resolvers = {
             } 
             catch (err) {
                 throw new Error(`Error deleting user: ${err.message}`);
+            }
+        },
+        deleteSetlistById: async (_, { setlistId }, context) => {
+            if (!context.user) throw new Error("Not authenticated");
+
+            try {
+                const setlist = await Setlist.findOne({ _id: setlistId }).populate(
+                    { 
+                        path: 'songs',
+                        populate: {
+                            path: 'sections',
+                            populate: {
+                                path: 'notes'
+                            }
+                        }
+                    }
+                );
+                if (!setlist) throw new Error("Setlist not found");
+
+                const noteIds = setlist.songs.flatMap(song => song.sections.flatMap(section => section.notes));
+                const sectionIds = setlist.songs.flatMap(song => song.sections);
+
+                await Note.deleteMany({ _id: { $in: noteIds }});
+                await Section.deleteMany({ _id: { $in: sectionIds }});
+                await Song.deleteMany({ _id: { $in: setlist.songs }});
+                await Setlist.findOneAndDelete({ _id: setlistId });
+                return `Setlist titled "${setlist.title}" has been deleted successfully.`;
+            } 
+            catch (err) {
+                throw new Error(`Error deleting setlist: ${err.message}`);
             }
         },
         deleteSongById: async (_, { songId }, context) => {

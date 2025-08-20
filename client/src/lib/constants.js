@@ -102,10 +102,7 @@ export function useUpdateTitle() {
                 if (!currentSong) {
                     const { data: newSongData} = await createSong({
                         variables: {
-                            input: {
-                                title: songData.title,
-                                sections: []
-                            }
+                            input: { title: songData.title }
                         }
                     });
                     const newSong = newSongData.createSong;
@@ -162,10 +159,7 @@ export function useSectionNoteCreator() {
                 // Create Song
                 const { data: songData } = await createSong({
                     variables: {
-                        input: {
-                            title: "Untitled Song",
-                            sections: []
-                        }
+                        input: { title: "Untitled Song" }
                     }
                 });
                 if (!songData) return;

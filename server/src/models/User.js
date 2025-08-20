@@ -25,9 +25,9 @@ const userSchema = new Schema(
             required: true,
             trim: true
         },
-        songs: [{
+        setlists: [{
             type: Schema.Types.ObjectId,
-            ref: 'Song'
+            ref: 'Setlist'
         }]
     },
     {

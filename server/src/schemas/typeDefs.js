@@ -4,6 +4,12 @@ const typeDefs = `
         firstName: String!
         lastName: String!
         username: String!
+        setlists: [Setlist]
+    }
+
+    type Setlist {
+        _id: ID!
+        title: String!
         songs: [Song]
     }
 
@@ -38,9 +44,12 @@ const typeDefs = `
         password: String!
     }
 
+    input CreateSetlistInput {
+        title: String!
+    }
+
     input CreateSongInput {
         title: String!
-        sections: [CreateSectionInput]
     }
 
     input CreateSectionInput {
@@ -62,6 +71,7 @@ const typeDefs = `
         users: [User]
         user(username: String!): User
         me: User
+        setlists: [Setlist]
         songs: [Song]
         song(songId: ID!): Song
         sections: [Section]
@@ -71,7 +81,8 @@ const typeDefs = `
     type Mutation {
         createUser(input: CreateUserInput!): Auth
         login(username: String!, password: String!): Auth
-        createSong(input: CreateSongInput!): Song
+        createSetlist(input: CreateSetlistInput!): Setlist
+        createSong(setlistId: ID!, input: CreateSongInput!): Song
         createSection(songId: ID!, input: CreateSectionInput!): Section
         createNote(sectionId: ID!, input: CreateNoteInput!): Note
 
@@ -80,6 +91,7 @@ const typeDefs = `
         updateSectionOrder(songId: ID!, sectionIds: [ID!]!): Song
 
         deleteUserById(userId: ID!): String
+        deleteSetlistById(setlistId: ID!): String
         deleteSongById(songId: ID!): String
         deleteSectionById(sectionId: ID!): String
         deleteNoteById(noteId: ID!): String

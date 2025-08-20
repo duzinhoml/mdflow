@@ -11,6 +11,7 @@ function SongTitle() {
         <>
             {currentSong ? (
                 <input 
+                    name='songTitle'
                     type="text" 
                     className='text-light text-center p-1 border-2 border-primary rounded position-absolute top-50 start-50 translate-middle'
                     onChange={handleInputChange} 
@@ -24,6 +25,7 @@ function SongTitle() {
                 />
             ) : (
                 <input 
+                    name='songTitle'
                     type="text" 
                     className='text-light text-center p-1 border-2 border-primary rounded position-absolute top-50 start-50 translate-middle'
                     placeholder='Song Title'

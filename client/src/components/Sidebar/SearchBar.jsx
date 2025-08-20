@@ -10,6 +10,7 @@ function SearchBar() {
                     {searchTerm ? <i className="fa-solid fa-xmark"></i> : <i className="fa-solid fa-magnifying-glass"></i>}
                 </span>
                 <input 
+                    name="searchBar"
                     className="w-100 border rounded-2 rounded-start-0 p-1 ps-2 fs-6" 
                     type="text" 
                     value={searchTerm}

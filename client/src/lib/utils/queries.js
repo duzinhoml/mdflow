@@ -18,17 +18,21 @@ export const QUERY_ME = gql`
             firstName
             lastName
             username
-            songs {
+            setlists {
                 _id
                 title
-                sections {
+                songs {
                     _id
-                    label
-                    color
-                    notes {
+                    title
+                    sections {
                         _id
                         label
                         color
+                        notes {
+                            _id
+                            label
+                            color
+                        }
                     }
                 }
             }
