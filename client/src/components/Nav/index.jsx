@@ -4,7 +4,7 @@ import Auth from '../../lib/utils/auth.js';
 
 import { useToggleVisible } from '../../contexts/ToggleVisibleContext.jsx';
 
-import SongTitle from './SongTitle.jsx';
+import SetlistTitle from './SetlistTitle.jsx';
 
 import './index.css';
 import '../../index.css';
@@ -17,7 +17,7 @@ function Nav() {
         <nav className="navbar px-2 mx-2 temp-bg position-relative">
             <span className='navbar-brand me-2 text-light'>MDFlow</span>
 
-            <SongTitle />
+            <SetlistTitle />
             <div className='d-flex'>
 
                 {/* Tools */}

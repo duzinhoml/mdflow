@@ -12,3 +12,25 @@
         pointer-events: none;
     }
 }
+
+.tabs {
+    border: none;
+    border-bottom: 3px solid transparent;
+    border-radius: 6px 6px 0 0;
+    transition: font-weight 0.3s ease-in-out, border-color 0.3s ease-in-out, color 0.3s ease-in-out;
+
+    &:hover {
+        color: hsl(210, 11%, 20%);
+        border-color: hsl(235, 10%, 35%);
+    }
+
+    &.current {
+        border-color: hsl(235, 10%, 25%);
+        font-weight: 500;
+
+        &:hover {
+            color: hsl(210, 11%, 15%)
+        }
+    }
+
+}

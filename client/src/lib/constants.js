@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useCallback } from 'react';
 import { ApolloClient, InMemoryCache, createHttpLink } from '@apollo/client';
 import { setContext } from '@apollo/client/link/context';
 import { useSensors, useSensor, PointerSensor, KeyboardSensor } from '@dnd-kit/core';
@@ -11,7 +11,11 @@ import { useSong } from '../contexts/SongContext.jsx';
 import Auth from './utils/auth.js';
 
 import { useMutation } from '@apollo/client';
-import { CREATE_SONG, CREATE_SECTION, CREATE_NOTE, UPDATE_SONG_TITLE, UPDATE_SECTION_ORDER, DELETE_SONG_BY_ID, DELETE_SECTION_BY_ID, DELETE_NOTE_BY_ID } from './utils/mutations.js';
+import { 
+    CREATE_SETLIST, CREATE_SONG, CREATE_SECTION, CREATE_NOTE, 
+    UPDATE_SETLIST_TITLE, UPDATE_SONG_TITLE, UPDATE_SECTION_ORDER, 
+    DELETE_SETLIST_BY_ID, DELETE_SONG_BY_ID, DELETE_SECTION_BY_ID, DELETE_NOTE_BY_ID 
+} from './utils/mutations.js';
 import { QUERY_ME } from './utils/queries';
 
 // Test Data
@@ -76,11 +80,79 @@ export function useWindowResize() {
     return screenWidth;
 };
 
+// Updating Setlist Title
+export function useUpdateSetlistTitle() {
+    const { setUserData } = useUser();
+    const { setlistData, setSetlistData } = useSongData();
+    const { currentSetlist, setCurrentSetlist } = useSong();
+    const [createSetlist] = useMutation(CREATE_SETLIST, { refetchQueries: [QUERY_ME] });
+    const [updateSetlistTitle] = useMutation(UPDATE_SETLIST_TITLE, { refetchQueries: [QUERY_ME] });
+
+    useEffect(() => {
+        if (currentSetlist?.title) setSetlistData(prev => ({ ...prev, title: currentSetlist.title}))
+        else setSetlistData(prev => ({ ...prev, title: ""}));
+    }, [currentSetlist]);
+
+    const handleInputChange = (e) => {
+        const { value } = e.target;
+        setSetlistData(prev =>  ({ ...prev, title: value }))
+    };
+
+    useEffect(() => {
+        if (!setlistData.title || setlistData.title === currentSetlist?.title) return;
+
+        const debounceTimeout = setTimeout(async () => {
+            try {
+                // No Setlist
+                if (!currentSetlist) {
+                    const { data: newSetlistData} = await createSetlist({
+                        variables: {
+                            input: { title: setlistData.title }
+                        }
+                    });
+                    const newSetlist = newSetlistData.createSetlist;
+                    
+                    setCurrentSetlist(newSetlist);
+                    setUserData(prev => ({
+                        ...prev,
+                        setlists: [...(prev.setlists || []), newSetlist],
+                    }));
+                }
+                else {
+                    // Current Setlist
+                    await updateSetlistTitle({
+                        variables: {
+                            setlistId: currentSetlist?._id,
+                            title: setlistData.title
+                        }
+                    });
+
+                    setCurrentSetlist(prev => ({ ...prev, title: setlistData.title }));
+                    setUserData(prev => ({
+                        ...prev,
+                        setlists: prev.setlists.map(setlist => setlist._id === currentSetlist?._id ?
+                            { ...setlist, title: setlistData.title }
+                            : setlist
+                        )
+                    }));
+                }
+            } 
+            catch (err) {
+                console.error(err);
+            }
+        }, 500);
+
+        return () => clearTimeout(debounceTimeout);
+    }, [setlistData.title]);
+
+    return handleInputChange;
+}
+
 // Updating Song Title
-export function useUpdateTitle() {
+export function useUpdateSongTitle() {
     const { setUserData } = useUser();
     const { songData, setSongData } = useSongData();
-    const { currentSong, setCurrentSong } = useSong();
+    const { currentSetlist, setCurrentSetlist, currentSong, setCurrentSong } = useSong();
     const [createSong] = useMutation(CREATE_SONG, { refetchQueries: [QUERY_ME] });
     const [updateSongTitle] = useMutation(UPDATE_SONG_TITLE, { refetchQueries: [QUERY_ME] });
 
@@ -95,42 +167,56 @@ export function useUpdateTitle() {
     };
     
     useEffect(() => {
+        if (!currentSetlist) return;
         if (!songData.title || songData.title === currentSong?.title) return;
 
         const debounceTimeout = setTimeout(async () => {
             try {
+                // No Song
                 if (!currentSong) {
                     const { data: newSongData} = await createSong({
                         variables: {
+                            setlistId: currentSetlist?._id,
                             input: { title: songData.title }
                         }
                     });
                     const newSong = newSongData.createSong;
 
+                    setCurrentSong(newSong);
+                    setCurrentSetlist(prev => ({
+                        ...prev,
+                        songs: [...(prev.songs || []), newSong]
+                    }));
                     setUserData(prev => ({
                         ...prev,
-                        songs: [...prev.songs, newSong]
+                        songs: [...(prev.songs || []), newSong]
                     }));
-
-                    setCurrentSong(newSong);
-                    return;
                 }
+                else {
+                    // Current Song
+                    await updateSongTitle({
+                        variables: {
+                            songId: currentSong?._id,
+                            title: songData.title
+                        }
+                    });
 
-                setCurrentSong(prev => ({ ...prev, title: songData.title, sections: prev.sections }));
-                await updateSongTitle({
-                    variables: {
-                        songId: currentSong?._id,
-                        title: songData.title
-                    }
-                });
-                
-                setUserData(prev => ({
-                    ...prev,
-                    songs: prev.songs.map(song => song._id === currentSong._id ?
-                        { ...song, title: songData.title }
-                        : song
-                    )
-                }));
+                    setCurrentSong(prev => ({ ...prev, title: songData.title, sections: prev.sections }));
+                    setCurrentSetlist(prev => ({
+                        ...prev,
+                        songs: prev.songs.map(song => song._id === currentSong._id ?
+                            { ...song, title: songData.title }
+                            : song
+                        )
+                    }));
+                    setUserData(prev => ({
+                        ...prev,
+                        songs: prev.songs.map(song => song._id === currentSong._id ?
+                            { ...song, title: songData.title }
+                            : song
+                        )
+                    }));
+                }
             } 
             catch (err) {
                 console.error(err);
@@ -289,11 +375,52 @@ export function useSectionNoteCreator() {
     return handleInputSelection;
 }
 
+// Delete Setlist
+export function useDeleteSetlist() {
+    const { setUserData } = useUser();
+    const { setSetlistData } = useSongData();
+    const { currentSetlist, setCurrentSetlist } = useSong();
+    const [deleteSetlistById] = useMutation(DELETE_SETLIST_BY_ID, { refetchQueries: [QUERY_ME] });
+
+    const handleDeleteSetlist = async (setlistId) => {
+        try {
+            await deleteSetlistById({
+                variables: {
+                    setlistId
+                }
+            });
+
+            setUserData(prev => {
+                const deletedSetlist = prev.setlists.find(setlist => setlist._id === setlistId);
+                const updatedSetlists = prev.setlists.filter(setlist => setlist._id !== setlistId);
+
+                const updatedSongs = prev.songs.filter(song => !(deletedSetlist.songs || []).some(dsSong => dsSong._id === song._id));
+
+                return {
+                    ...prev,
+                    songs: updatedSongs,
+                    setlists: updatedSetlists
+                }
+            });
+
+            if (currentSetlist && setlistId === currentSetlist._id) {
+                setCurrentSetlist(null);
+                setSetlistData({ title: "" });
+            }
+        } 
+        catch (err) {
+            console.error(err);
+        }
+    }
+
+    return handleDeleteSetlist;
+}
+
 // Delete Song
 export function useDeleteSong() {
     const { setUserData } = useUser();
     const { setSongData } = useSongData();
-    const { currentSong, setCurrentSong, setCurrentSections } = useSong();
+    const { setCurrentSetlist, currentSong, setCurrentSong, setCurrentSections } = useSong();
     const [deleteSongById] = useMutation(DELETE_SONG_BY_ID, { refetchQueries: [QUERY_ME] });
 
     const handleDeleteSong = async (songId) => {
@@ -303,7 +430,11 @@ export function useDeleteSong() {
                     songId
                 }
             });
-            
+
+            setCurrentSetlist(prev => ({
+                ...prev,
+                songs: prev.songs.filter(song => song._id !== songId)
+            }));
             setUserData(prev => ({
                 ...prev,
                 songs: prev.songs.filter(song => song._id !== songId)
@@ -398,6 +529,24 @@ export function useDeleteNote() {
     };
 
     return handleDeleteNote;
+}
+
+// Delete Parent
+export function useDelete() {
+    const handleDeleteSetlist = useDeleteSetlist();
+    const handleDeleteSong = useDeleteSong();
+    const handleDeleteSection = useDeleteSection();
+
+    const handleDelete = useCallback((category, itemId) => {
+        switch(category.toLowerCase()) {
+            case "setlists": handleDeleteSetlist(itemId); break;
+            case "songs": handleDeleteSong(itemId); break;
+            case "sections": handleDeleteSection(itemId); break;
+            default: console.error(`Unknown delete category: ${category}`); break;
+        }
+    }, [handleDeleteSetlist, handleDeleteSong, handleDeleteSection]);
+
+    return handleDelete;
 }
 
 // Login Input Change

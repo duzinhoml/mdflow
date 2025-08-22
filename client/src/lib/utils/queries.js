@@ -36,6 +36,20 @@ export const QUERY_ME = gql`
                     }
                 }
             }
+            songs {
+                _id
+                title
+                sections {
+                    _id
+                    label
+                    color
+                    notes {
+                        _id
+                        label
+                        color
+                    }
+                }
+            }
         }
     }
 `;

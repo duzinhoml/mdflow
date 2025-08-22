@@ -2,7 +2,7 @@ import { useState, useEffect } from 'react';
 import { useSortable } from '@dnd-kit/sortable';
 import { CSS } from '@dnd-kit/utilities';
 
-import { useDeleteSection, useDeleteNote, useHoverEffect } from '../lib/constants';
+import { useDelete, useDeleteNote, useHoverEffect } from '../lib/constants';
 
 import { useSong } from '../contexts/SongContext';
 
@@ -14,10 +14,10 @@ function SortableInput({ id, className, inputStyle, notes, children }) {
         item: null
     });
 
-    const { isCurrentSection, hoverBg, isHovered, allowDrag, handleHoverEffect } = useHoverEffect();
+    const { isCurrentSection, hoverBg, isHovered, allowDrag, setAllowDrag, handleHoverEffect } = useHoverEffect();
     const { attributes, listeners, setNodeRef, transform, transition } = useSortable({ id, disabled: !allowDrag });
 
-    const handleDeleteSection = useDeleteSection();
+    const handleDelete = useDelete();
     const handleDeleteNote = useDeleteNote();
     const { currentSong, currentSections, currentSection, setCurrentSection } = useSong();
     
@@ -49,6 +49,8 @@ function SortableInput({ id, className, inputStyle, notes, children }) {
 
     useEffect(() => setToDelete({ message: false, item: null }), [currentSection]);
 
+    useEffect(() => { toDelete.message && setAllowDrag(false) });
+
     return (
         <div 
             ref={setNodeRef} 
@@ -67,7 +69,7 @@ function SortableInput({ id, className, inputStyle, notes, children }) {
             >
                 {isHovered?.label && currentSong && currentSections?.length ? (
                     <div className='d-flex justify-space-between'>
-                        <span className='w-50 delete' onClick={() => handleDeleteSection(id)}>
+                        <span className='w-50 delete' onClick={() => handleDelete("sections", id)}>
                             Delete
                             <i className="fa-solid fa-trash ms-2"></i>
                         </span>

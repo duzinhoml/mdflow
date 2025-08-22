@@ -3,6 +3,7 @@ import { SortableContext, horizontalListSortingStrategy } from '@dnd-kit/sortabl
 
 import { useSong } from '../contexts/SongContext.jsx';
 
+import SongTitle from "../components/SongTitle.jsx";
 import Sidebar from "../components/Sidebar/index.jsx";
 import SongLayout from "../components/SongLayout.jsx";
 import SortableInput from './SortableInput.jsx';
@@ -15,7 +16,10 @@ function DndDashboard() {
     }, [currentSong]);
 
     return (
-        <div className='d-flex flex-grow-1'>
+        <div className='d-flex flex-column flex-grow-1'>
+
+            <SongTitle />
+
             <Sidebar />
             {/* Sections */}
             <SongLayout>

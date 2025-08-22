@@ -1,44 +1,33 @@
-import { useDeleteSong } from "../../lib/constants.js";
-
-import { useUser } from "../../contexts/UserContext";
 import { useSong } from "../../contexts/SongContext.jsx";
 import { useSearch } from "../../contexts/SearchTermContext.jsx";
 
-function List() {
-    const handleDeleteSong = useDeleteSong();
+import FilterLogic from "./FilterLogic.jsx";
+import './index.css';
 
-    const { userData } = useUser();
-    const { handleSetCurrentSong } = useSong();
-    const { searchTerm, searchedSongs } = useSearch();
+function List() {
+    const { currentSetlist } = useSong();
+    const { searchTerm, filter, handleToggleFilter, searchedItems, filteredItems } = useSearch();
 
     return (
         <div className="overflow-y-scroll flex-grow-1">
+
+            <div className="d-flex justify-content-center gap-3">
+                <button className={`btn tabs pb-1 ${filter === "Setlists" && 'current'}`} onClick={() => handleToggleFilter("Setlists")}>
+                    Setlists
+                </button>
+                <button className={`btn tabs pb-1 ${filter === "Songs" && 'current'}`} onClick={() => handleToggleFilter("Songs")}>
+                    Songs
+                </button>
+            </div>
+
             <ul className="list-group m-3">
-                {searchTerm ? searchedSongs.map(song => (
-                    <div key={song._id} className="d-flex align-items-center mb-3">
-                        <button 
-                            className="btn btn-lg list-group-item py-2 rounded-2 flex-grow-1 text-start" 
-                            onClick={() => handleSetCurrentSong(song)}
-                        >
-                            {song.title}
-                        </button>
-                        <button className="btn btn-danger ms-2" onClick={() => handleDeleteSong(song._id)}>
-                            <i className="fa-solid fa-trash"></i>
-                        </button>
-                    </div>
-                )) : userData?.songs.map(song => (
-                    <div key={song._id} className="d-flex align-items-center mb-3">
-                        <button 
-                            className="btn btn-lg list-group-item py-2 rounded-2 flex-grow-1 text-start" 
-                            onClick={() => handleSetCurrentSong(song)}
-                        >
-                            {song.title}
-                        </button>
-                        <button className="btn btn-danger ms-2" onClick={() => handleDeleteSong(song._id)}>
-                            <i className="fa-solid fa-trash"></i>
-                        </button>
-                    </div>
-                ))}
+                <FilterLogic 
+                    currentSetlist={currentSetlist}
+                    filter={filter}
+                    searchTerm={searchTerm}
+                    searchedItems={searchedItems}
+                    filteredItems={filteredItems}
+                />
             </ul>
         </div>
     );

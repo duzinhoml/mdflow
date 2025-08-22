@@ -1,0 +1,29 @@
+import Filter from "./Filter.jsx";
+
+function FilterLogic({ currentSetlist, filter, searchTerm, searchedItems, filteredItems }) {
+    if (searchTerm && currentSetlist && filter === "Setlists") return <Filter key={currentSetlist._id} item={currentSetlist} filter={filter}/>;
+    if (searchTerm && currentSetlist && filter === "Songs")
+        return (currentSetlist?.songs.filter(song => song.title.toLowerCase().includes(searchTerm.toLowerCase())) || []).map(item => <Filter key={item._id} item={item} filter={filter} />);
+
+    if (currentSetlist && filter === "Setlists") return <Filter key={currentSetlist._id} item={currentSetlist} filter={filter}/>
+    if (currentSetlist && filter === "Songs") {
+        if (currentSetlist?.songs.length) return (currentSetlist?.songs).map(song => <Filter key={song._id} item={song} filter={filter} />)
+    }
+
+    if (searchTerm) return searchedItems(filter).map(item => <Filter key={item._id} item={item} filter={filter} />);
+
+    const items = filteredItems(filter);
+    if (items.length && !currentSetlist) return items.map(item => <Filter key={item._id} item={item} filter={filter} />);
+
+    return (
+        <div className="text-center mt-2">
+            <p className="fs-5 fw-medium">No {filter} yet</p>
+            <p className="text-muted">
+                Start by creating your first {currentSetlist ? "song" : "setlist"}. 
+                Just enter a name and you’re good to go!
+            </p>
+        </div>
+    );
+}
+
+export default FilterLogic;

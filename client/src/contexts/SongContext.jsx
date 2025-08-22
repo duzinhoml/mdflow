@@ -3,18 +3,24 @@ import { useState, useEffect, useContext, createContext } from 'react';
 const SongContext = createContext();
 
 export const SongProvider = ({ children }) => {
+    const [currentSetlist, setCurrentSetlist] = useState(null);
     const [currentSong, setCurrentSong] = useState(null);
     const [currentSections, setCurrentSections] = useState([]);
     const [currentSection, setCurrentSection] = useState(null);
-    
-    const handleSetCurrentSong = (song) => {
-        if (song._id === 'createSong') {
-            setCurrentSong(null)
-            return;
+
+    const handleSetCurrent = (filter, item) => {
+        if (filter === "Setlists") {
+            if (currentSetlist?._id === item._id) {
+                setCurrentSetlist(null);
+                setCurrentSong(null);
+            }
+            else setCurrentSetlist(item);
         }
-        
-        if (currentSong?._id === song._id) setCurrentSong(null);
-        else setCurrentSong(song);
+        else {
+            if (!currentSetlist) return;
+            if (currentSong?._id === item._id) setCurrentSong(null);
+            else setCurrentSong(item);
+        }
     }
     
     useEffect(() => {
@@ -22,7 +28,8 @@ export const SongProvider = ({ children }) => {
     }, [currentSong]);
 
     const value = {
-        currentSong, setCurrentSong, handleSetCurrentSong,
+        currentSetlist, setCurrentSetlist,
+        currentSong, setCurrentSong, handleSetCurrent,
         currentSections, setCurrentSections,
         currentSection, setCurrentSection
     }

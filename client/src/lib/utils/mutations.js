@@ -17,13 +17,17 @@ export const CREATE_SETLIST = gql`
         createSetlist(input: $input) {
             _id
             title
+            songs {
+                _id
+                title
+            }
         }
     }
 `;
 
 export const CREATE_SONG = gql`
-    mutation createSong($input: CreateSongInput!) {
-        createSong(input: $input) {
+    mutation createSong($setlistId: ID!, $input: CreateSongInput!) {
+        createSong(setlistId: $setlistId, input: $input) {
             _id
             title
         }
@@ -55,6 +59,15 @@ export const CREATE_NOTE = gql`
     }
 `;
 
+export const UPDATE_SETLIST_TITLE = gql`
+    mutation updateSetlistTitle($setlistId: ID!, $title: String!) {
+        updateSetlistTitle(setlistId: $setlistId, title: $title) {
+            _id
+            title
+        }
+    }
+`;
+
 export const UPDATE_SONG_TITLE = gql`
     mutation updateSongTitle($songId: ID!, $title: String!) {
         updateSongTitle(songId: $songId, title: $title) {
@@ -75,6 +88,12 @@ export const UPDATE_SECTION_ORDER = gql`
                 color
             }
         }
+    }
+`;
+
+export const DELETE_SETLIST_BY_ID = gql`
+    mutation deleteSetlistById($setlistId: ID!) {
+        deleteSetlistById(setlistId: $setlistId)
     }
 `;
 

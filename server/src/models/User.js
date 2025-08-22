@@ -28,6 +28,10 @@ const userSchema = new Schema(
         setlists: [{
             type: Schema.Types.ObjectId,
             ref: 'Setlist'
+        }],
+        songs: [{
+            type: Schema.Types.ObjectId,
+            ref: 'Song'
         }]
     },
     {

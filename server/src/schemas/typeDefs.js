@@ -5,6 +5,7 @@ const typeDefs = `
         lastName: String!
         username: String!
         setlists: [Setlist]
+        songs: [Song]
     }
 
     type Setlist {
@@ -87,6 +88,7 @@ const typeDefs = `
         createNote(sectionId: ID!, input: CreateNoteInput!): Note
 
         updateUser(userId: ID!, input: UpdateUserInput!): User
+        updateSetlistTitle(setlistId: ID!, title: String!): Setlist
         updateSongTitle(songId: ID!, title: String!): Song
         updateSectionOrder(songId: ID!, sectionIds: [ID!]!): Song
 
