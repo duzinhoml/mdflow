@@ -4,12 +4,12 @@ import { useUpdateSongTitle } from '../lib/constants.js';
 
 function SongTitle() {
     const { songData } = useSongData();
-    const { currentSetlist, currentSong } = useSong();
+    const { currentSetlist, currentSong, prevSong, nextSong } = useSong();
     const handleInputChange = useUpdateSongTitle();
 
     return (
         <div className='d-flex justify-content-center align-items-center my-2'>
-            <i className="fa-solid fa-angle-left text-light" style={{ cursor: 'pointer' }}></i>
+            <i className="fa-solid fa-angle-left text-light" onClick={() => prevSong(currentSong)} style={{ cursor: 'pointer' }}></i>
             {currentSong ? (
                 <input 
                     name='currentSongTitle'
@@ -44,7 +44,7 @@ function SongTitle() {
                 /> 
             )
             }
-            <i className="fa-solid fa-angle-right text-light" style={{ cursor: 'pointer' }}></i>
+            <i className="fa-solid fa-angle-right text-light" onClick={() => nextSong(currentSong)} style={{ cursor: 'pointer' }}></i>
         </div>
     );
 }

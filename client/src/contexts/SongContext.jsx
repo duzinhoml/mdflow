@@ -8,6 +8,8 @@ export const SongProvider = ({ children }) => {
     const [currentSections, setCurrentSections] = useState([]);
     const [currentSection, setCurrentSection] = useState(null);
 
+    const songs = currentSetlist?.songs;
+
     const handleSetCurrent = (filter, item) => {
         if (filter === "Setlists") {
             if (currentSetlist?._id === item._id) {
@@ -27,11 +29,28 @@ export const SongProvider = ({ children }) => {
         if (!currentSong?.sections?.find(section => section._id === currentSection?._id)) setCurrentSection(null);
     }, [currentSong]);
 
+    const prevSong = (song) => {
+        if (!song) return;
+        const activeIndex = songs.findIndex(s => s._id === song._id);
+
+        if (activeIndex <=0) return;
+        setCurrentSong(songs[activeIndex - 1]);
+    }
+
+    const nextSong = (song) => {
+        if (!song) return;
+        const activeIndex = songs.findIndex(s => s._id === song._id);
+        
+        if (activeIndex < 0 || activeIndex === (songs.length - 1)) return;
+        setCurrentSong(songs[activeIndex + 1]);
+    }
+
     const value = {
         currentSetlist, setCurrentSetlist,
         currentSong, setCurrentSong, handleSetCurrent,
         currentSections, setCurrentSections,
-        currentSection, setCurrentSection
+        currentSection, setCurrentSection,
+        prevSong, nextSong
     }
 
     return (

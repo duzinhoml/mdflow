@@ -32,5 +32,39 @@
             color: hsl(210, 11%, 15%)
         }
     }
+}
 
+.list {
+    color: hsl(213, 18%, 88%);
+    background-color: hsl(208, 7%, 36%);
+    border-color: hsl(208, 7%, 36%);
+    transition: 0.3s ease-in-out, border-color 0.3s ease-in-out;
+
+    &:hover {
+        color: hsl(213, 18%, 88%);
+        background-color: hsl(208, 7%, 33%);
+        border-color: hsl(208, 7%, 33%);
+    }
+
+    &:active {
+        color: hsl(213, 18%, 88%) !important;
+        background-color: hsl(208, 7%, 30%) !important;
+        border-color: hsl(208, 7%, 30%) !important;
+    }
+
+    &.current {
+        color: hsl(213, 18%, 98%);
+        background-color: hsl(208, 7%, 30%);
+        border-color: hsl(208, 7%, 30%);
+
+        &:hover {
+            background-color: hsl(208, 7%, 27%);
+            border-color: hsl(208, 7%, 27%);
+        }
+
+        &:active {
+            background-color: hsl(208, 7%, 24%) !important;
+            border-color: hsl(208, 7%, 24%) !important;
+        }
+    }
 }

@@ -189,7 +189,11 @@ export function useUpdateSongTitle() {
                     }));
                     setUserData(prev => ({
                         ...prev,
-                        songs: [...(prev.songs || []), newSong]
+                        songs: [...(prev.songs || []), newSong],
+                        setlists: prev.setlists.map(setlist => setlist._id === currentSetlist._id ?
+                            { ...setlist, songs: [...(setlist.songs || []), newSong] }
+                            : setlist
+                        )
                     }));
                 }
                 else {
@@ -209,13 +213,29 @@ export function useUpdateSongTitle() {
                             : song
                         )
                     }));
-                    setUserData(prev => ({
-                        ...prev,
-                        songs: prev.songs.map(song => song._id === currentSong._id ?
-                            { ...song, title: songData.title }
-                            : song
-                        )
-                    }));
+                    setUserData(prev => {
+                        const updatedSetlists = prev.setlists.map(setlist => {
+                            if (setlist._id === currentSetlist._id) {
+                                return {
+                                    ...setlist,
+                                    songs: setlist.songs.map(song => song._id === currentSong._id ?
+                                        { ...song, title: songData.title }
+                                        : song
+                                    )
+                                }
+                            }
+                            return setlist;
+                        });
+
+                        return {
+                            ...prev,
+                            songs: prev.songs.map(song => song._id === currentSong._id ?
+                                { ...song, title: songData.title }
+                                : song
+                            ),
+                            setlists: updatedSetlists
+                        }
+                    });
                 }
             } 
             catch (err) {
@@ -236,15 +256,18 @@ export function useSectionNoteCreator() {
     const [createSection] = useMutation(CREATE_SECTION, { refetchQueries: [QUERY_ME] });
     const [createNote] = useMutation(CREATE_NOTE, { refetchQueries: [QUERY_ME] });
 
-    const { currentSong, setCurrentSong, currentSections, setCurrentSections, currentSection } = useSong();
+    const { currentSetlist, setCurrentSetlist, currentSong, setCurrentSong, currentSections, setCurrentSections, currentSection } = useSong();
     
     // Create Section
     const handleCreateSection = async (child) => {
+        if (!currentSetlist) return;
+
         try {
             if (!currentSong) {
                 // Create Song
                 const { data: songData } = await createSong({
                     variables: {
+                        setlistId: currentSetlist?._id,
                         input: { title: "Untitled Song" }
                     }
                 });
@@ -254,7 +277,7 @@ export function useSectionNoteCreator() {
                 // Add section to new Song
                 const { data: sectionData } = await createSection({
                     variables: {
-                        songId: songData.createSong?._id,
+                        songId: newSong._id,
                         input: {
                             label: child.label,
                             color: child.color
@@ -272,11 +295,18 @@ export function useSectionNoteCreator() {
                 
                 setCurrentSong(updatedSong);
                 setCurrentSections([newSection]);
-                
+                setCurrentSetlist(prev => ({
+                    ...prev,
+                    songs: [...(prev.songs || []), updatedSong]
+                }));
                 setUserData(prev => ({ 
                     ...prev, 
-                    songs: [...prev.songs, updatedSong]
-                }))
+                    setlists: prev.setlists.map(setlist => setlist._id === currentSetlist?._id
+                        ? { ...setlist, songs: [...(setlist.songs || []), updatedSong] }
+                        : setlist
+                    ),
+                    songs: [...(prev.songs || []), updatedSong]
+                }));
             }
             else {
                 if (currentSection) return;
@@ -294,20 +324,48 @@ export function useSectionNoteCreator() {
                 if (!data) return;
                 const newSection = data.createSection
 
-                const updatedSections = [...currentSections, newSection];
+                const updatedSections = [...(currentSections || []), newSection];
                 
                 setCurrentSections(updatedSections);
                 setCurrentSong(prev => ({
                     ...prev,
                     sections: updatedSections
                 }));
-                setUserData(prev => ({
+                setCurrentSetlist(prev => ({
                     ...prev,
                     songs: prev.songs.map(song => song._id === currentSong._id
-                        ? { ...song, sections: updatedSections }
+                        ? { ...song, sections: [...(song.sections || []), newSection] }
                         : song
                     )
                 }));
+                setUserData(prev => {
+                    const updatedSetlists = prev.setlists.map(setlist => {
+                        if (setlist._id === currentSetlist._id) {
+                            return {
+                                ...setlist,
+                                songs: setlist.songs.map(song => {
+                                    if (song._id === currentSong._id) {
+                                        return {
+                                            ...song,
+                                            sections: [...(song.sections || []), newSection]
+                                        }
+                                    }
+                                    return song;
+                                })
+                            }
+                        }
+                        return setlist
+                    });
+
+                    return {
+                        ...prev,
+                        setlists: updatedSetlists,
+                        songs: prev.songs.map(song => song._id === currentSong._id
+                            ? { ...song, sections: updatedSections }
+                            : song
+                        )
+                    }
+                });
             }
         } 
         catch (err) {
@@ -334,19 +392,48 @@ export function useSectionNoteCreator() {
             if (!data) return;
             const newNote = data.createNote;
 
-            setUserData(prev => ({
-                ...prev,
-                songs: prev.songs.map(song => song._id === currentSong._id
-                    ? {
-                        ...song,
-                        sections: song.sections.map(section => section._id === currentSection._id
-                            ? { ...section, notes: [...section.notes || [], newNote] }
-                            : section
-                        )
+            setUserData(prev => {
+                const updatedSetlists = prev.setlists.map(setlist => {
+                    if (setlist._id === currentSetlist._id) {
+                        return {
+                            ...setlist,
+                            songs: setlist.songs.map(song => {
+                                if (song._id === currentSong._id) {
+                                    return {
+                                        ...song,
+                                        sections: song.sections.map(section => {
+                                            if (section._id === currentSection._id) {
+                                                return {
+                                                    ...section,
+                                                    notes: [...(section.notes || []), newNote]
+                                                }
+                                            }
+                                            return section
+                                        })
+                                    }
+                                }
+                                return song
+                            })
+                        }
                     }
-                    : song
-                )
-            }));
+                    return setlist
+                });
+
+                return {
+                    ...prev,
+                    setlists: updatedSetlists,
+                    songs: prev.songs.map(song => song._id === currentSong._id
+                        ? {
+                            ...song,
+                            sections: song.sections.map(section => section._id === currentSection._id
+                                ? { ...section, notes: [...section.notes || [], newNote] }
+                                : section
+                            )
+                        }
+                        : song
+                    )
+                }
+            });
 
             setCurrentSections(prev => 
                 prev.map(section => section._id === currentSection._id
@@ -361,6 +448,31 @@ export function useSectionNoteCreator() {
                     : section
                 )
             }));
+
+            setCurrentSetlist(prev => {
+                const updatedSongs = prev.songs.map(song => {
+                    if (song._id === currentSong._id) {
+                        return {
+                            ...song,
+                            sections: song.sections.map(section => {
+                                if (section._id === currentSection._id) {
+                                    return {
+                                        ...section,
+                                        notes: [...(section.notes || []), newNote]
+                                    }
+                                }
+                                return section
+                            })
+                        }
+                    }
+                    return song
+                })
+        
+                return {
+                    ...prev,
+                    songs: updatedSongs
+                }
+            });
         }
         catch (err) {
             console.error(err);
@@ -420,7 +532,7 @@ export function useDeleteSetlist() {
 export function useDeleteSong() {
     const { setUserData } = useUser();
     const { setSongData } = useSongData();
-    const { setCurrentSetlist, currentSong, setCurrentSong, setCurrentSections } = useSong();
+    const { currentSetlist, setCurrentSetlist, currentSong, setCurrentSong, setCurrentSections } = useSong();
     const [deleteSongById] = useMutation(DELETE_SONG_BY_ID, { refetchQueries: [QUERY_ME] });
 
     const handleDeleteSong = async (songId) => {
@@ -431,14 +543,27 @@ export function useDeleteSong() {
                 }
             });
 
-            setCurrentSetlist(prev => ({
-                ...prev,
-                songs: prev.songs.filter(song => song._id !== songId)
-            }));
-            setUserData(prev => ({
-                ...prev,
-                songs: prev.songs.filter(song => song._id !== songId)
-            }));
+            if (currentSetlist) {
+                setCurrentSetlist(prev => ({
+                    ...prev,
+                    songs: prev.songs.filter(song => song._id !== songId)
+                }));
+            };
+
+            setUserData(prev => {
+                const updatedSongs = prev.songs.filter(song => song._id !== songId);
+
+                const updatedSetlists = prev.setlists.map(setlist => ({
+                    ...setlist,
+                    songs: (setlist.songs || []).filter(song => song._id !== songId)
+                }))
+
+                return {
+                    ...prev,
+                    songs: updatedSongs,
+                    setlists: updatedSetlists
+                }
+            });
 
             if (currentSong && songId === currentSong._id) {
                 setCurrentSong(null);
@@ -457,7 +582,7 @@ export function useDeleteSong() {
 // Deleting a Section
 export function useDeleteSection() {
     const { setUserData } = useUser();
-    const { currentSong, setCurrentSong, currentSections, setCurrentSections } = useSong();
+    const { currentSetlist, setCurrentSetlist, currentSong, setCurrentSong, currentSections, setCurrentSections } = useSong();
     const [deleteSectionById] = useMutation(DELETE_SECTION_BY_ID, { refetchQueries: [QUERY_ME] });
 
     const handleDeleteSection = async (sectionId) => {
@@ -472,13 +597,41 @@ export function useDeleteSection() {
                 ...prev, 
                 sections: prev.sections.filter(section => section._id !== sectionId)
             }));
-            setUserData(prev => ({
+            setCurrentSetlist(prev => ({
                 ...prev,
                 songs: prev.songs.map(song => song._id === currentSong._id
                     ? { ...song, sections: song.sections.filter(section => section._id !== sectionId) }
                     : song
                 )
             }));
+            setUserData(prev => {
+                const updatedSetlists = prev.setlists.map(setlist => {
+                    if (setlist._id === currentSetlist._id) {
+                        return {
+                            ...setlist,
+                            songs: setlist.songs.map(song => {
+                                if (song._id === currentSong._id) {
+                                    return {
+                                        ...song,
+                                        sections: song.sections.filter(section => section._id !== sectionId)
+                                    }
+                                }
+                                return song;
+                            })
+                        }
+                    }
+                    return setlist;
+                })
+
+                return {
+                    ...prev,
+                    setlists: updatedSetlists,
+                    songs: prev.songs.map(song => song._id === currentSong._id
+                        ? { ...song, sections: song.sections.filter(section => section._id !== sectionId) }
+                        : song
+                    )
+                }
+            });
         } 
         catch (err) {
             console.error(err);
@@ -491,7 +644,7 @@ export function useDeleteSection() {
 // Deleting a Note
 export function useDeleteNote() {
     const { setUserData } = useUser();
-    const { currentSong, setCurrentSong, currentSection } = useSong();
+    const { currentSetlist, setCurrentSetlist, currentSong, setCurrentSong, currentSection } = useSong();
 
     const [deleteNoteById] = useMutation(DELETE_NOTE_BY_ID, { refetchQueries: [QUERY_ME] });
 
@@ -501,19 +654,73 @@ export function useDeleteNote() {
         try {
             await deleteNoteById({ variables: { noteId } });
 
-            setUserData(prev => ({
-                ...prev,
-                songs: prev.songs.map(song => song._id === currentSong._id
-                    ? {
-                        ...song,
-                        sections: song.sections.map(section => section._id === sectionId
-                            ? { ...section, notes: section.notes.filter(note => note._id !== noteId) }
-                            : section
-                        )
+            setUserData(prev => {
+                const updatedSetlists = prev.setlists.map(setlist => {
+                    if (setlist._id === currentSetlist._id) {
+                        return {
+                            ...setlist,
+                            songs: setlist.songs.map(song => {
+                                if (song._id === currentSong._id) {
+                                    return {
+                                        ...song,
+                                        sections: song.sections.map(section => {
+                                            if (section._id === currentSection._id) {
+                                                return {
+                                                    ...section,
+                                                    notes: section.notes.filter(note => note._id !== noteId)
+                                                }
+                                            }
+                                            return section
+                                        })
+                                    }
+                                }
+                                return song
+                            })
+                        }
                     }
-                    : song
-                )
-            }));
+                    return setlist
+                });
+
+                return {
+                    ...prev,
+                    setlists: updatedSetlists,
+                    songs: prev.songs.map(song => song._id === currentSong._id
+                        ? {
+                            ...song,
+                            sections: song.sections.map(section => section._id === sectionId
+                                ? { ...section, notes: section.notes.filter(note => note._id !== noteId) }
+                                : section
+                            )
+                        }
+                        : song
+                    )
+                }
+            });
+
+            setCurrentSetlist(prev => {
+                const updatedSongs = prev.songs.map(song => {
+                    if (song._id === currentSong._id) {
+                        return {
+                            ...song,
+                            sections: song.sections.map(section => {
+                                if (section._id === currentSection._id) {
+                                    return {
+                                        ...section,
+                                        notes: section.notes.filter(note => note._id !== noteId)
+                                    }
+                                }
+                                return section
+                            })
+                        }
+                    }
+                    return song
+                });
+
+                return {
+                    ...prev,
+                    songs: updatedSongs
+                }
+            })
 
             setCurrentSong(prev => ({
                 ...prev,
