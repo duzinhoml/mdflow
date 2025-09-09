@@ -1,4 +1,6 @@
 .selector {
+    background-color: hsl(235, 13%, 22%);
+    min-height: 25vh;
     transition: opacity 0.3s ease-in-out;
 
     &.show {
@@ -13,5 +15,37 @@
         position: absolute;
         bottom: 0;
         width: 100%;
+    }
+}
+
+.labels {
+    color: hsl(213, 18%, 88%);
+    background-color: hsl(235, 13%, 42%);
+    border-color: hsl(235, 13%, 42%);;
+    transition: background-color 0.3s ease-in-out, border-color 0.3s ease-in-out;
+
+    &:hover {
+        color: hsl(213, 18%, 88%);
+        background-color: hsl(235, 13%, 38%); 
+        border-color: hsl(235, 13%, 39%);
+    }
+
+    &:active {
+        color: hsl(213, 18%, 88%) !important;
+        background-color: hsl(235, 13%, 35%) !important; 
+        border-color: hsl(235, 13%, 36%) !important;
+    }
+}
+
+.inputs {
+    background-color: hsl(235, 13%, 20%);
+    transition: background-color 0.3s ease-in-out, opacity 2.3s ease-in-out;
+
+    &:hover {
+        background-color: hsl(235, 13%, 18%);
+    }
+
+    &:active {
+        background-color: hsl(235, 13%, 17%) !important;
     }
 }

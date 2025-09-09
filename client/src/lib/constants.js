@@ -20,7 +20,7 @@ import { QUERY_ME } from './utils/queries';
 
 // Test Data
 export const INPUT_POOL = [
-    { id: 1, label: 'Sections', children: [
+    { id: 1, label: 'Sections', icon: 'fa-solid fa-layer-group', children: [
             { label: 'Intro', color: '#61a6ae' },
             { label: 'Verse', color: '#7c79be' },
             { label: 'Pre-Chorus', color: '#cdab4c' },
@@ -35,7 +35,7 @@ export const INPUT_POOL = [
             { label: 'Outro', color: '#61a6ae' },
         ]
     },
-    { id: 2, label: 'Dynamics', children: [
+    { id: 2, label: 'Dynamics', icon: 'fa-solid fa-chart-simple', children: [
             { label: 'High', color: '#cccccc' },
             { label: 'Low', color: '#cccccc' },
             { label: 'Mid', color: '#cccccc' },
@@ -43,7 +43,7 @@ export const INPUT_POOL = [
             { label: 'Soft', color: '#cccccc' }
         ]
     },
-    { id: 3, label: 'Instruments', children: [
+    { id: 3, label: 'Instruments', icon: 'fa-solid fa-guitar', children: [
             { label: 'Percussion', color: '#cccccc', children: [
                 { label: 'Drums', color: '#cccccc' },
                 { label: 'Perc', color: '#cccccc' },

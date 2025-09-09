@@ -17,7 +17,7 @@ function ArrangementSelector() {
     useEffect(() => setCurrentTab(null), [visible.selector]);
     
     return (
-        <div className={`bg-dark rounded-top-2 selector ${visible.selector ? 'show' : 'hide'}`} style={{ minHeight: '25vh' }}>
+        <div className={`rounded-top-2 selector ${visible.selector ? 'show' : 'hide'}`}>
             <Tabs setCurrentTab={setCurrentTab} screenWidth={screenWidth}/>
             <CurrentTab currentTab={currentTab} screenWidth={screenWidth}/>
         </div>

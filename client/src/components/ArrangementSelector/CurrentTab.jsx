@@ -1,6 +1,8 @@
 import { useState, useEffect } from "react";
 import { useSectionNoteCreator } from "../../lib/constants";
 
+import './index.css';
+
 function CurrentTab({ currentTab, screenWidth }) {
     const [openSection, setOpenSection] = useState({
         state: false,
@@ -23,12 +25,11 @@ function CurrentTab({ currentTab, screenWidth }) {
                     <button 
                         key={child.label} 
                         type="submit"
-                        className={`btn btn-dark m-1 flex-grow-1 col-${currentTab?.id === 3 ? '2' : '3'}`}
+                        className={`btn inputs m-1 flex-grow-1 col-${currentTab?.id === 3 ? '2' : '3'}`}
                         style={{
                             color: child.color,
                             borderColor: child.color,
-                            fontSize: screenWidth >= 768 ? '20px' : '16px',
-                            textShadow: '2px 2px 4px black'
+                            fontSize: screenWidth >= 768 ? '20px' : '16px'
                         }}
                         onClick={() => { 
                             if (currentTab?.id !== 3) handleInputSelection(currentTab, child); 
@@ -48,7 +49,7 @@ function CurrentTab({ currentTab, screenWidth }) {
                                 <button 
                                     key={grandChild.label} 
                                     type="submit"
-                                    className={`btn btn-dark m-1 col-${currentTab?.id === 3 ? '2' : '3'}`}
+                                    className={`btn inputs m-1 col-${currentTab?.id === 3 ? '2' : '3'}`}
                                     style={{
                                         color: grandChild.color,
                                         borderColor: grandChild.color,
