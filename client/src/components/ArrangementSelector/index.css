@@ -21,7 +21,8 @@
 .labels {
     color: hsl(213, 18%, 88%);
     background-color: hsl(235, 13%, 42%);
-    border-color: hsl(235, 13%, 42%);;
+    border-color: hsl(235, 13%, 42%);
+    box-shadow: 0px 0px 2px 2px hsl(235, 13%, 32%);
     transition: background-color 0.3s ease-in-out, border-color 0.3s ease-in-out;
 
     &:hover {

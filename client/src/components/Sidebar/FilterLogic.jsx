@@ -17,8 +17,8 @@ function FilterLogic({ currentSetlist, filter, searchTerm, searchedItems, filter
 
     return (
         <div className="text-center mt-2">
-            <p className="fs-5 fw-medium">No {filter} yet</p>
-            <p className="text-muted">
+            <p className="fs-5 fw-medium text-light">No {filter} yet</p>
+            <p className="text-white-50">
                 Start by creating your first {currentSetlist ? "song" : "setlist"}. 
                 Just enter a name and you’re good to go!
             </p>

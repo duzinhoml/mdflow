@@ -19,7 +19,7 @@ function SetlistTitle() {
                     style={{ 
                         border: 'none',
                         backgroundColor: 'transparent',
-                        outlineColor: 'grey',
+                        outlineColor: 'hsl(235, 13%, 42%)',
                         cursor: 'text'
                     }}
                     autoComplete='off'

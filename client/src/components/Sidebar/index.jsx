@@ -10,11 +10,11 @@ function Sidebar() {
 
     return (
         <div 
-            className={`bg-secondary position-absolute end-0 d-flex flex-column overflow-hidden sidebar ${visible.sidebar ? 'show' : 'hide'}`}
+            className={`position-absolute end-0 d-flex flex-column overflow-hidden sidebar ${visible.sidebar ? 'show' : 'hide'}`}
             style={{ width: '25vw', height: 'calc(100% - 60px)', borderTopLeftRadius: '6px', borderBottomLeftRadius: '6px', zIndex: 1 }}
         >
             <SearchBar />
-            <hr className="mb-1" style={{ border: '2px solid black' }}/>
+            <hr className="mb-1" style={{ border: '2px solid hsl(235, 13%, 52%)' }}/>
             <List />
         </div>
     );

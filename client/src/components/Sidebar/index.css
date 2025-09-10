@@ -1,4 +1,5 @@
 .sidebar {
+    background-color: hsl(235, 13%, 22%);
     transition: opacity 0.3s ease-in-out, transform 0.3s ease-in-out;
 
     &.show {
@@ -14,57 +15,60 @@
 }
 
 .tabs {
+    color: hsl(213, 18%, 88%);
     border: none;
     border-bottom: 3px solid transparent;
     border-radius: 6px 6px 0 0;
     transition: font-weight 0.3s ease-in-out, border-color 0.3s ease-in-out, color 0.3s ease-in-out;
 
     &:hover {
-        color: hsl(210, 11%, 20%);
-        border-color: hsl(235, 10%, 35%);
+        color: hsl(213, 18%, 93%);
+        border-color: hsl(235, 13%, 37%);
     }
 
     &.current {
-        border-color: hsl(235, 10%, 25%);
+        border-color: hsl(235, 13%, 52%);
         font-weight: 500;
 
         &:hover {
-            color: hsl(210, 11%, 15%)
+            color: hsl(213, 18%, 88%);
         }
     }
 }
 
 .list {
     color: hsl(213, 18%, 88%);
-    background-color: hsl(208, 7%, 36%);
-    border-color: hsl(208, 7%, 36%);
-    transition: 0.3s ease-in-out, border-color 0.3s ease-in-out;
+    background-color: hsl(235, 13%, 42%);
+    border-color: hsl(235, 13%, 42%);
+    box-shadow: 0px 0px 2px 2px hsl(235, 13%, 32%);
+    transition: background-color 0.3s ease-in-out, border-color 0.3s ease-in-out;
 
     &:hover {
         color: hsl(213, 18%, 88%);
-        background-color: hsl(208, 7%, 33%);
-        border-color: hsl(208, 7%, 33%);
+        background-color: hsl(235, 13%, 38%); 
+        border-color: hsl(235, 13%, 39%);
     }
 
     &:active {
         color: hsl(213, 18%, 88%) !important;
-        background-color: hsl(208, 7%, 30%) !important;
-        border-color: hsl(208, 7%, 30%) !important;
+        background-color: hsl(235, 13%, 35%) !important; 
+        border-color: hsl(235, 13%, 36%) !important;
     }
 
     &.current {
         color: hsl(213, 18%, 98%);
-        background-color: hsl(208, 7%, 30%);
-        border-color: hsl(208, 7%, 30%);
+        background-color: hsl(235, 13%, 35%);
+        border-color: hsl(235, 13%, 36%);
 
         &:hover {
-            background-color: hsl(208, 7%, 27%);
-            border-color: hsl(208, 7%, 27%);
+            background-color: hsl(235, 13%, 32%);
+            border-color: hsl(235, 13%, 33%);
         }
 
         &:active {
-            background-color: hsl(208, 7%, 24%) !important;
-            border-color: hsl(208, 7%, 24%) !important;
+            color: hsl(213, 18%, 98%) !important;
+            background-color: hsl(235, 13%, 29%) !important;
+            border-color: hsl(235, 13%, 30%) !important;
         }
     }
 }

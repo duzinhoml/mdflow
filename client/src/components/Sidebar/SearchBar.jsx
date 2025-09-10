@@ -14,6 +14,7 @@ function SearchBar() {
                 <input 
                     name="searchBar"
                     className="w-100 border rounded-2 rounded-start-0 p-1 ps-2 fs-6" 
+                    style={{ outlineColor: 'hsl(235, 13%, 42%)' }}
                     type="text" 
                     value={searchTerm}
                     placeholder={`Search ${filter}`}
@@ -23,7 +24,7 @@ function SearchBar() {
                 />
             </div>
             {searchTerm && 
-                <p className="m-0 mt-2 fs-6 text-wrap">
+                <p className="m-0 mt-2 fs-6 text-wrap text-light">
                     {searchedItems(filter).length ? (
                         <>
                             All {filter.toLowerCase()} matching <span className="text-danger">{searchTerm}</span> are displayed below

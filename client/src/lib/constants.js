@@ -491,7 +491,7 @@ export function useSectionNoteCreator() {
 export function useDeleteSetlist() {
     const { setUserData } = useUser();
     const { setSetlistData } = useSongData();
-    const { currentSetlist, setCurrentSetlist } = useSong();
+    const { currentSetlist, setCurrentSetlist, currentSong, setCurrentSong } = useSong();
     const [deleteSetlistById] = useMutation(DELETE_SETLIST_BY_ID, { refetchQueries: [QUERY_ME] });
 
     const handleDeleteSetlist = async (setlistId) => {
@@ -519,6 +519,8 @@ export function useDeleteSetlist() {
                 setCurrentSetlist(null);
                 setSetlistData({ title: "" });
             }
+
+            if (currentSong && currentSetlist.songs.includes(currentSong)) setCurrentSong(null);
         } 
         catch (err) {
             console.error(err);

@@ -29,16 +29,16 @@ function DndDashboard() {
                             <SortableInput 
                                 key={section._id.toString()} 
                                 id={section._id.toString()} 
-                                className='border border-light-subtle border-5 rounded-4 m-3 p-3'
-                                inputStyle={{ border: `3px solid ${section.color}`, textShadow: '2px 2px 4px black', boxShadow: 'inset 0px 2px 4px black', backgroundColor: '#262731' }}
+                                className='rounded-4 m-3 p-3'
+                                inputStyle={{ border: `3px solid ${section.color}`, boxShadow: `0px 0px 2px 0.5px ${section.color}`, backgroundColor: '#262731' }}
                                 notes={section.notes || []}
                             >
                                 {section.label}
                             </SortableInput>
                         )) : (
                             <SortableInput 
-                                className='border border-light-subtle border-5 rounded-4 m-3 p-3' 
-                                inputStyle={{ width: '12vw', textShadow: '2px 2px 4px black' }}
+                                className='rounded-4 m-3 p-3' 
+                                inputStyle={{ width: '12vw' }}
                             >
                                 Create your song
                             </SortableInput>

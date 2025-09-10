@@ -29,6 +29,7 @@ function CurrentTab({ currentTab, screenWidth }) {
                         style={{
                             color: child.color,
                             borderColor: child.color,
+                            boxShadow: `0px 0px 2px 1px ${child.color}`,
                             fontSize: screenWidth >= 768 ? '20px' : '16px'
                         }}
                         onClick={() => { 
@@ -53,8 +54,8 @@ function CurrentTab({ currentTab, screenWidth }) {
                                     style={{
                                         color: grandChild.color,
                                         borderColor: grandChild.color,
-                                        fontSize: screenWidth >= 768 ? '20px' : '16px',
-                                        textShadow: '2px 2px 4px black'
+                                        boxShadow: `0px 0px 2px 1px ${grandChild.color}`,
+                                        fontSize: screenWidth >= 768 ? '20px' : '16px'
                                     }}
                                     onClick={() => handleInputSelection(currentTab, grandChild)}
                                 >
