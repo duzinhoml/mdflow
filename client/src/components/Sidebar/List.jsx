@@ -1,12 +1,10 @@
-import { useSong } from "../../contexts/SongContext.jsx";
 import { useSearch } from "../../contexts/SearchTermContext.jsx";
 
 import FilterLogic from "./FilterLogic.jsx";
 import './index.css';
 
 function List() {
-    const { currentSetlist } = useSong();
-    const { searchTerm, filter, handleToggleFilter, searchedItems, filteredItems } = useSearch();
+    const { filter, handleToggleFilter } = useSearch();
 
     return (
         <div className="overflow-y-scroll flex-grow-1">
@@ -21,13 +19,7 @@ function List() {
             </div>
 
             <ul className="list-group m-3">
-                <FilterLogic 
-                    currentSetlist={currentSetlist}
-                    filter={filter}
-                    searchTerm={searchTerm}
-                    searchedItems={searchedItems}
-                    filteredItems={filteredItems}
-                />
+                <FilterLogic />
             </ul>
         </div>
     );

@@ -50,3 +50,72 @@
         background-color: hsl(235, 13%, 17%) !important;
     }
 }
+
+.createTabs {
+    color: hsl(213, 18%, 88%);
+    border: none;
+    border-bottom: 3px solid transparent;
+    border-radius: 6px 6px 0 0;
+    transition: font-weight 0.3s ease-in-out, border-color 0.3s ease-in-out, color 0.3s ease-in-out;
+
+    &:hover {
+        color: hsl(213, 18%, 93%);
+        border-color: hsl(235, 13%, 37%);
+    }
+
+    &.current {
+        border-color: hsl(235, 13%, 52%);
+        font-weight: 500;
+
+        &:hover {
+            color: hsl(213, 18%, 88%);
+        }
+    }
+}
+
+.labelInput[type="text"] {
+    background-color: transparent;
+    cursor: text;
+    outline: none;
+    box-shadow: 0px 0px 2px 2px hsl(235, 13%, 32%);
+}
+
+.colorInput[type="color"] {
+    background-color: hsl(235, 13%, 32%);
+    border: none;
+    padding: 4px;
+    width: 40px;
+    height: 40px;
+    cursor: pointer;
+    box-shadow: 0px 0px 2px 2px hsl(235, 13%, 17%);
+}
+
+.add {
+    color: hsl(213, 18%, 88%);
+    background-color: hsl(152, 69%, 31%);
+    border-color: hsl(152, 69%, 31%);
+    box-shadow: 0px 0px 2px 2px hsl(152, 69%, 16%);
+    transition: opacity 0.3s ease-in-out, 0.3s ease-in-out, border-color 0.3s ease-in-out, 0.3s ease-in-out;
+
+    &.display {
+        opacity: 1;
+        pointer-events: all;
+    }
+
+    &.close {
+        opacity: 0;
+        pointer-events: none;
+    }
+
+    &:hover {
+        color: hsl(213, 18%, 88%);
+        background-color: hsl(152, 69%, 28%);
+        border-color: hsl(152, 69%, 28%);
+    }
+
+    &:active {
+        color: hsl(213, 18%, 88%) !important;
+        background-color: hsl(152, 69%, 25%) !important;
+        border-color: hsl(152, 69%, 25%) !important;
+    }
+}

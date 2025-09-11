@@ -43,7 +43,6 @@ export const CREATE_SECTION = gql`
             notes {
                 _id
                 label
-                color
             }
         }
     }
@@ -54,7 +53,6 @@ export const CREATE_NOTE = gql`
         createNote(sectionId: $sectionId, input: $input) {
             _id
             label
-            color
         }
     }
 `;

@@ -31,7 +31,6 @@ export const QUERY_ME = gql`
                         notes {
                             _id
                             label
-                            color
                         }
                     }
                 }
@@ -46,7 +45,6 @@ export const QUERY_ME = gql`
                     notes {
                         _id
                         label
-                        color
                     }
                 }
             }

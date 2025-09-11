@@ -6,11 +6,6 @@ const noteSchema = new Schema(
             type: String,
             required: true,
             trim: true
-        },
-        color: {
-            type: String,
-            required: true,
-            trim: true
         }
     },
     {

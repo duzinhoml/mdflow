@@ -30,7 +30,6 @@ const typeDefs = `
     type Note {
         _id: ID!
         label: String!
-        color: String!
     }
 
     type Auth {
@@ -60,7 +59,6 @@ const typeDefs = `
 
     input CreateNoteInput {
         label: String!
-        color: String!
     }
 
     input UpdateUserInput {

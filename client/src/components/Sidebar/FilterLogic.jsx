@@ -1,6 +1,12 @@
+import { useSong } from "../../contexts/SongContext.jsx";
+import { useSearch } from "../../contexts/SearchTermContext.jsx";
+
 import Filter from "./Filter.jsx";
 
-function FilterLogic({ currentSetlist, filter, searchTerm, searchedItems, filteredItems }) {
+function FilterLogic() {
+    const { currentSetlist } = useSong();
+    const { searchTerm, filter, searchedItems, filteredItems } = useSearch();
+
     if (searchTerm && currentSetlist && filter === "Setlists") return <Filter key={currentSetlist._id} item={currentSetlist} filter={filter}/>;
     if (searchTerm && currentSetlist && filter === "Songs")
         return (currentSetlist?.songs.filter(song => song.title.toLowerCase().includes(searchTerm.toLowerCase())) || []).map(item => <Filter key={item._id} item={item} filter={filter} />);

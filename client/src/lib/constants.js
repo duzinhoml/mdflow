@@ -63,7 +63,8 @@ export const INPUT_POOL = [
                 { label: 'Keys', color: '#cccccc' }
             ] },
         ]
-    }
+    },
+    { id: 4, label: 'Create', icon: 'fa-solid fa-pen-to-square' }
 ];
 
 // Screen Width
@@ -383,10 +384,7 @@ export function useSectionNoteCreator() {
             const { data } = await createNote({
                 variables: {
                     sectionId: currentSection._id,
-                    input: {
-                        label: child.label,
-                        color: child.color
-                    }
+                    input: { label: child.label }
                 }
             });
             if (!data) return;
@@ -484,7 +482,12 @@ export function useSectionNoteCreator() {
         else handleCreateNote(child);
     }
 
-    return handleInputSelection;
+    const handleCreateSelection = (data) => {
+        if (data.type === "Section") handleCreateSection(data);
+        else handleCreateNote(data);
+    }
+
+    return { handleInputSelection, handleCreateSelection };
 }
 
 // Delete Setlist
@@ -791,7 +794,7 @@ export function useDndSensors() {
 // Drag Function
 export function useDrag() {
     const { userData, setUserData } = useUser();
-    const { currentSong, setCurrentSong, currentSections, setCurrentSections } = useSong();
+    const { currentSetlist, setCurrentSetlist, currentSong, setCurrentSong, currentSections, setCurrentSections } = useSong();
 
     const [updateSectionOrder] = useMutation(UPDATE_SECTION_ORDER, {
         refetchQueries: [QUERY_ME],
@@ -811,11 +814,31 @@ export function useDrag() {
         try {
             if (oldIndex !== -1 && newIndex !== -1) {
                 const reorderedSections = arrayMove([...currentSections], oldIndex, newIndex);
-                setUserData(prev => ({
+                setUserData(prev => {
+                    const updatedSetlists = prev.setlists.map(setlist => {
+                        if (setlist._id === currentSetlist?._id) {
+                            return {
+                                ...setlist,
+                                songs: setlist.songs.map(song => song._id === currentSong?._id ?
+                                    { ...song, sections: reorderedSections } : song
+                                )
+                            }
+                        }
+                        return setlist;
+                    });
+
+                    return {
+                        ...prev,
+                        setlists: updatedSetlists,
+                        songs: prev.songs.map(song => song._id === currentSong._id ?
+                            { ...song, sections: reorderedSections } : song
+                        )
+                    }
+                });
+                setCurrentSetlist(prev => ({
                     ...prev,
-                    songs: prev.songs.map(song => song._id === currentSong._id ?
-                        { ...song, sections: reorderedSections } : song
-                    )
+                    songs: prev.songs.map(song => song._id === currentSong._id ? 
+                        { ...song, sections: reorderedSections } : song)
                 }));
                 setCurrentSong(prev => ({
                     ...prev,

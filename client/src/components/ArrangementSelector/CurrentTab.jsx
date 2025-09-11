@@ -1,6 +1,8 @@
 import { useState, useEffect } from "react";
 import { useSectionNoteCreator } from "../../lib/constants";
 
+import Custom from "./Custom.jsx";
+
 import './index.css';
 
 function CurrentTab({ currentTab, screenWidth }) {
@@ -16,12 +18,13 @@ function CurrentTab({ currentTab, screenWidth }) {
         else setOpenSection({ state: true, section: child });
     }
 
-    const handleInputSelection = useSectionNoteCreator();
+    const { handleInputSelection } = useSectionNoteCreator();
 
     return (
         <div className="collapse" id={`collapseExample${currentTab?.id}`}>
-            <div className={`p-2 m-0 pt-0 row`}>
-                {currentTab?.children.map(child => (
+            <div className={`pb-2 mx-3 m-0 pt-0 row justify-content-center`}>
+                {currentTab?.id === 4 && <Custom/>}
+                {currentTab?.children?.map(child => (
                     <button 
                         key={child.label} 
                         type="submit"
