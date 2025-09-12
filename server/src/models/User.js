@@ -18,12 +18,16 @@ const userSchema = new Schema(
             required: true,
             trim: true,
             unique: true,
-            lowercase: true
+            lowercase: true,
+            minLength: [3, 'Username must be at least 3 characters long.'],
+            maxLength: [30, 'Username cannot exceed 30 characters.'],
         },
         password: {
             type: String,
             required: true,
-            trim: true
+            trim: true,
+            minLength: [3, 'Password must be at least 3 characters long.'],
+            maxLength: [50, 'Password cannot exceed 50 characters.'],
         },
         setlists: [{
             type: Schema.Types.ObjectId,

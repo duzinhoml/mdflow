@@ -1,0 +1,39 @@
+.options {
+    color: hsl(210, 17%, 88%);
+    box-shadow: 0px 0px 4px 2px hsl(235, 10%, 15%);
+    transition: color 0.3s ease-in-out, border-color 0.3s ease-in-out, background-color 0.3s ease-in-out;
+
+    &.current {
+        background-color: hsl(235, 10%, 40%);
+        border-color: hsl(235, 10%, 40%);
+    }
+
+    &:hover {
+        color: hsl(210, 17%, 88%);
+        background-color: hsl(235, 10%, 45%);
+    }
+    
+    &:active {
+        color: hsl(210, 17%, 88%) !important;
+        background-color: hsl(235, 10%, 40%) !important;
+        border-color: hsl(235, 10%, 40%) !important;
+    }
+}
+
+.log-out {
+    color: hsl(210, 17%, 88%);
+    background-color: hsl(235, 10%, 35%);
+    box-shadow: 0px 0px 4px 2px hsl(235, 10%, 15%);
+    transition: color 0.3s ease-in-out, border-color 0.3s ease-in-out, background-color 0.3s ease-in-out;
+
+    &:hover {
+        color: hsl(210, 17%, 88%);
+        background-color: hsl(235, 10%, 30%);
+    }
+    
+    &:active {
+        color: hsl(210, 17%, 88%) !important;
+        background-color: hsl(235, 10%, 27%) !important;
+        border-color: hsl(235, 10%, 27%) !important;
+    }
+}

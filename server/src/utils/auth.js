@@ -1,8 +1,10 @@
+import { User } from '../models/index.js';
+
 import jwt from 'jsonwebtoken';
 import dotenv from 'dotenv';
 dotenv.config();
 
-export const authenticateToken = ({ req }) => {
+export const authenticateToken = async ({ req }) => {
     let token = req.body.token || req.query.token || req.headers.authorization;
 
     if (req.headers.authorization) token = token.split(' ').pop().trim();
@@ -11,7 +13,8 @@ export const authenticateToken = ({ req }) => {
 
     try {
         const { data } = jwt.verify(token, process.env.JWT_SECRET_KEY || '', { maxAge: '2hr' });
-        req.user = data;
+        const user = await User.findOne({ _id: data._id }, "_id username");
+        req.user = { _id: user._id, username: user.username };
     } 
     catch (err) {
         console.log('Invalid token');

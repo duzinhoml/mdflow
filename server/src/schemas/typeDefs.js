@@ -66,6 +66,12 @@ const typeDefs = `
         password: String
     }
 
+    input UpdatePasswordInput {
+        currentPassword: String!
+        newPassword: String!
+        confirmPassword: String!
+    }
+
     type Query {
         users: [User]
         user(username: String!): User
@@ -86,11 +92,13 @@ const typeDefs = `
         createNote(sectionId: ID!, input: CreateNoteInput!): Note
 
         updateUser(userId: ID!, input: UpdateUserInput!): User
+        updatePassword(input: UpdatePasswordInput!): User
         updateSetlistTitle(setlistId: ID!, title: String!): Setlist
         updateSongTitle(songId: ID!, title: String!): Song
         updateSectionOrder(songId: ID!, sectionIds: [ID!]!): Song
 
         deleteUserById(userId: ID!): String
+        deleteUser(confirmDelete: String!): String
         deleteSetlistById(setlistId: ID!): String
         deleteSongById(songId: ID!): String
         deleteSectionById(sectionId: ID!): String

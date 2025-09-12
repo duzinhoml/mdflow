@@ -1,0 +1,65 @@
+.decision-input {
+    border: 1px solid hsl(235, 13%, 52%);
+    transition: border-color 0.3s ease-in-out, box-shadow 0.3s ease-in-out;
+
+    &:focus {
+        border-color: hsl(235, 13%, 32%) !important;
+        box-shadow: 0px 0px 2px 2px hsl(235, 13%, 52%) !important;
+    }
+}
+
+.error {
+    border: 2px solid hsl(354, 70%, 54%) !important;
+
+    &:focus {
+        box-shadow: 0px 0px 2px 1px hsl(354, 70%, 54%) !important;
+    }
+}
+
+.error-feedback {
+    color: hsl(354, 70%, 54%);
+}
+
+.settings-save-btn {
+    color: hsl(210, 17%, 98%);
+    background-color: hsl(264, 100%, 72%); 
+    border-color: hsl(264, 100%, 72%);
+    box-shadow: 0px 0px 2px 1px hsl(264, 100%, 62%);
+    transition: background-color 0.3s ease-in-out, border-color 0.3s ease-in-out;
+
+    &:hover {
+        color: hsl(210, 17%, 98%);
+        background-color: hsl(264, 100%, 67%);
+        border-color: hsl(264, 100%, 67%);
+    }
+
+    &:active {
+        color: hsl(210, 17%, 98%) !important;
+        background-color: hsl(264, 100%, 62%) !important;
+        border-color: hsl(264, 100%, 62%) !important;
+    }
+}
+
+.settings-discard-btn {
+    color: hsl(213, 18%, 98%);
+    background-color: hsl(235, 13%, 52%);
+    border: 1px solid hsl(235, 13%, 52%);
+    box-shadow: 0px 0px 2px 2px hsl(235, 13%, 27%);
+    transition: background-color 0.3s ease-in-out, border-color 0.3s ease-in-out;
+
+    &:hover {
+        color: hsl(213, 18%, 98%);
+        background-color: hsl(235, 13%, 48%); 
+        border-color: hsl(235, 13%, 49%);
+    }
+
+    &:active {
+        color: hsl(213, 18%, 98%) !important;
+        background-color: hsl(235, 13%, 45%) !important; 
+        border-color: hsl(235, 13%, 46%) !important;
+    }
+}
+
+.delete-message {
+    color: hsl(354, 70%, 54%);
+}

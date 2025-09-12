@@ -223,6 +223,43 @@ const resolvers = {
                 throw new Error(`Error updating user: ${err.message}`);
             }
         },
+        updatePassword: async (_, { input }, context) => {
+            if (!context.user) throw new Error("Not Authenticated");
+
+            try {
+                const user = await User.findOne({ _id: context.user._id });
+                
+                input.currentPassword = input.currentPassword.trim();
+
+                const correctPW = await user.isCorrectPassword(input.currentPassword);
+                if (!correctPW) throw new Error("Incorrect password");
+
+                if (input.newPassword.length < 8) throw new Error("Password must be at least 8 characters long.");
+                if (input.newPassword.length > 50) throw new Error("Password cannot exceed 50 characters.");
+
+                const passwordRegex = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,}$/;
+                if (!passwordRegex.test(input.newPassword)) throw new Error("Password must include at least one lowercase letter, one uppercase letter, one number, and one special character.");
+
+                if (input.newPassword !== input.confirmPassword) throw new Error('Passwords do not match');
+
+                const saltRounds = 10;
+                input.newPassword = await bcrypt.hash(input.newPassword, saltRounds);
+
+                const updatedUser = await User.findOneAndUpdate(
+                    { _id: context.user._id },
+                    { $set: {
+                        password: input.newPassword
+                    } },
+                    { new: true }
+                );
+
+                if (!updatedUser) throw new Error("User not found or update failed");
+                return updatedUser;
+            } 
+            catch (err) {
+                throw new Error(err.message);
+            }
+        },
         updateSetlistTitle: async (_, { setlistId, title}, context) => {
             try {
                 if (!context.user) throw new Error('Not authenticated');
@@ -277,6 +314,58 @@ const resolvers = {
             } 
             catch (err) {
                 throw new Error(`Error updating song: ${err.message}`);
+            }
+        },
+        deleteUser: async (_, { confirmDelete }, context) => {
+            if (!context.user) throw new Error("Not authenticated");
+
+            try {
+                if (confirmDelete !== context.user.username) throw new Error("Incorrect confirmation");
+
+                const user = await User.findOne({ _id: context.user._id }).populate([
+                    {
+                        path: "setlists",
+                        populate: {
+                            path: "songs",
+                            populate: {
+                                path: "sections",
+                                populate: {
+                                    path: "notes"
+                                }
+                            }
+                        }
+                    }
+                ]);
+
+                if (!user) throw new Error("User not found");
+                const fullName = `${user.firstName} ${user.lastName}`;
+
+                const noteIds = user.setlists?.flatMap(
+                    setlist => setlist.songs?.flatMap(
+                        song => song.sections?.flatMap(
+                            section => section.notes
+                        ) || []
+                    ) || []
+                ) || [];
+
+                const sectionIds = user.setlists?.flatMap(
+                    setlist => setlist.songs?.flatMap(
+                        song => song.sections
+                    ) || []
+                ) || [];
+
+                const songIds = user.setlists?.flatMap(setlist => setlist.songs) || [];
+
+                await Note.deleteMany({ _id: { $in: noteIds } });
+                await Section.deleteMany({ _id: { $in: sectionIds } });
+                await Song.deleteMany({ _id: { $in: songIds } });
+                await Setlist.deleteMany({ _id: { $in: user.setlists } });
+                await User.findOneAndDelete({ _id: context.user._id });
+
+                return `${fullName}, your account and it's associated contents have been deleted.`;
+            } 
+            catch (err) {
+                throw new Error(err.message);
             }
         },
         deleteUserById: async (_, { userId }) => {

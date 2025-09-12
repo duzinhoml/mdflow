@@ -1,0 +1,26 @@
+.home {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    width: 40px;
+    aspect-ratio: 1 / 1;
+    border-radius: 50%;
+
+    color: hsl(213, 18%, 98%);
+    background-color: hsl(235, 13%, 42%);
+    border: 1px solid hsl(235, 13%, 42%);
+    box-shadow: 0px 0px 2px 2px hsl(235, 13%, 27%);
+    transition: background-color 0.3s ease-in-out, border-color 0.3s ease-in-out;
+
+    &:hover {
+        color: hsl(213, 18%, 98%);
+        background-color: hsl(235, 13%, 38%); 
+        border-color: hsl(235, 13%, 39%);
+    }
+
+    &:active {
+        color: hsl(213, 18%, 98%) !important;
+        background-color: hsl(235, 13%, 35%) !important; 
+        border-color: hsl(235, 13%, 36%) !important;
+    }
+}

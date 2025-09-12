@@ -25,7 +25,7 @@ function FilterLogic() {
         <div className="text-center mt-2">
             <p className="fs-5 fw-medium text-light">No {filter} yet</p>
             <p className="text-white-50">
-                Start by creating your first {currentSetlist ? "song" : "setlist"}. 
+                Start by creating your first {filter.toLowerCase().split('').slice(0, filter.length - 1)}.
                 Just enter a name and you’re good to go!
             </p>
         </div>

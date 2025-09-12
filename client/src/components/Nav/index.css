@@ -38,19 +38,19 @@
         color: hsl(210, 17%, 88%);
         background-color: hsl(235, 10%, 25%);
         box-shadow: 0px 0px 4px 2px hsl(235, 10%, 15%);
-        transition: color 0.3s ease-in-out, background-color 0.3s ease-in-out;
+        transition: color 0.3s ease-in-out, border-color 0.3s ease-in-out, background-color 0.3s ease-in-out;
 
         .current {
             color: hsl(210, 17%, 98%);
         }
 
         &:hover {
-            color: hsl(210, 17%, 83%);
+            color: hsl(210, 17%, 88%);
             background-color: hsl(235, 10%, 20%);
         }
 
         &:active {
-            color: hsl(210, 17%, 78%) !important;
+            color: hsl(210, 17%, 88%) !important;
             background-color: hsl(235, 10%, 17%) !important;
             border-color: hsl(235, 10%, 17%) !important;
         }
@@ -72,4 +72,31 @@
 .btn.show {
     background-color: hsl(264, 100%, 62%) !important;
     border-color: hsl(264, 100%, 62%) !important
+}
+
+.profile {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    width: 40px;
+    aspect-ratio: 1 / 1;
+    border-radius: 50%;
+
+    color: hsl(213, 18%, 98%);
+    background-color: hsl(235, 13%, 42%);
+    border: 1px solid hsl(235, 13%, 42%);
+    box-shadow: 0px 0px 2px 2px hsl(235, 13%, 27%);
+    transition: background-color 0.3s ease-in-out, border-color 0.3s ease-in-out;
+
+    &:hover {
+        color: hsl(213, 18%, 98%);
+        background-color: hsl(235, 13%, 38%); 
+        border-color: hsl(235, 13%, 39%);
+    }
+
+    &:active {
+        color: hsl(213, 18%, 98%) !important;
+        background-color: hsl(235, 13%, 35%) !important; 
+        border-color: hsl(235, 13%, 36%) !important;
+    }
 }

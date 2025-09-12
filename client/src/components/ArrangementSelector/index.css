@@ -91,11 +91,11 @@
 }
 
 .add {
-    color: hsl(213, 18%, 88%);
-    background-color: hsl(152, 69%, 31%);
-    border-color: hsl(152, 69%, 31%);
-    box-shadow: 0px 0px 2px 2px hsl(152, 69%, 16%);
-    transition: opacity 0.3s ease-in-out, 0.3s ease-in-out, border-color 0.3s ease-in-out, 0.3s ease-in-out;
+    color: hsl(210, 17%, 98%);
+    background-color: hsl(264, 100%, 72%);
+    border-color: hsl(264, 100%, 72%);
+    box-shadow: 0px 0px 2px 1px hsl(264, 100%, 62%);
+    transition: opacity 0.3s ease-in-out, background-color 0.3s ease-in-out, border-color 0.3s ease-in-out;
 
     &.display {
         opacity: 1;
@@ -108,14 +108,14 @@
     }
 
     &:hover {
-        color: hsl(213, 18%, 88%);
-        background-color: hsl(152, 69%, 28%);
-        border-color: hsl(152, 69%, 28%);
+        color: hsl(210, 17%, 98%);
+        background-color: hsl(264, 100%, 67%);
+        border-color: hsl(264, 100%, 67%);
     }
 
     &:active {
-        color: hsl(213, 18%, 88%) !important;
-        background-color: hsl(152, 69%, 25%) !important;
-        border-color: hsl(152, 69%, 25%) !important;
+        color: hsl(210, 17%, 98%) !important;
+        background-color: hsl(264, 100%, 62%) !important;
+        border-color: hsl(264, 100%, 62%) !important;
     }
 }

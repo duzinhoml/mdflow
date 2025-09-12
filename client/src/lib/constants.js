@@ -1,4 +1,5 @@
 import { useState, useEffect, useCallback } from 'react';
+import { useNavigate } from 'react-router-dom';
 import { ApolloClient, InMemoryCache, createHttpLink } from '@apollo/client';
 import { setContext } from '@apollo/client/link/context';
 import { useSensors, useSensor, PointerSensor, KeyboardSensor } from '@dnd-kit/core';
@@ -13,8 +14,8 @@ import Auth from './utils/auth.js';
 import { useMutation } from '@apollo/client';
 import { 
     CREATE_SETLIST, CREATE_SONG, CREATE_SECTION, CREATE_NOTE, 
-    UPDATE_SETLIST_TITLE, UPDATE_SONG_TITLE, UPDATE_SECTION_ORDER, 
-    DELETE_SETLIST_BY_ID, DELETE_SONG_BY_ID, DELETE_SECTION_BY_ID, DELETE_NOTE_BY_ID 
+    UPDATE_PASSWORD, UPDATE_SETLIST_TITLE, UPDATE_SONG_TITLE, UPDATE_SECTION_ORDER, 
+    DELETE_USER, DELETE_SETLIST_BY_ID, DELETE_SONG_BY_ID, DELETE_SECTION_BY_ID, DELETE_NOTE_BY_ID 
 } from './utils/mutations.js';
 import { QUERY_ME } from './utils/queries';
 
@@ -777,6 +778,108 @@ export const useInputChange = () => {
     };
 
     return { formData, handleInputChange };
+}
+
+// Update Password
+export const useUpdatePassword = () => {
+    const [formData, setFormData] = useState({
+        currentPassword: "",
+        newPassword: "",
+        confirmPassword: ""
+    });
+    const navigate = useNavigate();
+    const [updatePassword, { error }] = useMutation(UPDATE_PASSWORD, { refetchQueries: [QUERY_ME] });
+
+    const currentPWError = error?.message === "Incorrect password";
+    const newPWError = error?.message?.includes("character");
+    const confirmPWError = error?.message === "Passwords do not match";
+
+    const incorrectPassword = error?.message === 'Incorrect password';
+    const minChar = error?.message === 'Password must be at least 8 characters long.';
+    const maxChar = error?.message === 'Password cannot exceed 50 characters.';
+    const specialChar = error?.message === 'Password must include at least one lowercase letter, one uppercase letter, one number, and one special character.';
+    const noMatch = error?.message === 'Passwords do not match';
+
+    const handleInputChange = (e) => {
+        const { name, value } = e.target;
+        setFormData(prev => ({
+            ...prev,
+            [name]: value
+        }));
+
+        if (error) error.message = null;
+    }
+
+    const handleFormSubmit = async (e) => {
+        try {
+            e.preventDefault();
+            
+            await updatePassword({
+                variables: {
+                    input: { ...formData }
+                }
+            });
+            navigate('/');
+        } 
+        catch (err) {
+            console.error(err);
+        }
+    }
+
+    const cancelForm = () => {
+        setFormData({
+            currentPassword: "",
+            newPassword: "",
+            confirmPassword: ""
+        });
+
+        if (error) error.message = null;
+    }
+
+    return { 
+        formData, error, 
+        currentPWError, newPWError, confirmPWError,
+        incorrectPassword, minChar, maxChar, specialChar, noMatch,
+        handleInputChange, handleFormSubmit, cancelForm };
+}
+
+// Delete User
+export const useDeleteUser = () => {
+    const [confirmDelete, setConfirmDelete] = useState("");
+    const [deleteUser, { error }] = useMutation(DELETE_USER, { refetchQueries: [QUERY_ME] });
+
+    const confirmDeleteError = error?.message === "Incorrect confirmation";
+
+    const handleInputChange = (e) => {
+        const { value } = e.target;
+        setConfirmDelete(value);
+
+        if (error) error.message = null;
+    }
+
+    const handleDeleteUser = async (e, confirmDelete) => {
+        e.preventDefault();
+
+        try {
+            await deleteUser({
+                variables: { confirmDelete }
+            });
+            
+            setConfirmDelete("");
+            Auth.logout();
+        } 
+        catch (err) {
+           console.error(err); 
+        }
+    }
+
+    const cancelForm = () => {
+        setConfirmDelete("");
+
+        if (error) error.message = null;
+    }
+
+    return { error, confirmDeleteError, confirmDelete, handleInputChange, handleDeleteUser, cancelForm };
 }
 
 // Sensors

@@ -3,16 +3,22 @@ import { createBrowserRouter, RouterProvider } from 'react-router-dom';
 
 import App from './App.jsx'
 import Home from './pages/Home.jsx'
+import Settings from './pages/Settings.jsx';
+import Error from './pages/Error.jsx';
 
 const router = createBrowserRouter([
   {
     path: '/',
     element: <App />,
-    errorElement: <div className='alert alert-danger' role='alert'>404 Not Found</div>,
+    errorElement: <Error />,
     children: [
       {
         index: true,
         element: <Home />
+      },
+      {
+        path: '/settings',
+        element: <Settings />
       }
     ]
   }

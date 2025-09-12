@@ -57,6 +57,14 @@ export const CREATE_NOTE = gql`
     }
 `;
 
+export const UPDATE_PASSWORD = gql`
+    mutation updatePassword($input: UpdatePasswordInput!) {
+        updatePassword(input: $input) {
+            _id
+        }
+    }
+`;
+
 export const UPDATE_SETLIST_TITLE = gql`
     mutation updateSetlistTitle($setlistId: ID!, $title: String!) {
         updateSetlistTitle(setlistId: $setlistId, title: $title) {
@@ -86,6 +94,12 @@ export const UPDATE_SECTION_ORDER = gql`
                 color
             }
         }
+    }
+`;
+
+export const DELETE_USER = gql`
+    mutation deleteUser($confirmDelete: String!) {
+        deleteUser(confirmDelete: $confirmDelete)
     }
 `;
 
