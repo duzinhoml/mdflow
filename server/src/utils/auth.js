@@ -13,8 +13,7 @@ export const authenticateToken = async ({ req }) => {
 
     try {
         const { data } = jwt.verify(token, process.env.JWT_SECRET_KEY || '', { maxAge: '2hr' });
-        const user = await User.findOne({ _id: data._id }, "_id username");
-        req.user = { _id: user._id, username: user.username };
+        req.user = data;
     } 
     catch (err) {
         console.log('Invalid token');

@@ -13,7 +13,7 @@ import Auth from './utils/auth.js';
 
 import { useMutation } from '@apollo/client';
 import { 
-    CREATE_SETLIST, CREATE_SONG, CREATE_SECTION, CREATE_NOTE, 
+    LOGIN_USER, CREATE_USER, CREATE_SETLIST, CREATE_SONG, CREATE_SECTION, CREATE_NOTE, 
     UPDATE_PASSWORD, UPDATE_SETLIST_TITLE, UPDATE_SONG_TITLE, UPDATE_SECTION_ORDER, 
     DELETE_USER, DELETE_SETLIST_BY_ID, DELETE_SONG_BY_ID, DELETE_SECTION_BY_ID, DELETE_NOTE_BY_ID 
 } from './utils/mutations.js';
@@ -762,12 +762,14 @@ export function useDelete() {
     return handleDelete;
 }
 
-// Login Input Change
-export const useInputChange = () => {
+// Login
+export const useLogin = () => {
     const [formData, setFormData] = useState({
         username: '',
         password: ''
     });
+    const [login, { error }] = useMutation(LOGIN_USER, { refetchQueries: [QUERY_ME] });
+    const loginError = error?.message?.includes("Please")
 
     const handleInputChange = (e) => {
         const { name, value } = e.target;
@@ -775,9 +777,82 @@ export const useInputChange = () => {
             ...prev,
             [name]: value
         }));
+
+        if (error) error.message = null;
     };
 
-    return { formData, handleInputChange };
+    const handleFormSubmit = async (e, input) => {
+        e.preventDefault();
+
+        try {
+            const { data } = await login({
+                variables: { ...input }
+            });
+
+            Auth.login(data.login.token);
+        } 
+        catch (err) {
+            console.error(err);
+        }
+    };
+
+    return { 
+        formData, handleInputChange,
+        error, loginError, handleFormSubmit
+     };
+
+}
+
+// Register
+export const useRegister = () => {
+    const [formData, setFormData] = useState({
+        firstName: "",
+        lastName: "",
+        username: "",
+        password: ""
+    });
+    const [currentStep, setCurrentStep] = useState(1);
+
+    const [createUser, { error }] = useMutation(CREATE_USER, { refetchQueries: [QUERY_ME] });
+    const userError = error?.message?.includes('Username');
+    const passError = error?.message?.includes('Password');
+
+    const handleInputChange = (e) => {
+        const { name, value } = e.target;
+        setFormData(prev => ({
+            ...prev,
+            [name]: value
+        }));
+
+        if (error) error.message = null;
+    }
+
+    const handlePrevStep = () => setCurrentStep(1);
+
+    const handleNextStep = (e) => {
+        e.preventDefault();
+        setCurrentStep(2)
+    };
+
+    const handleFormSubmit = async (e, input) => {
+        e.preventDefault();
+
+        try {
+            const { data } = await createUser({
+                variables: { input }
+            });
+
+            Auth.login(data.createUser.token);
+        } 
+        catch (err) {
+            console.error(err);
+        }
+    }
+
+    return {
+        formData, handleInputChange,
+        currentStep, error, userError, passError, handlePrevStep, handleNextStep, handleFormSubmit
+    }
 }
 
 // Update Password

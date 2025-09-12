@@ -85,27 +85,40 @@ const resolvers = {
     Mutation: {
         createUser: async (_, { input }) => {
             try {
-                input.username = input.username.trim().toLowerCase();
+                input.username = input.username.trim();
                 input.password = input.password.trim();
 
                 // Username Check
+                if (input.username.length < 3) throw new Error('Username must be at least 3 characters long.');
+                if (input.username.length > 30) throw new Error('Username cannot exceed 30 characters.');
+
+                const usernameRegex = /^[a-z0-9_-]+$/;
+                if (!usernameRegex.test(input.username)) throw new Error('Username can only contain lowercase letters, numbers, underscores, and dashes.');
+
                 const userUsername = await User.findOne({ username: input.username });
                 if (userUsername) throw new Error('Username already exists');
+
+                // Password Check
+                if (input.password.length < 8) throw new Error('Password must be at least 8 characters long.');
+                if (input.password.length > 50) throw new Error('Password cannot exceed 50 characters.');
+
+                const passwordRegex = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,}$/;
+                if (!passwordRegex.test(input.password)) throw new Error('Password must include at least one lowercase letter, one uppercase letter, one number, and one special character.');
 
                 const user = await User.create({ ...input });
                 const token = signToken(user._id, user.username);
                 return { token, user };
             } 
             catch (err) {
-                throw new Error(`Error creating user: ${err.message}`);
+                throw new Error(`${err.message}`);
             }
         },
         login: async (_, { username, password }) => {
             const user = await User.findOne({ username });
-            if (!user) throw new Error('User not found');
+            if (!user) throw new Error('User not found. Please check your username or create a new account.');
 
             const correctPW = await user.isCorrectPassword(password);
-            if (!correctPW) throw new Error('Incorrect password');
+            if (!correctPW) throw new Error('Incorrect username or password. Please try again.');
 
             const token = signToken(user._id, user.username);
             return { token, user };
@@ -320,8 +333,6 @@ const resolvers = {
             if (!context.user) throw new Error("Not authenticated");
 
             try {
-                if (confirmDelete !== context.user.username) throw new Error("Incorrect confirmation");
-
                 const user = await User.findOne({ _id: context.user._id }).populate([
                     {
                         path: "setlists",
@@ -338,6 +349,8 @@ const resolvers = {
                 ]);
 
                 if (!user) throw new Error("User not found");
+                if (confirmDelete !== user.username) throw new Error("Incorrect confirmation");
+
                 const fullName = `${user.firstName} ${user.lastName}`;
 
                 const noteIds = user.setlists?.flatMap(

@@ -12,6 +12,20 @@ export const LOGIN_USER = gql`
     }
 `;
 
+export const CREATE_USER = gql`
+    mutation createUser($input: CreateUserInput!) {
+        createUser(input: $input) {
+            token
+            user {
+                _id
+                username
+                firstName
+                lastName
+            }
+        }
+    }
+`;
+
 export const CREATE_SETLIST = gql`
     mutation createSetlist($input: CreateSetlistInput!) {
         createSetlist(input: $input) {

@@ -1,0 +1,57 @@
+.login-input {
+    border: 1px solid hsl(235, 13%, 52%);
+    transition: border-color 0.3s ease-in-out, box-shadow 0.3s ease-in-out;
+
+    &:focus {
+        border-color: hsl(235, 13%, 32%) !important;
+        box-shadow: 0px 0px 2px 2px hsl(235, 13%, 52%) !important;
+    }
+}
+
+.login-btn {
+    color: hsl(210, 17%, 98%);
+    background-color: hsl(264, 100%, 72%);
+    border-color: hsl(264, 100%, 72%);
+    box-shadow: 0px 0px 2px 1px hsl(264, 100%, 62%);
+    transition: opacity 0.3s ease-in-out, background-color 0.3s ease-in-out, border-color 0.3s ease-in-out;
+
+    &:hover {
+        color: hsl(210, 17%, 98%);
+        background-color: hsl(264, 100%, 67%);
+        border-color: hsl(264, 100%, 67%);
+    }
+
+    &:active {
+        color: hsl(210, 17%, 98%) !important;
+        background-color: hsl(264, 100%, 62%) !important;
+        border-color: hsl(264, 100%, 62%) !important;
+    }
+}
+
+.sign-up {
+    cursor: pointer;
+    text-decoration: underline;
+    color: hsl(264, 100%, 72%);
+    transition: color 0.3s ease-in-out;
+
+    &:hover {
+        color: hsl(264, 100%, 67%);
+    }
+
+    &:active {
+        color: hsl(264, 100%, 62%);
+    }
+}
+
+.login-error {
+    border: 2px solid hsl(354, 70%, 54%) !important;
+
+    &:focus {
+        box-shadow: 0px 0px 2px 1px hsl(354, 70%, 54%) !important;
+    }
+}
+
+.login-error-feedback {
+    text-align: center;
+    color: hsl(0, 0%, 79%);
+}
