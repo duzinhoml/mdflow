@@ -71,15 +71,19 @@ export const INPUT_POOL = [
 // Screen Width
 export function useWindowResize() {
     const [screenWidth, setScreenWidth] = useState(window.innerWidth);
+    const [isMobile, setIsMobile] = useState(window.innerWidth <= 1024);
 
     useEffect(() => {
-        const handleResize = () => setScreenWidth(window.innerWidth);
+        const handleResize = () => {
+            setScreenWidth(window.innerWidth)
+            setIsMobile(window.innerWidth <= 1024);
+        };
         window.addEventListener('resize', handleResize);
         
         return () => window.removeEventListener('resize', handleResize);
     }, []);
 
-    return screenWidth;
+    return { screenWidth, isMobile };
 };
 
 // Updating Setlist Title

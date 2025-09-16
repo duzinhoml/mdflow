@@ -10,15 +10,15 @@ function Register({ setAccountStep }) {
 
     return (
         <div className="container d-flex justify-content-center align-items-center min-vh-100">
-            <div className="row w-100 justify-content-center flex-column flex-md-row">
-                <div className="col-12 col-md-5 d-flex justify-content-center align-items-center text-center text-md-start pe-md-5">
+            <div className="row w-100 justify-content-center flex-column flex-lg-row">
+                <div className="col-12 col-lg-5 d-flex justify-content-center align-items-center text-center text-lg-start pe-lg-5">
                     <div className="text-center">
                         <h1 className='text-light'>MDFlow</h1>
                         <p style={{ color: '#A86FFF' }}>Nest Your Ideas, Watch Them Grow</p> 
                     </div>
                 </div>
 
-                <div className="col-12 col-md-5 ps-md-5">
+                <div className="col-12 col-lg-5 ps-lg-5">
 
                     <form 
                         className="border border-5 rounded p-4 position-relative needs-validation" 

@@ -1,15 +1,16 @@
 import { useState, useEffect } from "react";
-import { useSectionNoteCreator } from "../../lib/constants";
+import { useWindowResize, useSectionNoteCreator } from "../../lib/constants";
 
 import Custom from "./Custom.jsx";
 
 import './index.css';
 
-function CurrentTab({ currentTab, screenWidth }) {
+function CurrentTab({ currentTab }) {
     const [openSection, setOpenSection] = useState({
         state: false,
         section: null
     });
+    const { screenWidth } = useWindowResize();
 
     useEffect(() => setOpenSection({ state: false, section: null }), [currentTab]);
 
@@ -22,13 +23,13 @@ function CurrentTab({ currentTab, screenWidth }) {
 
     return (
         <div className="collapse" id={`collapseExample${currentTab?.id}`}>
-            <div className={`pb-2 mx-3 m-0 pt-0 row justify-content-center`}>
+            <div className={`mx-3 m-0 pt-0 row justify-content-center`}>
                 {currentTab?.id === 4 && <Custom/>}
                 {currentTab?.children?.map(child => (
                     <button 
                         key={child.label} 
                         type="submit"
-                        className={`btn inputs m-1 flex-grow-1 col-${currentTab?.id === 3 ? '2' : '3'}`}
+                        className={`btn inputs m-1 flex-grow-1 col-lg-${currentTab?.id === 3 ? '2' : '3'} col-${currentTab?.id === 3 ? '4' : '3'}`}
                         style={{
                             color: child.color,
                             borderColor: child.color,
@@ -46,14 +47,14 @@ function CurrentTab({ currentTab, screenWidth }) {
             </div>
 
             {(openSection.state && currentTab?.id === 3) && (
-                <div className="p-2 m-0 pt-0 row">
+                <div className="mx-3 mb-2 pt-0 row">
                     {currentTab?.children.map(child => (
                         (openSection.section?.label === child.label) && (
                             child.children?.map(grandChild => (
                                 <button 
                                     key={grandChild.label} 
                                     type="submit"
-                                    className={`btn inputs m-1 col-${currentTab?.id === 3 ? '2' : '3'}`}
+                                    className={`btn sub-inputs m-1 col-lg-${currentTab?.id === 3 ? '2' : '3'} col-${currentTab?.id === 3 ? '3' : '3'}`}
                                     style={{
                                         color: grandChild.color,
                                         borderColor: grandChild.color,

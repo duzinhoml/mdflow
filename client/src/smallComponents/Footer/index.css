@@ -1,0 +1,34 @@
+.footer {
+    background-color: hsl(235, 13%, 22%);
+    border-radius: 6px 6px 0px 0px;
+    box-shadow: 0px 0px 2px 2px hsl(235, 13%, 32%);
+    z-index: 1;
+}
+
+.foot-labels {
+
+    > button {
+        color: hsl(213, 18%, 88%);
+        box-shadow: 0px 0px 5px 2px hsl(235, 13%, 19%);
+        width: 54px; 
+        transition: background-color 0.3s ease-in-out, border-color 0.3s ease-in-out;
+
+        &.current {
+            background-color: hsl(235, 10%, 30%);
+            border-color: hsl(235, 10%, 30%);
+            color: hsl(264, 100%, 72%);
+        }
+    
+        &:hover {
+            color: hsl(213, 18%, 88%);
+            background-color: hsl(235, 13%, 38%); 
+            border-color: hsl(235, 13%, 39%);
+        }
+    
+        &:active {
+            color: hsl(213, 18%, 88%) !important;
+            background-color: hsl(235, 13%, 35%) !important; 
+            border-color: hsl(235, 13%, 36%) !important;
+        }
+    }
+}

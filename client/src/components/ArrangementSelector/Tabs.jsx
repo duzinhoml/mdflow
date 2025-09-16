@@ -1,10 +1,11 @@
 import { useSong } from "../../contexts/SongContext.jsx";
-import { INPUT_POOL } from "../../lib/constants.js";
+import { INPUT_POOL, useWindowResize } from "../../lib/constants.js";
 
 import './index.css';
 
-function Tabs({ setCurrentTab, screenWidth }) {
+function Tabs({ setCurrentTab }) {
     const { currentSong } = useSong();
+    const { screenWidth } = useWindowResize();
 
     return (
         <div className='justify-content-center my-3 mx-3 row gap-2'>
@@ -14,7 +15,7 @@ function Tabs({ setCurrentTab, screenWidth }) {
                     <button 
                         key={input.id}
                         onClick={() => setCurrentTab(input)} 
-                        className={`btn mx-1 col-2 flex-grow-1 flex-md-grow-1 labels d-flex justify-content-center align-items-center`} 
+                        className={`btn mx-0 col-lg-2 col-4 flex-grow-1 flex-md-grow-1 labels d-flex justify-content-center align-items-center`} 
                         data-bs-toggle="collapse" 
                         data-bs-target={`#collapseExample${input.id}`} 
                         aria-expanded="false" 

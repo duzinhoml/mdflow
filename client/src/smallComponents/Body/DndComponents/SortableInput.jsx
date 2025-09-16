@@ -1,12 +1,12 @@
-import { useState, useEffect } from 'react';
-import { useSortable } from '@dnd-kit/sortable';
+import { useState, useEffect } from "react";
+import { useSortable } from "@dnd-kit/sortable";
 import { CSS } from '@dnd-kit/utilities';
 
-import { useDelete, useDeleteNote, useHoverEffect } from '../lib/constants';
+import { useDelete, useDeleteNote, useHoverEffect } from "../../../lib/constants.js";
 
-import { useSong } from '../contexts/SongContext';
+import { useSong } from "../../../contexts/SongContext.jsx";
 
-import './index.css'
+import './index.css';
 
 function SortableInput({ id, labelStyle, notes, children }) {
     const [toDelete, setToDelete] = useState({
@@ -16,11 +16,11 @@ function SortableInput({ id, labelStyle, notes, children }) {
 
     const { isCurrentSection, hoverBg, isHovered, allowDrag, setAllowDrag, handleHoverEffect } = useHoverEffect();
     const { attributes, listeners, setNodeRef, transform, transition } = useSortable({ id, disabled: !allowDrag });
-
+    
     const handleDelete = useDelete();
     const handleDeleteNote = useDeleteNote();
     const { currentSong, currentSections, currentSection, setCurrentSection } = useSong();
-    
+
     const style = {
         transform: CSS.Transform.toString(transform),
         transition: [transition, 'background-color 0.3s ease-in-out'].filter(Boolean).join(', '),
@@ -50,7 +50,7 @@ function SortableInput({ id, labelStyle, notes, children }) {
         <div 
             ref={setNodeRef} 
             style={style} 
-            className="section-card" 
+            className="sm-section-card" 
             {...attributes} 
             {...listeners} 
             onMouseEnter={() => handleHoverEffect("card", true)} 

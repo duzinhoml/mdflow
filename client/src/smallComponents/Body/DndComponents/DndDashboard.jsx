@@ -1,27 +1,24 @@
 import { useEffect } from 'react';
-import { SortableContext, horizontalListSortingStrategy } from '@dnd-kit/sortable';
+import { DndContext } from '@dnd-kit/core';
+import { horizontalListSortingStrategy, SortableContext } from '@dnd-kit/sortable';
 
-import { useSong } from '../contexts/SongContext.jsx';
+import { useSong } from '../../../contexts/SongContext.jsx';
+import { useDndSensors, useDrag } from '../../../lib/constants.js';
 
-import SongTitle from "../components/SongTitle.jsx";
-import Sidebar from "../components/Sidebar/index.jsx";
-import SongLayout from "../components/SongLayout.jsx";
+import SongLayout from '../../../components/SongLayout.jsx';
 import SortableInput from './SortableInput.jsx';
 
 function DndDashboard() {
     const { currentSong, currentSections, setCurrentSections } = useSong();
+    const { sensors } = useDndSensors();
+    const handleDragEnd = useDrag();
 
     useEffect(() => {
-        currentSong?.sections ? setCurrentSections(currentSong.sections) : setCurrentSections([]);
-    }, [currentSong]);
+        currentSong?.sections ? setCurrentSections(currentSong.sections) : setCurrentSections([])
+    }, [currentSong])
 
     return (
-        <div className='d-flex flex-column flex-grow-1'>
-
-            <SongTitle />
-
-            <Sidebar />
-            {/* Sections */}
+        <DndContext sensors={sensors} onDragEnd={handleDragEnd}>
             <SongLayout>
                 <SortableContext items={currentSections.map(section => section._id)} strategy={horizontalListSortingStrategy}>
                     {currentSections.length ? 
@@ -35,14 +32,14 @@ function DndDashboard() {
                                 {section.label}
                             </SortableInput>
                         )) : (
-                            <SortableInput labelStyle={{ width: '12vw' }}>
+                            <SortableInput>
                                 Create your song
                             </SortableInput>
                         )
                     }
                 </SortableContext>
             </SongLayout>
-        </div>
+        </DndContext>
     );
 };
 
