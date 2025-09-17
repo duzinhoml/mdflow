@@ -15,7 +15,7 @@ function SmallDashboard() {
     return (
         <div className="d-flex flex-column vh-100">
             <Header />
-            <Body activePage={activePage} />
+            <Body activePage={activePage} setActivePage={setActivePage} />
             <Footer activePage={activePage} setActivePage={setActivePage} />
         </div>
     );

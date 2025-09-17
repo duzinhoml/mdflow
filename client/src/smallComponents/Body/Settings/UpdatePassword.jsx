@@ -3,7 +3,7 @@ import { useUpdatePassword } from "../../../lib/constants";
 import '../../../settingsComponents/Selection/index.css';
 import './index.css';
 
-function UpdatePassword({ setOption }) {
+function UpdatePassword({ setOption, setActivePage }) {
     const { 
         formData, error, 
         currentPWError, newPWError, confirmPWError,
@@ -21,7 +21,10 @@ function UpdatePassword({ setOption }) {
             <form 
                 id="updatePasswordForm" 
                 className="text-light p-0 pt-4 needs-validation"
-                onSubmit={handleFormSubmit}
+                onSubmit={() => {
+                    handleFormSubmit()
+                    setActivePage("Home")
+                }}
                 style={{ 
                     borderTop: '1px solid hsl(0, 0.00%, 36%)',
                 }}

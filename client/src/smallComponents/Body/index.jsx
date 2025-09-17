@@ -6,7 +6,7 @@ import ArrangementSelector from "../../components/ArrangementSelector/index.jsx"
 import MusicSelector from "./MusicSelector/index.jsx";
 import Settings from "./Settings/index.jsx";
 
-function Body({ activePage }) {
+function Body({ activePage, setActivePage }) {
 
     return (
         <div className="h-100 d-flex flex-column">
@@ -19,7 +19,7 @@ function Body({ activePage }) {
                     <MusicSelector />
                 </>
                 :
-                <Settings />}
+                <Settings setActivePage={setActivePage} />}
         </div>
     );
 };
