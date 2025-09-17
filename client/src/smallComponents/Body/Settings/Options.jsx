@@ -1,27 +1,21 @@
-import { useState } from 'react';
+import Auth from '../../../lib/utils/auth.js';
 
-import Auth from '../../lib/utils/auth.js';
+import '../../../settingsComponents/Options/index.css';
 
-import UpdatePassword from '../Selection/UpdatePassword.jsx';
-import DeleteUser from '../Selection/DeleteUser.jsx';
-
-import './index.css';
-
-function Options() {
-    const [option, setOption] = useState("update");
+function Options({ setOption }) {
 
     return (
         <>
-            <div className="d-flex flex-column h-100" style={{ borderRight: "4px solid #3a3b47", width: '25vw' }}>
+            <div className="d-flex flex-column h-100">
                 <button 
-                    className={`btn d-flex align-items-center rounded-2 mx-4 mt-3 py-2 options ${option === "update" && "current"}`}
+                    className={`btn d-flex align-items-center rounded-2 mx-4 mt-3 py-2 options`}
                     onClick={() => setOption("update")}
                 >
                     <i className="fa-solid fa-lock me-2"></i>
                     Change Password
                 </button>
                 <button 
-                    className={`btn d-flex align-items-center rounded-2 mx-4 mt-3 py-2 options ${option === "delete" && "current"}`}
+                    className={`btn d-flex align-items-center rounded-2 mx-4 mt-3 py-2 options`}
                     onClick={() => setOption("delete")}
                 >
                     <i className="fa-solid fa-user me-2"></i>
@@ -35,12 +29,9 @@ function Options() {
                     Log Out
                 </button>
             </div>
-
-            {option === "update" 
-                ? <UpdatePassword />
-                : <DeleteUser />}
         </>
+
     );
-};
+}
 
 export default Options;

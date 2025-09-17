@@ -22,6 +22,7 @@ function SongTitle() {
                     style={{ 
                         border: 'none',
                         backgroundColor: 'transparent',
+                        boxShadow: '0px 0px 2px 2px hsl(235, 10%, 15%)',
                         outlineColor: 'grey',
                         cursor: 'text'
                     }}
@@ -38,6 +39,7 @@ function SongTitle() {
                     style={{ 
                         border: 'none',
                         backgroundColor: 'transparent',
+                        boxShadow: '0px 0px 2px 2px hsl(235, 10%, 15%)',
                         outlineColor: 'grey',
                         cursor: currentSetlist ? 'text' : 'default'
                     }}

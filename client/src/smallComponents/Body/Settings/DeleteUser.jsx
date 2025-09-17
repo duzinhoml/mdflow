@@ -1,14 +1,19 @@
-import { useUser } from '../../contexts/UserContext';
-import { useDeleteUser } from '../../lib/constants';
+import { useUser } from "../../../contexts/UserContext";
+import { useDeleteUser } from "../../../lib/constants.js";
 
+import '../../../settingsComponents/Selection/index.css'
 import './index.css';
 
-function DeleteUser() {
-    const { error, confirmDeleteError, confirmDelete, handleInputChange, handleDeleteUser, cancelForm } = useDeleteUser();
+function DeleteUser({ setOption }) {
     const { userData } = useUser();
+    const { error, confirmDeleteError, confirmDelete, handleInputChange, handleDeleteUser, cancelForm } = useDeleteUser();
 
     return (
-        <div className="d-flex flex-column flex-grow-1 m-3">
+        <div className="d-flex flex-column flex-grow-1 m-3 mt-2">
+            <button className="btn btn-sm exit align-self-start mb-3" onClick={() => setOption("")}>
+                <i className="fa-solid fa-angle-left me-2"></i>
+                Go Back
+            </button>
             <h4 className='mb-3 text-light'>Delete Account</h4>
             <form 
                 id="deleteUserForm" 
@@ -32,7 +37,6 @@ function DeleteUser() {
                         onChange={handleInputChange}
                         placeholder={`To confirm, type "${userData?.username}"`}
                         autoComplete="off"
-                        style={{ width: '60%' }}
                         required
                     />
                     <label htmlFor="confirmDeleteInput" className="fs-6" style={{ color: 'grey' }}>{`To confirm, type "${userData?.username}"`}</label>
@@ -57,6 +61,6 @@ function DeleteUser() {
             </form>
         </div>
     );
-};
+}
 
 export default DeleteUser;

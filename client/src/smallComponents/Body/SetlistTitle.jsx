@@ -21,6 +21,7 @@ function SetlistTitle() {
                     style={{ 
                         border: 'none',
                         backgroundColor: 'transparent',
+                        boxShadow: '0px 0px 2px 2px hsl(235, 10%, 15%)',
                         outlineColor: 'hsl(235, 13%, 42%)',
                         cursor: 'text'
                     }}
@@ -37,6 +38,7 @@ function SetlistTitle() {
                     style={{ 
                         border: 'none',
                         backgroundColor: 'transparent',
+                        boxShadow: '0px 0px 2px 2px hsl(235, 10%, 15%)',
                         outlineColor: 'grey',
                         cursor: 'text'
                     }}

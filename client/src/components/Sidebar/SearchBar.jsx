@@ -24,7 +24,7 @@ function SearchBar() {
                 />
             </div>
             {searchTerm && 
-                <p className="m-0 mt-2 fs-6 text-wrap text-light">
+                <p className="m-0 mt-3 fs-6 text-wrap text-light">
                     {searchedItems(filter).length ? (
                         <>
                             All {filter.toLowerCase()} matching <span className="text-danger">{searchTerm}</span> are displayed below

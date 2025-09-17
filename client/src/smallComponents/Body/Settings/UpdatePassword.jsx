@@ -1,8 +1,9 @@
-import { useUpdatePassword } from '../../lib/constants';
+import { useUpdatePassword } from "../../../lib/constants";
 
+import '../../../settingsComponents/Selection/index.css';
 import './index.css';
 
-function UpdatePassword() {
+function UpdatePassword({ setOption }) {
     const { 
         formData, error, 
         currentPWError, newPWError, confirmPWError,
@@ -11,7 +12,11 @@ function UpdatePassword() {
     } = useUpdatePassword();
 
     return (
-        <div className="d-flex flex-column flex-grow-1 m-3">
+        <div className="d-flex flex-column flex-grow-1 m-3 mt-2">
+            <button className="btn btn-sm exit align-self-start mb-3" onClick={() => setOption("")}>
+                <i className="fa-solid fa-angle-left me-2"></i>
+                Go Back
+            </button>
             <h4 className='mb-3 text-light'>Change Password</h4>
             <form 
                 id="updatePasswordForm" 
@@ -31,7 +36,6 @@ function UpdatePassword() {
                         onChange={handleInputChange}
                         placeholder='Enter old password'
                         autoComplete="off"
-                        style={{ width: '40%' }}
                         required
                     />
                     <label htmlFor="currentPWInput" className="fs-6" style={{ color: 'grey' }}>Enter old password</label>
@@ -47,7 +51,6 @@ function UpdatePassword() {
                         onChange={handleInputChange}
                         placeholder='Enter new password'
                         autoComplete="off"
-                        style={{ width: '40%' }}
                         required
                     />
                     <label htmlFor="newPWInput" className="fs-6" style={{ color: 'grey' }}>Enter new password</label>
@@ -65,7 +68,6 @@ function UpdatePassword() {
                         onChange={handleInputChange}
                         placeholder='Confirm new password'
                         autoComplete="off"
-                        style={{ width: '40%' }}
                         required
                     />
                     <label htmlFor="confirmPWInput" className="fs-6" style={{ color: 'grey' }}>Confirm new password</label>

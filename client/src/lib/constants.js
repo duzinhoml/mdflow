@@ -37,31 +37,31 @@ export const INPUT_POOL = [
         ]
     },
     { id: 2, label: 'Dynamics', icon: 'fa-solid fa-chart-simple', children: [
-            { label: 'High', color: '#cccccc' },
-            { label: 'Low', color: '#cccccc' },
-            { label: 'Mid', color: '#cccccc' },
-            { label: 'All in', color: '#cccccc' },
-            { label: 'Soft', color: '#cccccc' }
+            { label: 'High' },
+            { label: 'Low' },
+            { label: 'Mid' },
+            { label: 'All in' },
+            { label: 'Soft' }
         ]
     },
     { id: 3, label: 'Instruments', icon: 'fa-solid fa-guitar', children: [
-            { label: 'Percussion', color: '#cccccc', children: [
-                { label: 'Drums', color: '#cccccc' },
-                { label: 'Perc', color: '#cccccc' },
-                { label: 'Loop', color: '#cccccc' }
+            { label: 'Percussion', children: [
+                { label: 'Drums' },
+                { label: 'Perc' },
+                { label: 'Loop' }
             ] },
-            { label: 'Bass', color: '#cccccc', children: [
-                { label: 'Bass', color: '#cccccc' },
-                { label: 'Synth Bass', color: '#cccccc' }
+            { label: 'Bass', children: [
+                { label: 'Bass' },
+                { label: 'Synth Bass' }
             ] },
-            { label: 'Guitar', color: '#cccccc', children: [
-                { label: 'Acoustic Guitar', color: '#cccccc' },
-                { label: 'Electric Guitar', color: '#cccccc' }
+            { label: 'Guitar', children: [
+                { label: 'Acoustic Guitar' },
+                { label: 'Electric Guitar' }
             ] },
-            { label: 'Keys', color: '#cccccc', children: [
-                { label: 'Piano', color: '#cccccc' },
-                { label: 'Organ', color: '#cccccc' },
-                { label: 'Keys', color: '#cccccc' }
+            { label: 'Keys', children: [
+                { label: 'Piano' },
+                { label: 'Organ' },
+                { label: 'Keys' }
             ] },
         ]
     },

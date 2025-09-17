@@ -1,6 +1,5 @@
 .selector {
     background-color: hsl(235, 13%, 22%);
-    min-height: 25vh;
     transition: opacity 0.3s ease-in-out;
 
     &.show {
@@ -39,6 +38,9 @@
 }
 
 .inputs {
+    display: flex;
+    justify-content: center;
+    align-items: center;
     background-color: hsl(235, 13%, 20%);
     transition: background-color 0.3s ease-in-out, opacity 2.3s ease-in-out;
 
@@ -51,16 +53,20 @@
     }
 }
 
-.sub-inputs {
-    background-color: hsl(235, 13%, 20%);
-    transition: background-color 0.3s ease-in-out, opacity 2.3s ease-in-out;
+.sub-inputs { 
+    background-color: hsl(235, 13%, 21%);
+    border-color: hsl(235, 13%, 21%);
+    box-shadow: 0px 0px 2px 2px hsl(235, 10%, 17%);
+    transition: background-color 0.3s ease-in-out, border-color 0.3s ease-in-out, opacity 2.3s ease-in-out;
 
     &:hover {
-        background-color: hsl(235, 13%, 18%);
+        background-color: hsl(235, 13%, 20%);
+        border-color: hsl(235, 13%, 20%);
     }
 
     &:active {
-        background-color: hsl(235, 13%, 17%) !important;
+        background-color: hsl(235, 13%, 19%) !important;
+        border-color: hsl(235, 13%, 19%) !important;
     }
 }
 

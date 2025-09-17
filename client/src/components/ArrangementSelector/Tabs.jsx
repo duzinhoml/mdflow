@@ -15,7 +15,7 @@ function Tabs({ setCurrentTab }) {
                     <button 
                         key={input.id}
                         onClick={() => setCurrentTab(input)} 
-                        className={`btn mx-0 col-lg-2 col-4 flex-grow-1 flex-md-grow-1 labels d-flex justify-content-center align-items-center`} 
+                        className={`btn mx-0 col-lg-2 col-3 flex-grow-1 flex-md-grow-1 labels d-flex justify-content-center align-items-center`} 
                         data-bs-toggle="collapse" 
                         data-bs-target={`#collapseExample${input.id}`} 
                         aria-expanded="false" 
@@ -23,7 +23,7 @@ function Tabs({ setCurrentTab }) {
                         style={{ fontSize: screenWidth >= 768 ? '20px' : '16px' }}
                     >
                         {input.label}
-                        <i className={`${input.icon} ms-2`}></i>
+                        <i className={`${input.icon} ms-lg-2 ms-1`}></i>
                     </button>
                 )
             })}
