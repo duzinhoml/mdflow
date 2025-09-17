@@ -7,8 +7,8 @@
 
     &:hover {
         color: hsl(213, 18%, 88%);
-        background-color: hsl(235, 13%, 21%); 
-        border-color: hsl(235, 13%, 21%);
+        background-color: hsl(235, 13%, 20%); 
+        border-color: hsl(235, 13%, 20%);
     }
 
     &:active {

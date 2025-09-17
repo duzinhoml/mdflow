@@ -20,7 +20,7 @@ function Tabs({ setCurrentTab }) {
                         data-bs-target={`#collapseExample${input.id}`} 
                         aria-expanded="false" 
                         aria-controls="collapseExample"
-                        style={{ fontSize: screenWidth >= 768 ? '20px' : '16px' }}
+                        style={{ fontSize: screenWidth >= 768 ? '20px' : '14px' }}
                     >
                         {input.label}
                         <i className={`${input.icon} ms-lg-2 ms-1`}></i>

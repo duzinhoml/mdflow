@@ -59,7 +59,7 @@ function SortableInput({ id, labelStyle, notes, children }) {
             
             {/* Section Label */}
             <div 
-                className='mb-3 p-1 rounded-2 text-center text-light w-100' 
+                className='mb-3 p-1 rounded-2 text-center text-light w-100 text-truncate' 
                 style={{ ...labelStyle }}
                 onMouseEnter={() => handleHoverEffect("label", true)}
                 onMouseLeave={() => handleHoverEffect("label", false)}
@@ -83,7 +83,7 @@ function SortableInput({ id, labelStyle, notes, children }) {
             {notes?.map(note => (
                 <div key={note._id} className='w-100 d-flex align-items-center'>
                     <div 
-                        className={`text-center border border-3 rounded-2 mb-2 p-1 w-100 position-relative notes`}
+                        className={`text-center border border-3 rounded-2 mb-2 p-1 w-100 position-relative overflow-x-scroll notes`}
                         onMouseEnter={() => handleHoverEffect("notes", true)}
                         onMouseLeave={() => handleHoverEffect("notes", false)}
                         onClick={() => confirmDelete(note)}
