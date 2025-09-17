@@ -11,7 +11,7 @@ function Login({ setAccountStep }) {
                 <div className="col-12 col-lg-5 d-flex justify-content-center align-items-center text-center text-lg-start pe-lg-5">
                     <div className="text-center">
                         <h1 className='text-light'>MDFlow</h1>
-                        <p style={{ color: '#a970ff' }}>Nest Your Ideas, Watch Them Grow</p> 
+                        <p style={{ color: '#a970ff' }}>Organize your music. Perfect your flow.</p> 
                     </div>
                 </div>
 

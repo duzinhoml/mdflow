@@ -14,7 +14,7 @@ function Register({ setAccountStep }) {
                 <div className="col-12 col-lg-5 d-flex justify-content-center align-items-center text-center text-lg-start pe-lg-5">
                     <div className="text-center">
                         <h1 className='text-light'>MDFlow</h1>
-                        <p style={{ color: '#A86FFF' }}>Nest Your Ideas, Watch Them Grow</p> 
+                        <p style={{ color: '#A86FFF' }}>Organize your music. Perfect your flow.</p> 
                     </div>
                 </div>
 
