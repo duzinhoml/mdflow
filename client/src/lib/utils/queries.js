@@ -21,9 +21,11 @@ export const QUERY_ME = gql`
             setlists {
                 _id
                 title
+                createdAt
                 songs {
                     _id
                     title
+                    createdAt
                     sections {
                         _id
                         label
@@ -38,6 +40,7 @@ export const QUERY_ME = gql`
             songs {
                 _id
                 title
+                createdAt
                 sections {
                     _id
                     label

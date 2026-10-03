@@ -1085,6 +1085,21 @@ export function useHoverEffect() {
     return { isCurrentSection, hoverBg, isHovered, setIsHovered, allowDrag, setAllowDrag, handleHoverEffect };
 }
 
+// createdAt & updatedAt Conversion
+export function useTimeConversion() {
+    const handleTimeConversion = (timestamp) => {
+        const numTimestamp = Number(timestamp);
+        const date = new Date(numTimestamp);
+
+        const formattedDate = 
+        `${(date.getMonth() + 1).toString().padStart(2, '0')}/${date.getDate().toString().padStart(2, '0')}/${date.getFullYear().toString().slice(-2)}`;
+
+        return formattedDate;
+    }
+
+    return handleTimeConversion;
+}
+
 // Authentication Render
 export function useLoginCheck() {
     const { loading, error } = useUser();

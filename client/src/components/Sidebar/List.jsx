@@ -9,6 +9,7 @@ function List() {
     return (
         <div className="overflow-y-scroll flex-grow-1">
 
+            <button className="btn position-absolute">Sort</button>
             <div className="d-flex justify-content-center gap-3">
                 <button className={`btn tabs pb-1 ${filter === "Setlists" && 'current'}`} onClick={() => handleToggleFilter("Setlists")}>
                     Setlists

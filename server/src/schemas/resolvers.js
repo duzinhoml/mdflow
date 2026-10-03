@@ -59,6 +59,7 @@ const resolvers = {
                     }
                 }
             )
+            .sort({ name: -1 })
         },
         songs: async () => {
             return await Song.find({}).populate(

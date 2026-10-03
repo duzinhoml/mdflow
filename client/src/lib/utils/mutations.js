@@ -31,9 +31,11 @@ export const CREATE_SETLIST = gql`
         createSetlist(input: $input) {
             _id
             title
+            createdAt
             songs {
                 _id
                 title
+                createdAt
             }
         }
     }
@@ -44,6 +46,7 @@ export const CREATE_SONG = gql`
         createSong(setlistId: $setlistId, input: $input) {
             _id
             title
+            createdAt
         }
     }
 `;
@@ -84,6 +87,7 @@ export const UPDATE_SETLIST_TITLE = gql`
         updateSetlistTitle(setlistId: $setlistId, title: $title) {
             _id
             title
+            updatedAt
         }
     }
 `;
@@ -93,6 +97,7 @@ export const UPDATE_SONG_TITLE = gql`
         updateSongTitle(songId: $songId, title: $title) {
             _id
             title
+            updatedAt
         }
     }
 `;
@@ -102,6 +107,7 @@ export const UPDATE_SECTION_ORDER = gql`
         updateSectionOrder(songId: $songId, sectionIds: $sectionIds) {
             _id
             title
+            updatedAt
             sections {
                 _id
                 label

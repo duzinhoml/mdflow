@@ -11,7 +11,7 @@
         color: hsl(213, 18%, 88%);
         box-shadow: 0px 0px 5px 2px hsl(235, 13%, 19%);
         width: 54px; 
-        transition: background-color 0.3s ease-in-out, border-color 0.3s ease-in-out;
+        transition: color 0.3s ease-in-out, background-color 0.3s ease-in-out, border-color 0.3s ease-in-out;
 
         &.current {
             background-color: hsl(235, 10%, 30%);

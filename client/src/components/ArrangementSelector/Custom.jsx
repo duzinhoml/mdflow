@@ -77,7 +77,7 @@ function Custom() {
                 {/* Add Button */}
                 <div className={`position-absolute end-0 bottom-0 me-lg-3 me-2 mb-3`}>
                     <button className={`btn btn-sm add ${creationFormData.label ? "display" : "close"}`} onClick={handleFormSubmit}>
-                        <i class="fa-solid fa-plus me-2"></i>
+                        <i className="fa-solid fa-plus me-2"></i>
                         {!isMobile && "Add "}{creationFormData.type}
                     </button>
                 </div>

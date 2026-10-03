@@ -22,18 +22,18 @@ function Footer({ activePage, setActivePage }) {
     return (
         <div className="d-flex justify-content-center gap-5 footer py-2 foot-labels">
             <button 
-                className={`btn btn-lg ${activePage === "Home" && "current"}`} 
+                className={`btn btn-lg ${activePage === "Home" ? "current" : ""}`} 
                 onClick={() => handlePageSelection(1)}
             >
                 <i className={`fa-solid fa-${activePage === "Tools" ? "stream" : "house"}`}></i>
             </button>
 
-            <button className={`btn btn-lg ${activePage === "Tools" && "current"}`} onClick={toggleTools}>
+            <button className={`btn btn-lg ${activePage === "Tools" ? "current" : ""}`} onClick={toggleTools}>
                 <i className="fa-solid fa-screwdriver-wrench"></i>
             </button>
 
             <button 
-                className={`btn btn-lg ${activePage === "Settings" && "current"}`} 
+                className={`btn btn-lg ${activePage === "Settings" ? "current" : ""}`} 
                 onClick={() => handlePageSelection(2)}
             >
                 <i className={`fa-solid fa-${activePage === "Tools" ? "music" : "gear"}`}></i>

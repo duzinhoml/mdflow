@@ -1,4 +1,4 @@
-import { useDelete } from "../../lib/constants.js";
+import { useDelete, useTimeConversion } from "../../lib/constants.js";
 
 import { useSong } from "../../contexts/SongContext.jsx";
 
@@ -6,6 +6,7 @@ import './index.css';
 
 function Filter({ item, filter }) {
     const handleDelete = useDelete();
+    const handleTimeConversion = useTimeConversion();
     
     const { currentSetlist, currentSong, handleSetCurrent } = useSong();
 
@@ -33,6 +34,9 @@ function Filter({ item, filter }) {
                     style={{ overflow: "scroll" }}
                 >
                     {item.title}
+                    <small className="position-absolute end-0 top-0 m-1 text-light" style={{ fontSize: "12px", opacity: "0.7" }}>
+                        {handleTimeConversion(item?.createdAt)}
+                    </small>
                 </button>
                 <button className="btn btn-danger ms-2" onClick={() => handleDelete(filter, item._id)}>
                     <i className="fa-solid fa-trash"></i>

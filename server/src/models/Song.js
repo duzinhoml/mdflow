@@ -16,7 +16,8 @@ const songSchema = new Schema(
         toJSON: {
             virtuals: true
         },
-        id: false
+        id: false,
+        timestamps: true
     }
 );
 
