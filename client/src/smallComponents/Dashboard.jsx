@@ -10,7 +10,9 @@ function SmallDashboard() {
     const [activePage, setActivePage] = useState("Home");
     const { user, userData, setUserData } = useUser();
 
-    useEffect(() => { if (!userData) setUserData(user) }, []);
+    useEffect(() => { 
+        if (!userData && user) setUserData(user); 
+    }, [user, userData, setUserData]);
 
     return (
         <div className="d-flex flex-column vh-100">

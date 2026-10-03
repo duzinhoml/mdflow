@@ -107,7 +107,7 @@ const resolvers = {
                 if (!passwordRegex.test(input.password)) throw new Error('Password must include at least one lowercase letter, one uppercase letter, one number, and one special character.');
 
                 const user = await User.create({ ...input });
-                const token = signToken(user._id, user.username);
+                const token = signToken({ _id: user._id, username: user.username });
                 return { token, user };
             } 
             catch (err) {
@@ -121,7 +121,7 @@ const resolvers = {
             const correctPW = await user.isCorrectPassword(password);
             if (!correctPW) throw new Error('Incorrect username or password. Please try again.');
 
-            const token = signToken(user._id, user.username);
+            const token = signToken({ _id: user._id, username: user.username });
             return { token, user };
         },
         createSetlist: async (_, { input }, context) => {

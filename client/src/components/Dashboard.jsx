@@ -12,7 +12,9 @@ import DndDashboard from '../dndComponents/DndDashboard.jsx';
 function Dashboard() {
     const { user, userData, setUserData } = useUser();
 
-    useEffect(() => { if (!userData) setUserData(user) }, []);
+    useEffect(() => { 
+        if (!userData && user) setUserData(user); 
+    }, [user, userData, setUserData]);
     
     const handleDragEnd = useDrag();
     const { sensors } = useDndSensors();

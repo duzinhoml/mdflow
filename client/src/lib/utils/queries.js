@@ -1,56 +1,56 @@
-import { gql } from '@apollo/client';
+import { gql } from "@apollo/client";
 
 export const QUERY_USERS = gql`
-    query users {
-        users {
-            _id
-            firstName
-            lastName
-            username
-        }
+  query users {
+    users {
+      _id
+      firstName
+      lastName
+      username
     }
+  }
 `;
 
 export const QUERY_ME = gql`
-    query me {
-        me {
+  query me {
+    me {
+      _id
+      firstName
+      lastName
+      username
+      setlists {
+        _id
+        title
+        createdAt
+        songs {
+          _id
+          title
+          createdAt
+          sections {
             _id
-            firstName
-            lastName
-            username
-            setlists {
-                _id
-                title
-                createdAt
-                songs {
-                    _id
-                    title
-                    createdAt
-                    sections {
-                        _id
-                        label
-                        color
-                        notes {
-                            _id
-                            label
-                        }
-                    }
-                }
+            label
+            color
+            notes {
+              _id
+              label
             }
-            songs {
-                _id
-                title
-                createdAt
-                sections {
-                    _id
-                    label
-                    color
-                    notes {
-                        _id
-                        label
-                    }
-                }
-            }
+          }
         }
+      }
+      songs {
+        _id
+        title
+        createdAt
+        sections {
+          _id
+          label
+          color
+          notes {
+            _id
+            label
+          }
+        }
+      }
     }
+  }
 `;

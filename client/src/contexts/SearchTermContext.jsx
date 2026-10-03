@@ -27,21 +27,20 @@ export const SearchTermProvider = ({ children }) => {
   const searchedItems = (filter) => {
     if (currentSetlist && filter === "Songs")
       return (
-        currentSetlist.songs.filter((song) =>
+        currentSetlist?.songs?.filter((song) =>
           song.title.toLowerCase().includes(searchTerm.toLowerCase()),
         ) || []
       );
     return (
-      userData?.[filter.toLowerCase()].filter((filteredItem) =>
+      userData?.[filter.toLowerCase()]?.filter((filteredItem) =>
         filteredItem.title.toLowerCase().includes(searchTerm.toLowerCase()),
       ) || []
     );
   };
   const filteredItems = (filter) =>
     userData?.[filter.toLowerCase()]
-      .filter((filteredItem) => filteredItem)
+      ?.filter((filteredItem) => filteredItem)
       .sort((a, b) => b.title.localeCompare(a.title)) || [];
-  console.log(userData.setlists);
 
   const value = {
     searchTerm,

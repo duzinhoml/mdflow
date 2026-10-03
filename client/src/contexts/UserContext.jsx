@@ -1,4 +1,4 @@
-import { useState, useContext, createContext } from 'react';
+import { useState, useEffect, useContext, createContext } from 'react';
 import { useQuery } from '@apollo/client';
 import { QUERY_ME } from '../lib/utils/queries';
 
@@ -7,6 +7,12 @@ const UserContext = createContext();
 export const UserProvider = ({ children }) => {
     const { loading, data, error } = useQuery(QUERY_ME);
     const [userData, setUserData] = useState(null);
+
+    useEffect(() => {
+        if (data?.me) {
+            setUserData(data.me);
+        }
+    }, [data?.me]);
 
     return (
         <UserContext.Provider value={{ user: data?.me, loading, error, userData, setUserData }}>

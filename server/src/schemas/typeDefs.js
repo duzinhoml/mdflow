@@ -6,24 +6,24 @@ const typeDefs = `
         username: String!
         setlists: [Setlist]
         songs: [Song]
-        createdAt: String!
-        updatedAt: String!
+        createdAt: String
+        updatedAt: String
     }
 
     type Setlist {
         _id: ID!
         title: String!
         songs: [Song]
-        createdAt: String!
-        updatedAt: String!
+        createdAt: String
+        updatedAt: String
     }
 
     type Song {
         _id: ID!
         title: String!
         sections: [Section]
-        createdAt: String!
-        updatedAt: String!
+        createdAt: String
+        updatedAt: String
     }
 
     type Section {
