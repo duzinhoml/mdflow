@@ -46,6 +46,8 @@ export const CREATE_SONG = gql`
         createSong(setlistId: $setlistId, input: $input) {
             _id
             title
+            bpm
+            timeSignature
             createdAt
         }
     }
@@ -97,6 +99,32 @@ export const UPDATE_SONG_TITLE = gql`
         updateSongTitle(songId: $songId, title: $title) {
             _id
             title
+            bpm
+            timeSignature
+            updatedAt
+        }
+    }
+`;
+
+export const UPDATE_SONG_BPM = gql`
+    mutation updateSongBpm($songId: ID!, $bpm: Int!) {
+        updateSongBpm(songId: $songId, bpm: $bpm) {
+            _id
+            title
+            bpm
+            timeSignature
+            updatedAt
+        }
+    }
+`;
+
+export const UPDATE_SONG_TIME_SIGNATURE = gql`
+    mutation updateSongTimeSignature($songId: ID!, $timeSignature: String!) {
+        updateSongTimeSignature(songId: $songId, timeSignature: $timeSignature) {
+            _id
+            title
+            bpm
+            timeSignature
             updatedAt
         }
     }

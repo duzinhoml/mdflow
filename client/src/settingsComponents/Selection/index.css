@@ -1,65 +1,69 @@
 .decision-input {
-    border: 1px solid hsl(235, 13%, 52%);
-    transition: border-color 0.3s ease-in-out, box-shadow 0.3s ease-in-out;
+    background-color: var(--bg-input) !important;
+    border: 1px solid var(--border-default) !important;
+    color: var(--text-primary) !important;
+    transition: border-color var(--transition-fast), box-shadow var(--transition-fast);
+}
 
-    &:focus {
-        border-color: hsl(235, 13%, 32%) !important;
-        box-shadow: 0px 0px 2px 2px hsl(235, 13%, 52%) !important;
-    }
+.decision-input:focus {
+    border-color: var(--accent-primary) !important;
+    box-shadow: 0 0 0 1px var(--accent-primary), 0 0 10px var(--accent-glow) !important;
+}
+
+.form-floating > label {
+    color: var(--text-muted) !important;
+}
+
+.form-floating > .decision-input:focus ~ label,
+.form-floating > .decision-input:not(:placeholder-shown) ~ label {
+    color: var(--text-secondary) !important;
 }
 
 .error {
-    border: 2px solid hsl(354, 70%, 54%) !important;
+    border: 1.5px solid var(--color-danger) !important;
+}
 
-    &:focus {
-        box-shadow: 0px 0px 2px 1px hsl(354, 70%, 54%) !important;
-    }
+.error:focus {
+    box-shadow: 0 0 0 1px var(--color-danger) !important;
 }
 
 .error-feedback {
-    color: hsl(354, 70%, 54%);
+    color: var(--color-danger);
+    font-size: 12px;
 }
 
 .settings-save-btn {
-    color: hsl(210, 17%, 98%);
-    background-color: hsl(264, 100%, 72%); 
-    border-color: hsl(264, 100%, 72%);
-    box-shadow: 0px 0px 2px 1px hsl(264, 100%, 62%);
-    transition: background-color 0.3s ease-in-out, border-color 0.3s ease-in-out;
+    color: #ffffff;
+    background-color: var(--accent-primary);
+    border: 1px solid var(--accent-primary);
+    border-radius: var(--radius-sm);
+    padding: 7px 18px;
+    font-weight: 500;
+    transition: background-color var(--transition-fast), box-shadow var(--transition-fast);
+}
 
-    &:hover {
-        color: hsl(210, 17%, 98%);
-        background-color: hsl(264, 100%, 67%);
-        border-color: hsl(264, 100%, 67%);
-    }
-
-    &:active {
-        color: hsl(210, 17%, 98%) !important;
-        background-color: hsl(264, 100%, 62%) !important;
-        border-color: hsl(264, 100%, 62%) !important;
-    }
+.settings-save-btn:hover {
+    color: #ffffff;
+    background-color: var(--accent-hover);
+    box-shadow: 0 0 12px var(--accent-glow);
 }
 
 .settings-discard-btn {
-    color: hsl(213, 18%, 98%);
-    background-color: hsl(235, 13%, 52%);
-    border: 1px solid hsl(235, 13%, 52%);
-    box-shadow: 0px 0px 2px 2px hsl(235, 13%, 27%);
-    transition: background-color 0.3s ease-in-out, border-color 0.3s ease-in-out;
+    color: var(--text-secondary);
+    background-color: var(--bg-surface-elevated);
+    border: 1px solid var(--border-default);
+    border-radius: var(--radius-sm);
+    padding: 7px 18px;
+    font-weight: 500;
+    transition: color var(--transition-fast), background-color var(--transition-fast);
+}
 
-    &:hover {
-        color: hsl(213, 18%, 98%);
-        background-color: hsl(235, 13%, 48%); 
-        border-color: hsl(235, 13%, 49%);
-    }
-
-    &:active {
-        color: hsl(213, 18%, 98%) !important;
-        background-color: hsl(235, 13%, 45%) !important; 
-        border-color: hsl(235, 13%, 46%) !important;
-    }
+.settings-discard-btn:hover {
+    color: var(--text-primary);
+    background-color: var(--bg-surface-hover);
 }
 
 .delete-message {
-    color: hsl(354, 70%, 54%);
+    color: var(--color-danger);
+    font-weight: 600;
 }

@@ -16,14 +16,14 @@ function Login({ setAccountStep }) {
                 </div>
 
                 <div className="col-12 col-lg-5 ps-lg-5">
-                    <form className="border border-5 rounded p-4 needs-validation" onSubmit={(e) => handleFormSubmit(e, formData)}>
+                    <form className="login-card p-4 needs-validation" onSubmit={(e) => handleFormSubmit(e, formData)}>
                         <h2 className="text-center mb-4 text-light">Login</h2>
                         <div className="row gy-3">
                             <div className="col-12 has-validation form-floating">
                                 <input
                                     id="usernameLoginInput"
                                     type="text"
-                                    className={`form-control form-control-lg ${error && loginError ? 'is-invalid login-error' : 'login-input'}`}
+                                    className={`form-control ${error && loginError ? 'is-invalid login-error' : 'login-input'}`}
                                     name="username"
                                     placeholder="Username"
                                     value={formData.username}
@@ -32,14 +32,14 @@ function Login({ setAccountStep }) {
                                     autoComplete='off'
                                     style={{ fontSize: '16px' }}
                                 />
-                                <label htmlFor="usernameLoginInput" className="ms-2" style={{ color: 'grey' }}>Username</label>
+                                <label htmlFor="usernameLoginInput">Username</label>
                             </div>
 
                             <div className="col-12 form-floating">
                                 <input
                                     id="passwordLoginInput"
                                     type="password"
-                                    className={`form-control form-control-lg ${error && loginError ? 'is-invalid login-error' : 'login-input'}`}
+                                    className={`form-control ${error && loginError ? 'is-invalid login-error' : 'login-input'}`}
                                     name="password"
                                     placeholder="Password"
                                     value={formData.password}
@@ -48,7 +48,7 @@ function Login({ setAccountStep }) {
                                     autoComplete='off'
                                     style={{ fontSize: '16px' }}
                                 />
-                                <label htmlFor="passwordLoginInput" className="ms-2" style={{ color: 'grey' }}>Password</label>
+                                <label htmlFor="passwordLoginInput">Password</label>
                             </div>
 
                             <div className="col-12">
@@ -60,8 +60,8 @@ function Login({ setAccountStep }) {
                                 </button>
                             </div>
 
-                            <div className="col-12">
-                                <p className="text-center text-light">
+                            <div className="col-12 mt-3">
+                                <p className="text-center text-light mb-0">
                                     Don't have an account? <span className="sign-up" onClick={() => setAccountStep("register")}>Sign up</span>
                                 </p>
                                 {error && <div className="login-error-feedback mt-3 mb-2">{error.message}</div>}

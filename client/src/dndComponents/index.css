@@ -1,83 +1,300 @@
-.notes {
-    color: hsl(210, 17%, 88%);
-    background-color: hsl(235, 13%, 17%);
-    border-color: hsl(235, 13%, 52%) !important;
-    box-shadow: 0px 0px 2px 1px hsl(235, 13%, 32%);
-    transition: color 0.3s ease-in-out, background-color 0.3s ease-in-out, border-color 0.3s ease-in-out;
-
-    &:hover {
-        color: hsl(210, 17%, 93%);
-        background-color: hsl(237, 13%, 22%);
-        border-color: hsl(235, 13%, 57%) !important;
-    }
-
-    &:active {
-        color: hsl(210, 17%, 98%) !important;
-        background-color: hsl(237, 13%, 27%) !important;
-        border-color: hsl(235, 10%, 62%) !important;
-    }
-}
-
-.delete {
-    color: hsl(210, 17%, 98%);
-    background-color: hsl(354, 70%, 54%);
-    text-shadow: none;
-    transition: background-color 0.3s ease-in-out, color 0.3s ease-in-out;
-
-    &:hover {
-        color: hsl(210, 17%, 91%);
-        background-color: hsl(354, 70%, 47%);
-    }
-
-    &:active {
-        color: hsl(210, 17%, 84%);
-        background-color: hsl(354, 70%, 40%);
-    }
-}
-
-.edit {
-    color: hsl(210, 17%, 98%);
-    background-color: hsl(235, 10%, 45%);
-    text-shadow: none;
-    transition: background-color 0.3s ease-in-out, color 0.3s ease-in-out;
-
-    &:hover {
-        color: hsl(210, 17%, 91%);
-        background-color: hsl(235, 10%, 38%);
-    }
-
-    &:active {
-        color: hsl(210, 17%, 84%);
-        background-color: hsl(235, 10%, 31%);
-    }
-}
-
-.done {
-    color: hsl(210, 17%, 98%);
-    background-color: hsl(152, 69%, 31%);
-    text-shadow: none;
-    transition: background-color 0.3s ease-in-out, color 0.3s ease-in-out;
-
-    &:hover {
-        color: hsl(210, 17%, 91%);
-        background-color: hsl(152, 69%, 24%);
-    }
-
-    &:active {
-        color: hsl(210, 17%, 84%);
-        background-color: hsl(152, 69%, 17%);
-    }
-}
+/* Studio Arrangement Section Cards */
 
 .section-card {
     touch-action: none;
-    width: 20vw;
-    border: 5px solid hsl(235, 13%, 62%);
-    box-shadow: 0px 0px 2px 1px hsl(235, 13%, 42%);
+    width: 280px;
+    min-width: 270px;
+    max-width: 300px;
+    background-color: var(--bg-surface-card);
+    border: 1px solid var(--border-default);
+    border-radius: var(--radius-lg);
+    box-shadow: var(--shadow-sm);
+    display: flex;
+    flex-direction: column;
+    margin: 8px 10px;
+    padding: 14px;
+    position: relative;
+    user-select: none;
+    transition: border-color var(--transition-fast), box-shadow var(--transition-fast), background-color var(--transition-fast), transform var(--transition-fast);
+}
+
+.section-card:hover {
+    border-color: var(--border-strong);
+    background-color: var(--bg-surface-elevated);
+    box-shadow: var(--shadow-md);
+}
+
+/* Active / Editing Section */
+.section-card.is-active {
+    border-color: var(--accent-primary);
+    background-color: #212437;
+    box-shadow: 0 0 0 1.5px var(--accent-primary), 0 4px 20px rgba(124, 77, 255, 0.25);
+}
+
+/* Picked up / Dragging Placeholder */
+.section-card.is-dragging {
+    opacity: 0.35;
+    border: 2px dashed var(--accent-primary) !important;
+    background-color: rgba(124, 77, 255, 0.05) !important;
+    transform: scale(0.97);
+}
+
+/* Drag Overlay Preview */
+.section-card-overlay {
+    width: 280px;
+    background-color: var(--bg-surface-elevated);
+    border: 1.5px solid var(--accent-primary);
+    border-radius: var(--radius-lg);
+    box-shadow: 0 16px 36px rgba(0, 0, 0, 0.6), 0 0 25px rgba(124, 77, 255, 0.4);
+    transform: rotate(2deg) scale(1.04);
+    cursor: grabbing;
+    pointer-events: none;
+    padding: 14px;
+    z-index: 9999;
+}
+
+/* Section Header Bar */
+.section-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 8px;
+    margin-bottom: 12px;
+    padding-bottom: 10px;
+    border-bottom: 1px solid var(--border-subtle);
+}
+
+.section-badge-container {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    min-width: 0;
+    flex-grow: 1;
+}
+
+.section-index {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 11px;
+    font-weight: 700;
+    color: var(--text-muted);
+    background-color: rgba(255, 255, 255, 0.05);
+    padding: 2px 6px;
+    border-radius: var(--radius-sm);
+    line-height: 1;
+}
+
+.section-pill {
+    font-size: 12px;
+    font-weight: 700;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+    padding: 4px 10px;
+    border-radius: var(--radius-full);
+    color: #ffffff;
+    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.25);
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+}
+
+/* Section Action Controls */
+.section-actions {
+    display: flex;
+    align-items: center;
+    gap: 4px;
+}
+
+.section-btn {
+    background: transparent;
+    border: none;
+    color: var(--text-muted);
+    width: 28px;
+    height: 28px;
+    border-radius: var(--radius-sm);
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 13px;
+    cursor: pointer;
+    transition: color var(--transition-fast), background-color var(--transition-fast);
+}
+
+.section-btn:hover {
+    color: var(--text-primary);
+    background-color: rgba(255, 255, 255, 0.08);
+}
+
+.section-btn.btn-active-edit {
+    color: var(--accent-primary);
+    background-color: var(--accent-light);
+}
+
+.section-btn.btn-delete:hover {
+    color: var(--color-danger);
+    background-color: rgba(239, 68, 68, 0.15);
+}
+
+/* Dedicated Drag Handle */
+.drag-handle {
+    cursor: grab;
+    color: var(--text-muted);
+    padding: 4px;
+    border-radius: var(--radius-sm);
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 14px;
+    transition: color var(--transition-fast), background-color var(--transition-fast);
+}
+
+.drag-handle:hover {
+    color: var(--text-primary);
+    background-color: rgba(255, 255, 255, 0.08);
+}
+
+.drag-handle:active {
+    cursor: grabbing;
+}
+
+/* Active Editing Banner */
+.active-indicator {
+    font-size: 10px;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    color: var(--accent-primary);
+    background-color: var(--accent-light);
+    border: 1px solid rgba(124, 77, 255, 0.3);
+    padding: 3px 8px;
+    border-radius: var(--radius-sm);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 5px;
+    margin-bottom: 10px;
+    animation: pulseGlow 2s infinite ease-in-out;
+}
+
+@keyframes pulseGlow {
+    0%, 100% {
+        opacity: 0.85;
+    }
+    50% {
+        opacity: 1;
+    }
+}
+
+/* Section Notes Container */
+.section-notes-container {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+    min-height: 90px;
+    flex-grow: 1;
+}
+
+/* Note Chip (Instrument / Dynamic) */
+.note-chip {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 8px;
+    padding: 6px 10px;
+    border-radius: var(--radius-md);
+    background-color: var(--bg-input);
+    border: 1px solid var(--border-default);
+    color: var(--text-primary);
+    font-size: 13px;
+    font-weight: 500;
+    transition: border-color var(--transition-fast), background-color var(--transition-fast);
+}
+
+.note-chip:hover {
+    border-color: var(--border-strong);
+    background-color: var(--bg-surface-hover);
+}
+
+/* Dynamic vs Instrument styling */
+.note-chip.chip-dynamic {
+    border-left: 3px solid var(--color-warning);
+    background: linear-gradient(90deg, rgba(245, 158, 11, 0.08) 0%, var(--bg-input) 100%);
+}
+
+.note-chip.chip-instrument {
+    border-left: 3px solid var(--color-info);
+    background: linear-gradient(90deg, rgba(56, 189, 248, 0.08) 0%, var(--bg-input) 100%);
+}
+
+.note-chip-label {
+    display: flex;
+    align-items: center;
+    gap: 7px;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+.note-chip-icon {
+    font-size: 11px;
+    opacity: 0.8;
+}
+
+.note-chip-delete {
+    opacity: 0.4;
+    cursor: pointer;
+    background: transparent;
+    border: none;
+    color: var(--text-muted);
+    padding: 2px 4px;
+    border-radius: var(--radius-sm);
+    font-size: 12px;
+    transition: opacity var(--transition-fast), color var(--transition-fast);
+}
+
+.note-chip:hover .note-chip-delete {
+    opacity: 1;
+}
+
+.note-chip-delete:hover {
+    color: var(--color-danger);
+    background-color: rgba(239, 68, 68, 0.15);
+}
+
+/* Empty Notes Placeholder */
+.empty-notes-hint {
     display: flex;
     flex-direction: column;
     align-items: center;
-    border-radius: 16px;
-    margin: 16px;
-    padding: 16px;
+    justify-content: center;
+    padding: 16px 8px;
+    border: 1px dashed var(--border-default);
+    border-radius: var(--radius-md);
+    text-align: center;
+    color: var(--text-muted);
+    font-size: 12px;
+    gap: 6px;
+    min-height: 80px;
+    background-color: rgba(255, 255, 255, 0.015);
+}
+
+.empty-notes-hint i {
+    font-size: 16px;
+    opacity: 0.6;
+}
+
+/* Mobile section card adjustments */
+.sm-section-card {
+    touch-action: none;
+    min-width: 250px;
+    max-width: 280px;
+    background-color: var(--bg-surface-card);
+    border: 1px solid var(--border-default);
+    border-radius: var(--radius-lg);
+    display: flex;
+    flex-direction: column;
+    margin: 8px;
+    padding: 12px;
 }

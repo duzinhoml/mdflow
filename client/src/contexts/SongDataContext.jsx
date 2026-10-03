@@ -9,6 +9,8 @@ export const SongDataProvider = ({ children }) => {
 
     const [songData, setSongData] = useState({
         title: '',
+        bpm: 120,
+        timeSignature: '4/4',
         sections: []
     });
 

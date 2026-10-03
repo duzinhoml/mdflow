@@ -30,12 +30,12 @@ function DeleteUser() {
                         name="confirmDelete"
                         value={confirmDelete}
                         onChange={handleInputChange}
-                        placeholder={`To confirm, type "${userData?.username}"`}
+                        placeholder={userData?.username ? `To confirm, type "${userData.username}"` : "Enter username to confirm"}
                         autoComplete="off"
                         style={{ width: '60%' }}
                         required
                     />
-                    <label htmlFor="confirmDeleteInput" className="fs-6" style={{ color: 'grey' }}>{`To confirm, type "${userData?.username}"`}</label>
+                    <label htmlFor="confirmDeleteInput" className="fs-6">{userData?.username ? `To confirm, type "${userData.username}"` : "Enter username to confirm"}</label>
                     {error && <div className="invalid-feedback error-feedback">{error.message}</div>}
                 </div>
                 <div className="mt-3">

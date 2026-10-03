@@ -1,34 +1,32 @@
 .footer {
-    background-color: hsl(235, 13%, 22%);
-    border-radius: 6px 6px 0px 0px;
-    box-shadow: 0px 0px 2px 2px hsl(235, 13%, 32%);
-    z-index: 1;
+    background-color: var(--bg-surface);
+    border-top: 1px solid var(--border-default);
+    box-shadow: 0 -4px 16px rgba(0, 0, 0, 0.4);
+    z-index: 50;
 }
 
-.foot-labels {
+.foot-labels > button {
+    color: var(--text-muted);
+    background-color: var(--bg-surface-elevated);
+    border: 1px solid var(--border-default);
+    width: 52px;
+    height: 44px;
+    border-radius: var(--radius-md);
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    transition: color var(--transition-fast), background-color var(--transition-fast), border-color var(--transition-fast), box-shadow var(--transition-fast);
+}
 
-    > button {
-        color: hsl(213, 18%, 88%);
-        box-shadow: 0px 0px 5px 2px hsl(235, 13%, 19%);
-        width: 54px; 
-        transition: color 0.3s ease-in-out, background-color 0.3s ease-in-out, border-color 0.3s ease-in-out;
+.foot-labels > button:hover {
+    color: var(--text-primary);
+    background-color: var(--bg-surface-hover);
+    border-color: var(--border-strong);
+}
 
-        &.current {
-            background-color: hsl(235, 10%, 30%);
-            border-color: hsl(235, 10%, 30%);
-            color: hsl(264, 100%, 72%);
-        }
-    
-        &:hover {
-            color: hsl(213, 18%, 88%);
-            background-color: hsl(235, 13%, 35%);
-            border-color: hsl(235, 13%, 36%)
-        }
-    
-        &:active {
-            color: hsl(213, 18%, 88%) !important;
-            background-color: hsl(235, 13%, 35%) !important; 
-            border-color: hsl(235, 13%, 36%) !important;
-        }
-    }
+.foot-labels > button.current {
+    background-color: var(--accent-primary);
+    border-color: var(--accent-primary);
+    color: #ffffff !important;
+    box-shadow: 0 0 14px var(--accent-glow);
 }

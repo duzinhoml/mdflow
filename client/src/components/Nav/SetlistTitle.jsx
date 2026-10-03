@@ -8,43 +8,30 @@ function SetlistTitle() {
     const handleInputChange = useUpdateSetlistTitle();
 
     return (
-        <>
-            {currentSetlist ? (
-                <input 
-                    name='currentSetlistTitle'
-                    type="text" 
-                    className='text-light text-center p-1 border-2 border-primary rounded position-absolute top-50 start-50 translate-middle'
-                    onChange={handleInputChange} 
-                    value={setlistData.title}
-                    style={{ 
-                        border: 'none',
-                        backgroundColor: 'transparent',
-                        boxShadow: '0px 0px 2px 2px hsl(235, 10%, 15%)',
-                        outlineColor: 'hsl(235, 13%, 42%)',
-                        cursor: 'text'
-                    }}
-                    autoComplete='off'
-                />
-            ) : (
-                <input 
-                    name='setlistTitle'
-                    type="text" 
-                    className='text-light text-center p-1 border-2 border-primary rounded position-absolute top-50 start-50 translate-middle'
-                    placeholder='Enter setlist name...'
-                    onChange={handleInputChange} 
-                    value={setlistData.title}
-                    style={{ 
-                        border: 'none',
-                        backgroundColor: 'transparent',
-                        boxShadow: '0px 0px 2px 2px hsl(235, 10%, 15%)',
-                        outlineColor: 'grey',
-                        cursor: 'text'
-                    }}
-                    autoComplete='off'
-                /> 
-            )
-            }
-        </>
+        <div className="setlist-pill-box" title={currentSetlist ? "Edit current setlist title" : "Enter a title to create a new setlist"}>
+            <i 
+                className={`fa-solid ${currentSetlist ? 'fa-list-check' : 'fa-folder-plus'}`}
+                style={{ color: currentSetlist ? 'var(--accent-primary)' : 'var(--text-muted)', fontSize: '13px' }}
+            ></i>
+            
+            <span className="setlist-label d-none d-md-inline">Setlist:</span>
+            
+            <input 
+                name={currentSetlist ? 'currentSetlistTitle' : 'setlistTitle'}
+                type="text" 
+                className="setlist-input"
+                placeholder="Enter setlist name..."
+                onChange={handleInputChange} 
+                value={setlistData.title}
+                autoComplete='off'
+            />
+
+            {currentSetlist && (
+                <span className="badge bg-dark bg-opacity-50 text-light d-none d-sm-inline" style={{ fontSize: '10px' }}>
+                    {currentSetlist.songs?.length || 0} {currentSetlist.songs?.length === 1 ? 'song' : 'songs'}
+                </span>
+            )}
+        </div>
     );
 };
 

@@ -5,33 +5,43 @@ function SearchBar() {
     const { currentSetlist } = useSong();
     const { searchTerm, filter, handleSearch, clearSearch, searchedItems } = useSearch();
 
+    const resultsCount = searchTerm ? searchedItems(filter).length : 0;
+
     return (
-        <div className="mt-3 mx-3">
-            <div className="d-flex">
-                <span className="input-group-text rounded-end-0" style={{ cursor: 'pointer', maxWidth: '38px' }} onClick={clearSearch}>
-                    {searchTerm ? <i className="fa-solid fa-xmark"></i> : <i className="fa-solid fa-magnifying-glass"></i>}
-                </span>
+        <div className="d-flex flex-column px-3 pt-2 pb-1">
+            <div className="sidebar-search-box">
+                <i className="fa-solid fa-magnifying-glass text-muted" style={{ fontSize: '12px' }}></i>
+                
                 <input 
                     name="searchBar"
-                    className="w-100 border rounded-2 rounded-start-0 p-1 ps-2 fs-6" 
-                    style={{ outlineColor: 'hsl(235, 13%, 42%)' }}
+                    className="sidebar-search-input" 
                     type="text" 
                     value={searchTerm}
-                    placeholder={`Search ${filter}`}
+                    placeholder={`Search ${filter.toLowerCase()}...`}
                     onChange={(e) => handleSearch(e)}
                     autoComplete="off"
-                    disabled={currentSetlist && filter === "Setlists" ? true : false}
+                    disabled={currentSetlist && filter === "Setlists" ? false : false}
                 />
+
+                {searchTerm && (
+                    <button 
+                        type="button"
+                        className="btn btn-sm text-muted p-0"
+                        onClick={clearSearch}
+                        title="Clear search"
+                        style={{ fontSize: '12px' }}
+                    >
+                        <i className="fa-solid fa-circle-xmark"></i>
+                    </button>
+                )}
             </div>
-            {searchTerm && 
-                <p className="m-0 mt-3 fs-6 text-wrap text-light">
-                    {searchedItems(filter).length ? (
-                        <>
-                            All {filter.toLowerCase()} matching <span className="text-danger">{searchTerm}</span> are displayed below
-                        </>
-                    ) : ("No results found")
-                    }
-                </p>}
+
+            {searchTerm && (
+                <div className="d-flex align-items-center justify-content-between px-1 mt-1 text-muted" style={{ fontSize: '11px' }}>
+                    <span>Results for <strong className="text-light">"{searchTerm}"</strong>:</span>
+                    <span className="badge bg-secondary bg-opacity-25 text-light">{resultsCount} found</span>
+                </div>
+            )}
         </div>
     );
 };

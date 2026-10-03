@@ -1,104 +1,252 @@
-import { useState, useEffect } from 'react';
+import { useState } from 'react';
 import { useSortable } from '@dnd-kit/sortable';
 import { CSS } from '@dnd-kit/utilities';
 
-import { useDelete, useDeleteNote, useHoverEffect } from '../lib/constants';
-
+import { useDelete, useDeleteNote } from '../lib/constants';
 import { useSong } from '../contexts/SongContext';
 
-import './index.css'
+import './index.css';
 
-function SortableInput({ id, labelStyle, notes, children }) {
-    const [toDelete, setToDelete] = useState({
-        message: false,
-        item: null
-    });
+// Helper to categorize note and return appropriate icon
+export function getNoteMetadata(label = '') {
+    const lower = label.toLowerCase();
+    const dynamicLabels = ['high', 'low', 'mid', 'all in', 'soft'];
+    const isDynamic = dynamicLabels.some(d => lower.includes(d));
 
-    const { isCurrentSection, hoverBg, isHovered, allowDrag, setAllowDrag, handleHoverEffect } = useHoverEffect();
-    const { attributes, listeners, setNodeRef, transform, transition } = useSortable({ id, disabled: !allowDrag });
+    if (isDynamic) {
+        let bars = 3;
+        let color = '#f59e0b';
+        if (lower.includes('soft')) { bars = 1; color = '#38bdf8'; }
+        else if (lower.includes('low')) { bars = 2; color = '#60a5fa'; }
+        else if (lower.includes('mid')) { bars = 3; color = '#f59e0b'; }
+        else if (lower.includes('high')) { bars = 4; color = '#f97316'; }
+        else if (lower.includes('all in')) { bars = 5; color = '#ef4444'; }
+
+        return {
+            type: 'dynamic',
+            icon: 'fa-solid fa-chart-simple',
+            bars,
+            color
+        };
+    }
+
+    // Instrument icons
+    let icon = 'fa-solid fa-music';
+    if (lower.includes('drum') || lower.includes('perc') || lower.includes('loop')) {
+        icon = 'fa-solid fa-drum';
+    } else if (lower.includes('bass')) {
+        icon = 'fa-solid fa-guitar';
+    } else if (lower.includes('guitar')) {
+        icon = 'fa-solid fa-guitar';
+    } else if (lower.includes('piano') || lower.includes('key') || lower.includes('organ')) {
+        icon = 'fa-solid fa-keyboard';
+    }
+
+    return {
+        type: 'instrument',
+        icon,
+        color: '#38bdf8'
+    };
+}
+
+function SortableInput({ id, labelStyle, notes = [], children, index }) {
+    const [confirmDelete, setConfirmDelete] = useState(false);
+
+    const {
+        attributes,
+        listeners,
+        setNodeRef,
+        transform,
+        transition,
+        isDragging
+    } = useSortable({ id });
 
     const handleDelete = useDelete();
     const handleDeleteNote = useDeleteNote();
-    const { currentSong, currentSections, currentSection, setCurrentSection } = useSong();
-    
+    const { currentSections, currentSection, setCurrentSection } = useSong();
+
+    const isCurrent = currentSection?._id === id;
+
     const style = {
         transform: CSS.Transform.toString(transform),
-        transition: [transition, 'background-color 0.3s ease-in-out'].filter(Boolean).join(', '),
-        backgroundColor: hoverBg(id)
-    }
-
-    const handleSelectSection = (id) => {
-        if (currentSections.find(section => section._id === id) === currentSection) setCurrentSection(null);
-        else setCurrentSection(currentSections.find(section => section._id === id))
+        transition
     };
 
-    const confirmDelete = (item) => {
-        if (item._id === toDelete.item?._id) {
-            setToDelete({ message: false, item: null });
-            return;
+    const handleSelectSection = (e) => {
+        e?.stopPropagation?.();
+        if (isCurrent) {
+            setCurrentSection(null);
+        } else {
+            const found = currentSections.find(section => section._id === id);
+            if (found) setCurrentSection(found);
         }
-
-        setToDelete({ message: true, item });
     };
 
-    useEffect(() => setToDelete({ message: false, item: null }), [currentSection]);
-
-    useEffect(() => { toDelete.message && setAllowDrag(false) });
+    const sectionColor = labelStyle?.border?.match(/#[0-9a-fA-F]{3,6}|hsl\([^)]+\)/)?.[0] || '#7c4dff';
 
     return (
-        // Section Card
         <div 
             ref={setNodeRef} 
             style={style} 
-            className="section-card" 
-            {...attributes} 
-            {...listeners} 
-            onMouseEnter={() => handleHoverEffect("card", true)} 
-            onMouseLeave={() => handleHoverEffect("card", false)}
+            className={`section-card ${isCurrent ? 'is-active' : ''} ${isDragging ? 'is-dragging' : ''}`}
+            onMouseLeave={() => setConfirmDelete(false)}
+            onClick={handleSelectSection}
         >
-            
-            {/* Section Label */}
-            <div 
-                className='mb-3 p-1 rounded-2 text-center text-light w-100 text-truncate' 
-                style={{ ...labelStyle }}
-                onMouseEnter={() => handleHoverEffect("label", true)}
-                onMouseLeave={() => handleHoverEffect("label", false)}
-            >
-                {isHovered?.label && currentSong && currentSections?.length ? (
-                    <div className='d-flex justify-space-between'>
-                        <span className='w-50 delete' onClick={() => handleDelete("sections", id)}>
-                            Delete
-                            <i className="fa-solid fa-trash ms-2"></i>
-                        </span>
-                        <span className={`w-50 ${currentSection?._id === id ? "done" : "edit"}`} onClick={() => handleSelectSection(id)}>
-                            {currentSection?._id === id ? "Done" : "Edit"}
-                            <i className={`fa-solid fa-${currentSection?._id === id ? "circle-check" : "pen-to-square"} ms-2`}></i>
-                        </span>
-                    </div>
-                    
-                ) : isCurrentSection(id) ? `Editing: ${children}` : children}
-            </div>
-
-            {/* Section Notes */}
-            {notes?.map(note => (
-                <div key={note._id} className='w-100 d-flex align-items-center'>
-                    <div 
-                        className={`text-center border border-3 rounded-2 mb-2 p-1 w-100 position-relative overflow-x-scroll notes`}
-                        onMouseEnter={() => handleHoverEffect("notes", true)}
-                        onMouseLeave={() => handleHoverEffect("notes", false)}
-                        onClick={() => confirmDelete(note)}
+            {/* Header: Index, Label Pill, Actions & Drag Handle */}
+            <div className="section-header" onClick={(e) => e.stopPropagation()}>
+                <div className="section-badge-container">
+                    {typeof index === 'number' && (
+                        <span className="section-index">{String(index + 1).padStart(2, '0')}</span>
+                    )}
+                    <span 
+                        className="section-pill"
+                        style={{ 
+                            backgroundColor: sectionColor,
+                            color: '#ffffff'
+                        }}
+                        title={children}
                     >
-                        <span>{note.label}</span>
-                    </div>
-                    {(toDelete.item?._id === note._id && toDelete.message && currentSection?._id === id) && (
-                        <button className="btn btn-danger text-center mb-2 py-1 px-2 ms-2" onClick={() => { handleHoverEffect("notes", true); handleDeleteNote(note._id, id)}}>
+                        {children}
+                    </span>
+                </div>
+
+                <div className="section-actions">
+                    {/* Active/Select Toggle */}
+                    <button 
+                        type="button"
+                        className={`section-btn ${isCurrent ? 'btn-active-edit' : ''}`}
+                        title={isCurrent ? "Finish editing section" : "Select section to add instruments/dynamics"}
+                        onClick={handleSelectSection}
+                    >
+                        <i className={`fa-solid fa-${isCurrent ? 'circle-check' : 'pen-to-square'}`}></i>
+                    </button>
+
+                    {/* Delete Section */}
+                    {confirmDelete ? (
+                        <button 
+                            type="button"
+                            className="section-btn btn-delete text-danger"
+                            title="Confirm delete section"
+                            onClick={() => handleDelete("sections", id)}
+                        >
+                            <i className="fa-solid fa-check"></i>
+                        </button>
+                    ) : (
+                        <button 
+                            type="button"
+                            className="section-btn btn-delete"
+                            title="Delete section"
+                            onClick={() => setConfirmDelete(true)}
+                        >
                             <i className="fa-solid fa-trash"></i>
                         </button>
                     )}
+
+                    {/* Dedicated Drag Handle */}
+                    <button 
+                        type="button"
+                        className="drag-handle ms-1"
+                        title="Drag to reorder section"
+                        {...attributes}
+                        {...listeners}
+                    >
+                        <i className="fa-solid fa-grip-vertical"></i>
+                    </button>
                 </div>
-            ))}
+            </div>
+
+            {/* Active Section Banner */}
+            {isCurrent && (
+                <div className="active-indicator">
+                    <i className="fa-solid fa-sliders"></i>
+                    <span>Selected for Editing</span>
+                </div>
+            )}
+
+            {/* Notes List (Dynamics & Instruments) */}
+            <div className="section-notes-container" onClick={(e) => e.stopPropagation()}>
+                {notes && notes.length > 0 ? (
+                    notes.map(note => {
+                        const meta = getNoteMetadata(note.label);
+                        return (
+                            <div 
+                                key={note._id} 
+                                className={`note-chip chip-${meta.type}`}
+                                title={`${meta.type.toUpperCase()}: ${note.label}`}
+                            >
+                                <span className="note-chip-label">
+                                    <i className={`${meta.icon} note-chip-icon`} style={{ color: meta.color }}></i>
+                                    <span>{note.label}</span>
+                                </span>
+                                
+                                <button 
+                                    type="button"
+                                    className="note-chip-delete"
+                                    title={`Remove ${note.label}`}
+                                    onClick={(e) => {
+                                        e.stopPropagation();
+                                        handleDeleteNote(note._id, id);
+                                    }}
+                                >
+                                    <i className="fa-solid fa-xmark"></i>
+                                </button>
+                            </div>
+                        );
+                    })
+                ) : (
+                    <div 
+                        className="empty-notes-hint"
+                        onClick={handleSelectSection}
+                        style={{ cursor: 'pointer' }}
+                    >
+                        <i className={isCurrent ? "fa-solid fa-plus-circle text-primary" : "fa-solid fa-layer-group"}></i>
+                        <span>{isCurrent ? "Choose instruments or dynamics below" : "Click to select and add elements"}</span>
+                    </div>
+                )}
+            </div>
         </div>
     );
-};
+}
+
+// Standalone overlay preview for DragOverlay
+export function SortableInputOverlay({ section }) {
+    if (!section) return null;
+    const notes = section.notes || [];
+
+    return (
+        <div className="section-card-overlay">
+            <div className="section-header">
+                <div className="section-badge-container">
+                    <span 
+                        className="section-pill"
+                        style={{ backgroundColor: section.color || '#7c4dff', color: '#ffffff' }}
+                    >
+                        {section.label}
+                    </span>
+                </div>
+                <div className="drag-handle text-primary">
+                    <i className="fa-solid fa-grip-vertical"></i>
+                </div>
+            </div>
+
+            <div className="section-notes-container">
+                {notes.slice(0, 3).map(note => {
+                    const meta = getNoteMetadata(note.label);
+                    return (
+                        <div key={note._id} className={`note-chip chip-${meta.type}`}>
+                            <span className="note-chip-label">
+                                <i className={`${meta.icon} note-chip-icon`} style={{ color: meta.color }}></i>
+                                <span>{note.label}</span>
+                            </span>
+                        </div>
+                    );
+                })}
+                {notes.length > 3 && (
+                    <small className="text-muted text-center">+{notes.length - 3} more items</small>
+                )}
+            </div>
+        </div>
+    );
+}
 
 export default SortableInput;

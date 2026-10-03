@@ -27,7 +27,7 @@ const userSchema = new Schema(
             required: true,
             trim: true,
             minLength: [3, 'Password must be at least 3 characters long.'],
-            maxLength: [50, 'Password cannot exceed 50 characters.'],
+            maxLength: [100, 'Password cannot exceed 100 characters.'],
         },
         setlists: [{
             type: Schema.Types.ObjectId,
@@ -48,7 +48,7 @@ const userSchema = new Schema(
 );
 
 userSchema.pre('save', async function (next) {
-    if (this.isNew || this.isModified('password')) {
+    if (this.password && (this.isNew || this.isModified('password'))) {
         const saltrounds = 10;
         this.password = await bcrypt.hash(this.password, saltrounds);
     }
@@ -56,6 +56,7 @@ userSchema.pre('save', async function (next) {
 });
 
 userSchema.methods.isCorrectPassword = async function (password) {
+    if (!this.password) return false;
     return bcrypt.compare(password, this.password);
 };
 

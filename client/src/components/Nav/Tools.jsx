@@ -1,28 +1,32 @@
 import { useToggleVisible } from '../../contexts/ToggleVisibleContext.jsx';
-
 import './index.css';
 
-function Tools({ toggleTools, setToggleTools }) {
+function Tools() {
     const { visible, toggleVisible } = useToggleVisible();
 
     return (
-        <div className="d-flex gap-2">
-            <div className={`d-flex gap-1 tools ${visible.tools ? 'show' : 'hide'}`}>
-                <button className="btn d-flex gap-1 align-items-center justify-content-between" onClick={() => toggleVisible('selector')}>
-                    <span className={`${visible.selector ? 'current' : ''}`}>Arrangement</span>
-                    <i className={`fa-solid fa-toggle-${visible.selector ? 'on current show' : 'off hide'}`}></i>
-                </button>
-                <button className='btn d-flex gap-1 align-items-center justify-content-between' onClick={() => toggleVisible('sidebar')}>
-                    <span className={`${visible.sidebar ? 'current' : ''}`}>Sidebar</span>
-                    <i className={`fa-solid fa-toggle-${visible.sidebar ? 'on current show' : 'off hide'}`}></i>
-                </button>
-            </div>
-
-            <button className={`btn text-light tools-btn ${toggleTools && 'toggled'}`} onClick={() => { toggleVisible('tools'); setToggleTools(prev => !prev)}}>
-                Tools
-                <i className="fa-solid fa-screwdriver-wrench ms-1"></i>
+        <div className="d-flex align-items-center gap-2">
+            {/* Palette Toggle */}
+            <button 
+                type="button"
+                className={`nav-toggle-btn ${visible.selector ? 'active' : ''}`}
+                onClick={() => toggleVisible('selector')}
+                title="Toggle Element Palette (Sections, Dynamics, Instruments)"
+            >
+                <i className="fa-solid fa-sliders"></i>
+                <span className="d-none d-md-inline">Palette</span>
             </button>
-            
+
+            {/* Library Sidebar Toggle */}
+            <button 
+                type="button"
+                className={`nav-toggle-btn ${visible.sidebar ? 'active' : ''}`}
+                onClick={() => toggleVisible('sidebar')}
+                title="Toggle Library Browser (Setlists & Songs)"
+            >
+                <i className="fa-solid fa-folder-open"></i>
+                <span className="d-none d-md-inline">Library</span>
+            </button>
         </div>
     );
 };

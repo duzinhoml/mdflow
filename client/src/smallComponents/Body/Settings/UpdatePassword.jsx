@@ -41,7 +41,7 @@ function UpdatePassword({ setOption, setActivePage }) {
                         autoComplete="off"
                         required
                     />
-                    <label htmlFor="currentPWInput" className="fs-6" style={{ color: 'grey' }}>Enter old password</label>
+                    <label htmlFor="currentPWInput" className="fs-6" style={{ color: 'var(--text-secondary)' }}>Enter old password</label>
                     {error && incorrectPassword ? <div className="invalid-feedback error-feedback fs-6">Incorrect Password</div> : ''}
                 </div>
                 <div className='mb-3 form-floating'>
@@ -56,7 +56,7 @@ function UpdatePassword({ setOption, setActivePage }) {
                         autoComplete="off"
                         required
                     />
-                    <label htmlFor="newPWInput" className="fs-6" style={{ color: 'grey' }}>Enter new password</label>
+                    <label htmlFor="newPWInput" className="fs-6" style={{ color: 'var(--text-secondary)' }}>Enter new password</label>
                     {error && minChar ? <div className="invalid-feedback error-feedback fs-6">Password must be at least 8 characters long.</div> : ''}
                     {error && maxChar ? <div className="invalid-feedback error-feedback fs-6">Password cannot exceed 50 characters.</div> : ''}
                     {error && specialChar ? <div className="invalid-feedback error-feedback fs-6">Password must include at least one lowercase letter, one uppercase letter, one number, and one special character.</div> : ''}
@@ -73,7 +73,7 @@ function UpdatePassword({ setOption, setActivePage }) {
                         autoComplete="off"
                         required
                     />
-                    <label htmlFor="confirmPWInput" className="fs-6" style={{ color: 'grey' }}>Confirm new password</label>
+                    <label htmlFor="confirmPWInput" className="fs-6" style={{ color: 'var(--text-secondary)' }}>Confirm new password</label>
                     {error && noMatch ? <div className="invalid-feedback error-feedback fs-6">Passwords do not match</div> : ''}
                 </div>
                 <div className="mt-3">

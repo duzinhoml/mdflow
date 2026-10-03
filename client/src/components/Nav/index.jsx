@@ -1,31 +1,36 @@
-import { useState } from 'react';
-import { Link } from 'react-router-dom'
-
+import { Link } from 'react-router-dom';
 import { useUser } from '../../contexts/UserContext.jsx';
 
-import SetlistTitle from './SetlistTitle.jsx';
 import Tools from './Tools.jsx';
-
 import './index.css';
 
 function Nav() {  
-    const [toggleTools, setToggleTools] = useState(false);
     const { userData } = useUser();
 
     return (
-        <nav className="navbar px-2 mx-2 position-relative">
-            <span className='navbar-brand me-2 text-light'>MDFlow</span>
+        <nav className="topbar-nav">
+            {/* Brand Logo & Name */}
+            <Link to="/" className="brand-container">
+                <div className="brand-icon">
+                    <i className="fa-solid fa-wave-square"></i>
+                </div>
+                <div className="d-flex align-items-center">
+                    <span className="brand-text">MDFlow</span>
+                    <span className="brand-badge d-none d-sm-inline">Studio</span>
+                </div>
+            </Link>
 
-            <SetlistTitle />
-            <div className='d-flex'>
-                <Tools toggleTools={toggleTools} setToggleTools={setToggleTools}/>
+            {/* Right Controls: Workspace Toggles & Profile Avatar */}
+            <div className='d-flex align-items-center gap-2'>
+                <Tools />
+                
                 <Link 
                     to="/settings" 
-                    className='ms-2 profile fs-6'
-                    style={{ textDecoration: "none" }}
+                    className='profile ms-1'
+                    title={userData ? `Account Settings: ${userData.firstName} ${userData.lastName}` : "Settings"}
                 >
-                    {userData?.firstName.slice(0, 1)}
-                    {userData?.lastName.slice(0, 1)}
+                    {userData?.firstName ? userData.firstName.slice(0, 1) : "U"}
+                    {userData?.lastName ? userData.lastName.slice(0, 1) : ""}
                 </Link>
             </div>
         </nav>

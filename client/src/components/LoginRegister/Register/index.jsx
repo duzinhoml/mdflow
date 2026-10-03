@@ -21,7 +21,7 @@ function Register({ setAccountStep }) {
                 <div className="col-12 col-lg-5 ps-lg-5">
 
                     <form 
-                        className="border border-5 rounded p-4 position-relative needs-validation" 
+                        className="register-card p-4 position-relative needs-validation" 
                         onSubmit={currentStep === 1 ? handleNextStep : (e) => handleFormSubmit(e, formData)}
                     >
                         <h2 className="text-center mb-4 text-light">Create Account</h2>
@@ -32,7 +32,7 @@ function Register({ setAccountStep }) {
                                         <input
                                             id="firstNameInput"
                                             type="text"
-                                            className="form-control form-control-lg register-input"
+                                            className="form-control register-input"
                                             name="firstName"
                                             placeholder="First Name"
                                             value={formData.firstName}
@@ -41,13 +41,13 @@ function Register({ setAccountStep }) {
                                             autoComplete='off'
                                             style={{ fontSize: '16px' }}
                                         />
-                                        <label htmlFor="firstNameInput" className="ms-2 fs-6" style={{ color: 'grey' }}>First Name</label>
+                                        <label htmlFor="firstNameInput">First Name</label>
                                     </div>
                                     <div className="col-12 form-floating">
                                         <input
                                             id="lastNameInput"
                                             type="text"
-                                            className="form-control form-control-lg register-input"
+                                            className="form-control register-input"
                                             name="lastName"
                                             placeholder="Last Name"
                                             value={formData.lastName}
@@ -56,7 +56,7 @@ function Register({ setAccountStep }) {
                                             autoComplete='off'
                                             style={{ fontSize: '16px' }}
                                         />
-                                        <label htmlFor="lastNameInput" className="ms-2 fs-6" style={{ color: 'grey' }}>Last Name</label>
+                                        <label htmlFor="lastNameInput">Last Name</label>
                                     </div>
                                     <div className="col-12">
                                         <button
@@ -66,8 +66,8 @@ function Register({ setAccountStep }) {
                                             Next
                                         </button>
                                     </div>
-                                    <div className="col-12">
-                                        <p className="text-center text-light">
+                                    <div className="col-12 mt-3">
+                                        <p className="text-center text-light mb-0">
                                             {'Already have an account?' + ' '} 
                                             <span className="login" onClick={() => setAccountStep('login')}>Login</span>
                                         </p>
@@ -81,7 +81,7 @@ function Register({ setAccountStep }) {
                                         <input
                                             id="usernameInput"
                                             type="text"
-                                            className={`form-control form-control-lg ${error && userError ? 'is-invalid register-error' : 'register-input'}`}
+                                            className={`form-control ${error && userError ? 'is-invalid register-error' : 'register-input'}`}
                                             name="username"
                                             placeholder="Username"
                                             value={formData.username}
@@ -90,13 +90,13 @@ function Register({ setAccountStep }) {
                                             autoComplete='off'
                                             style={{ fontSize: '16px' }}
                                         />
-                                        <label htmlFor="usernameInput" className="ms-2 fs-6" style={{ color: 'grey' }}>Username</label>
+                                        <label htmlFor="usernameInput">Username</label>
                                     </div>
                                     <div className="col-12 form-floating">
                                         <input
                                             id="passwordInput"
                                             type="password"
-                                            className={`form-control form-control-lg ${error && passError ? 'is-invalid register-error' : 'register-input'}`}
+                                            className={`form-control ${error && passError ? 'is-invalid register-error' : 'register-input'}`}
                                             name="password"
                                             placeholder="Password"
                                             value={formData.password}
@@ -105,7 +105,7 @@ function Register({ setAccountStep }) {
                                             autoComplete='off'
                                             style={{ fontSize: '16px' }}
                                         />
-                                        <label htmlFor="passwordInput" className="ms-2 fs-6" style={{ color: 'grey' }}>Password</label>
+                                        <label htmlFor="passwordInput">Password</label>
                                     </div>
                                     <div className="col-12">
                                         <button

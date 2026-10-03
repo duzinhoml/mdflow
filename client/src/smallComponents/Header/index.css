@@ -1,5 +1,6 @@
-.header {
-    background-color: hsl(235, 13%, 32%);
-    border-radius: 0px 0px 6px 6px;
-    box-shadow: 0px 0px 2px 2px hsl(235, 13%, 42%);
+.mobile-header {
+    background-color: var(--bg-surface);
+    border-bottom: 1px solid var(--border-default);
+    padding: 10px 16px;
+    box-shadow: 0 1px 8px rgba(0, 0, 0, 0.3);
 }

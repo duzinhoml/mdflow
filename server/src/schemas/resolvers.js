@@ -150,8 +150,12 @@ const resolvers = {
             if (!context.user) throw new Error('Not authenticated');
 
             try {
-                const { title } = input;
-                const newSong = await Song.create({ title });
+                const { title, bpm, timeSignature } = input;
+                const newSong = await Song.create({ 
+                    title,
+                    bpm: bpm ? Number(bpm) : 120,
+                    timeSignature: timeSignature ? timeSignature.trim() : '4/4'
+                });
                 if (!newSong) throw new Error('Song creation failed');
 
                 const updatedUser = await User.findOneAndUpdate(
@@ -308,6 +312,44 @@ const resolvers = {
             } 
             catch (err) {
                 throw new Error(`Error updating song title: ${err.message}`);
+            }
+        },
+        updateSongBpm: async (_, { songId, bpm }, context) => {
+            try {
+                if (!context.user) throw new Error('Not authenticated');
+                const cleanBpm = Math.min(Math.max(Number(bpm) || 120, 20), 320);
+
+                const updatedSong = await Song.findOneAndUpdate(
+                    { _id: songId },
+                    { $set: { bpm: cleanBpm } },
+                    { new: true }
+                );
+
+                if (!updatedSong) throw new Error('Song not found or update failed');
+
+                return updatedSong.populate('sections');
+            } 
+            catch (err) {
+                throw new Error(`Error updating song BPM: ${err.message}`);
+            }
+        },
+        updateSongTimeSignature: async (_, { songId, timeSignature }, context) => {
+            try {
+                if (!context.user) throw new Error('Not authenticated');
+                const cleanTimeSignature = (timeSignature || '4/4').trim();
+
+                const updatedSong = await Song.findOneAndUpdate(
+                    { _id: songId },
+                    { $set: { timeSignature: cleanTimeSignature } },
+                    { new: true }
+                );
+
+                if (!updatedSong) throw new Error('Song not found or update failed');
+
+                return updatedSong.populate('sections');
+            } 
+            catch (err) {
+                throw new Error(`Error updating song time signature: ${err.message}`);
             }
         },
         updateSectionOrder: async (_, { songId, sectionIds }, context) => {

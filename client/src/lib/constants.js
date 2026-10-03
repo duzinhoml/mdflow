@@ -14,7 +14,7 @@ import Auth from './utils/auth.js';
 import { useMutation } from '@apollo/client';
 import { 
     LOGIN_USER, CREATE_USER, CREATE_SETLIST, CREATE_SONG, CREATE_SECTION, CREATE_NOTE, 
-    UPDATE_PASSWORD, UPDATE_SETLIST_TITLE, UPDATE_SONG_TITLE, UPDATE_SECTION_ORDER, 
+    UPDATE_PASSWORD, UPDATE_SETLIST_TITLE, UPDATE_SONG_TITLE, UPDATE_SONG_BPM, UPDATE_SONG_TIME_SIGNATURE, UPDATE_SECTION_ORDER, 
     DELETE_USER, DELETE_SETLIST_BY_ID, DELETE_SONG_BY_ID, DELETE_SECTION_BY_ID, DELETE_NOTE_BY_ID 
 } from './utils/mutations.js';
 import { QUERY_ME } from './utils/queries';
@@ -25,23 +25,23 @@ export const INPUT_POOL = [
             { label: 'Intro', color: '#61a6ae' },
             { label: 'Verse', color: '#7c79be' },
             { label: 'Pre-Chorus', color: '#cdab4c' },
-            { label: 'Vamp', color: '#b75c52' },
             { label: 'Chorus', color: '#d16a33' },
+            { label: 'Bridge', color: '#b1727b' },
+            { label: 'Vamp', color: '#b75c52' },
             { label: 'Turnaround', color: '#8ab950' },
             { label: 'Interlude', color: '#b75a52' },
             { label: 'Instrumental', color: '#8ab950' },
-            { label: 'Bridge', color: '#b1727b' },
             { label: 'Tag', color: '#d16a33' },
             { label: 'Refrain', color: '#64a07c' },
             { label: 'Outro', color: '#61a6ae' },
         ]
     },
     { id: 2, label: 'Dynamics', icon: 'fa-solid fa-chart-simple', children: [
-            { label: 'High' },
+            { label: 'Soft' },
             { label: 'Low' },
             { label: 'Mid' },
-            { label: 'All in' },
-            { label: 'Soft' }
+            { label: 'High' },
+            { label: 'All in' }
         ]
     },
     { id: 3, label: 'Instruments', icon: 'fa-solid fa-guitar', children: [
@@ -70,13 +70,13 @@ export const INPUT_POOL = [
 
 // Screen Width
 export function useWindowResize() {
-    const [screenWidth, setScreenWidth] = useState(window.innerWidth);
-    const [isMobile, setIsMobile] = useState(window.innerWidth <= 1024);
+    const [screenWidth, setScreenWidth] = useState(typeof window !== 'undefined' ? window.innerWidth : 1200);
+    const [isMobile, setIsMobile] = useState(typeof window !== 'undefined' ? window.innerWidth < 768 : false);
 
     useEffect(() => {
         const handleResize = () => {
-            setScreenWidth(window.innerWidth)
-            setIsMobile(window.innerWidth <= 1024);
+            setScreenWidth(window.innerWidth);
+            setIsMobile(window.innerWidth < 768);
         };
         window.addEventListener('resize', handleResize);
         
@@ -163,13 +163,26 @@ export function useUpdateSongTitle() {
     const [updateSongTitle] = useMutation(UPDATE_SONG_TITLE, { refetchQueries: [QUERY_ME] });
 
     useEffect(() => {
-        if (currentSong?.title) setSongData(prev => ({ ...prev, title: currentSong.title}))
-        else setSongData(prev => ({ ...prev, title: ""}));
-    }, [currentSong]);
+        if (currentSong) {
+            setSongData(prev => ({
+                ...prev,
+                title: currentSong.title || "",
+                bpm: currentSong.bpm || 120,
+                timeSignature: currentSong.timeSignature || '4/4'
+            }));
+        } else {
+            setSongData(prev => ({
+                ...prev,
+                title: "",
+                bpm: 120,
+                timeSignature: '4/4'
+            }));
+        }
+    }, [currentSong, setSongData]);
     
     const handleInputChange = (e) => {
         const { value } = e.target;
-        setSongData(prev =>  ({ ...prev, title: value }))
+        setSongData(prev => ({ ...prev, title: value }));
     };
     
     useEffect(() => {
@@ -183,7 +196,11 @@ export function useUpdateSongTitle() {
                     const { data: newSongData} = await createSong({
                         variables: {
                             setlistId: currentSetlist?._id,
-                            input: { title: songData.title }
+                            input: {
+                                title: songData.title,
+                                bpm: Number(songData.bpm) || 120,
+                                timeSignature: songData.timeSignature || '4/4'
+                            }
                         }
                     });
                     const newSong = newSongData.createSong;
@@ -253,6 +270,105 @@ export function useUpdateSongTitle() {
     }, [songData.title]);
 
     return handleInputChange;
+}
+
+// Updating Song BPM
+export function useUpdateSongBpm() {
+    const { songData, setSongData } = useSongData();
+    const { currentSetlist, setCurrentSetlist, currentSong, setCurrentSong } = useSong();
+    const { setUserData } = useUser();
+    const [updateSongBpm] = useMutation(UPDATE_SONG_BPM, { refetchQueries: [QUERY_ME] });
+
+    const handleBpmChange = async (newBpm) => {
+        const parsed = parseInt(newBpm, 10);
+        if (isNaN(parsed)) return;
+        const clamped = Math.min(Math.max(parsed, 20), 320);
+
+        setSongData(prev => ({ ...prev, bpm: clamped }));
+
+        if (currentSong?._id) {
+            try {
+                await updateSongBpm({
+                    variables: {
+                        songId: currentSong._id,
+                        bpm: clamped
+                    }
+                });
+
+                setCurrentSong(prev => prev ? ({ ...prev, bpm: clamped }) : null);
+                if (currentSetlist) {
+                    setCurrentSetlist(prev => prev ? ({
+                        ...prev,
+                        songs: prev.songs?.map(s => s._id === currentSong._id ? { ...s, bpm: clamped } : s)
+                    }) : null);
+                }
+                setUserData(prev => {
+                    if (!prev) return prev;
+                    return {
+                        ...prev,
+                        songs: prev.songs?.map(s => s._id === currentSong._id ? { ...s, bpm: clamped } : s),
+                        setlists: prev.setlists?.map(sl => ({
+                            ...sl,
+                            songs: sl.songs?.map(s => s._id === currentSong._id ? { ...s, bpm: clamped } : s)
+                        }))
+                    };
+                });
+            } catch (err) {
+                console.error('Error updating BPM:', err);
+            }
+        }
+    };
+
+    return { bpm: songData.bpm || 120, handleBpmChange };
+}
+
+// Updating Song Time Signature
+export function useUpdateSongTimeSignature() {
+    const { songData, setSongData } = useSongData();
+    const { currentSetlist, setCurrentSetlist, currentSong, setCurrentSong } = useSong();
+    const { setUserData } = useUser();
+    const [updateSongTimeSignature] = useMutation(UPDATE_SONG_TIME_SIGNATURE, { refetchQueries: [QUERY_ME] });
+
+    const handleTimeSignatureChange = async (newSig) => {
+        if (!newSig || typeof newSig !== 'string') return;
+        const trimmed = newSig.trim();
+
+        setSongData(prev => ({ ...prev, timeSignature: trimmed }));
+
+        if (currentSong?._id) {
+            try {
+                await updateSongTimeSignature({
+                    variables: {
+                        songId: currentSong._id,
+                        timeSignature: trimmed
+                    }
+                });
+
+                setCurrentSong(prev => prev ? ({ ...prev, timeSignature: trimmed }) : null);
+                if (currentSetlist) {
+                    setCurrentSetlist(prev => prev ? ({
+                        ...prev,
+                        songs: prev.songs?.map(s => s._id === currentSong._id ? { ...s, timeSignature: trimmed } : s)
+                    }) : null);
+                }
+                setUserData(prev => {
+                    if (!prev) return prev;
+                    return {
+                        ...prev,
+                        songs: prev.songs?.map(s => s._id === currentSong._id ? { ...s, timeSignature: trimmed } : s),
+                        setlists: prev.setlists?.map(sl => ({
+                            ...sl,
+                            songs: sl.songs?.map(s => s._id === currentSong._id ? { ...s, timeSignature: trimmed } : s)
+                        }))
+                    };
+                });
+            } catch (err) {
+                console.error('Error updating time signature:', err);
+            }
+        }
+    };
+
+    return { timeSignature: songData.timeSignature || '4/4', handleTimeSignatureChange };
 }
 
 // Adding a Section || Note
@@ -964,7 +1080,11 @@ export const useDeleteUser = () => {
 // Sensors
 export function useDndSensors() {
     const sensors = useSensors(
-        useSensor(PointerSensor),
+        useSensor(PointerSensor, {
+            activationConstraint: {
+                distance: 5
+            }
+        }),
         useSensor(KeyboardSensor, {
             coordinateGetter: sortableKeyboardCoordinates
         })
@@ -1115,7 +1235,7 @@ export function useLoginCheck() {
 // ApolloProvider Client
 export function useApolloProvider() {
     const httpLink = createHttpLink({
-        uri: process.env.NODE_ENV === 'production' ? '/graphql' : 'http://localhost:3001/graphql'
+        uri: import.meta.env?.PROD ? '/graphql' : 'http://localhost:3001/graphql'
     });
 
     const authLink = setContext((_, { headers }) => {

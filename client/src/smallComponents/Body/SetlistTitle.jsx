@@ -10,42 +10,27 @@ function SetlistTitle() {
     const handleInputChange = useUpdateSetlistTitle();
 
     return (
-        <div className="d-flex justify-content-center">
-            {currentSetlist ? (
+        <div className="d-flex justify-content-center my-2 px-2">
+            <div className="setlist-pill-box" style={{ maxWidth: '92vw' }}>
+                <i 
+                    className={`fa-solid ${currentSetlist ? 'fa-list-check' : 'fa-folder-plus'}`}
+                    style={{ color: currentSetlist ? 'var(--accent-primary)' : 'var(--text-muted)', fontSize: '13px' }}
+                ></i>
                 <input 
-                    name='currentSetlistTitle'
+                    name={currentSetlist ? 'currentSetlistTitle' : 'setlistTitle'}
                     type="text" 
-                    className='text-light text-center p-1 border-2 border-primary rounded setlist-input'
+                    className="setlist-input flex-grow-1"
+                    placeholder="Enter setlist name..."
                     onChange={handleInputChange} 
                     value={setlistData.title}
-                    style={{ 
-                        border: 'none',
-                        backgroundColor: 'transparent',
-                        boxShadow: '0px 0px 2px 2px hsl(235, 10%, 15%)',
-                        outlineColor: 'hsl(235, 13%, 42%)',
-                        cursor: 'text'
-                    }}
                     autoComplete='off'
                 />
-            ) : (
-                <input 
-                    name='setlistTitle'
-                    type="text" 
-                    className='text-light text-center p-1 border-2 border-primary rounded setlist-input'
-                    placeholder='Enter setlist name...'
-                    onChange={handleInputChange} 
-                    value={setlistData.title}
-                    style={{ 
-                        border: 'none',
-                        backgroundColor: 'transparent',
-                        boxShadow: '0px 0px 2px 2px hsl(235, 10%, 15%)',
-                        outlineColor: 'grey',
-                        cursor: 'text'
-                    }}
-                    autoComplete='off'
-                /> 
-            )
-            }
+                {currentSetlist && (
+                    <span className="badge bg-dark bg-opacity-50 text-light" style={{ fontSize: '10px' }}>
+                        {currentSetlist.songs?.length || 0}
+                    </span>
+                )}
+            </div>
         </div>
     );
 };

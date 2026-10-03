@@ -21,6 +21,8 @@ const typeDefs = `
     type Song {
         _id: ID!
         title: String!
+        bpm: Int
+        timeSignature: String
         sections: [Section]
         createdAt: String
         updatedAt: String
@@ -56,6 +58,8 @@ const typeDefs = `
 
     input CreateSongInput {
         title: String!
+        bpm: Int
+        timeSignature: String
     }
 
     input CreateSectionInput {
@@ -101,6 +105,8 @@ const typeDefs = `
         updatePassword(input: UpdatePasswordInput!): User
         updateSetlistTitle(setlistId: ID!, title: String!): Setlist
         updateSongTitle(songId: ID!, title: String!): Song
+        updateSongBpm(songId: ID!, bpm: Int!): Song
+        updateSongTimeSignature(songId: ID!, timeSignature: String!): Song
         updateSectionOrder(songId: ID!, sectionIds: [ID!]!): Song
 
         deleteUserById(userId: ID!): String

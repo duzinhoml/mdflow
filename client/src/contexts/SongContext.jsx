@@ -10,48 +10,65 @@ export const SongProvider = ({ children }) => {
 
     const songs = currentSetlist?.songs;
 
+    const selectSetlist = (setlist) => {
+        if (!setlist) {
+            setCurrentSetlist(null);
+            setCurrentSong(null);
+            return;
+        }
+        setCurrentSetlist(setlist);
+        if (setlist.songs && setlist.songs.length > 0) {
+            setCurrentSong(setlist.songs[0]);
+        } else {
+            setCurrentSong(null);
+        }
+    };
+
     const handleSetCurrent = (filter, item) => {
         if (filter === "Setlists") {
             if (currentSetlist?._id === item._id) {
-                setCurrentSetlist(null);
-                setCurrentSong(null);
+                selectSetlist(null);
             }
-            else setCurrentSetlist(item);
+            else {
+                selectSetlist(item);
+            }
         }
         else {
             if (!currentSetlist) return;
             if (currentSong?._id === item._id) setCurrentSong(null);
             else setCurrentSong(item);
         }
-    }
+    };
     
     useEffect(() => {
-        if (!currentSong?.sections?.find(section => section._id === currentSection?._id)) setCurrentSection(null);
-    }, [currentSong]);
+        if (!currentSong?.sections?.find(section => section._id === currentSection?._id)) {
+            setCurrentSection(null);
+        }
+    }, [currentSong, currentSection?._id]);
 
     const prevSong = (song) => {
-        if (!song) return;
+        if (!song || !songs) return;
         const activeIndex = songs.findIndex(s => s._id === song._id);
 
-        if (activeIndex <=0) return;
+        if (activeIndex <= 0) return;
         setCurrentSong(songs[activeIndex - 1]);
-    }
+    };
 
     const nextSong = (song) => {
-        if (!song) return;
+        if (!song || !songs) return;
         const activeIndex = songs.findIndex(s => s._id === song._id);
         
-        if (activeIndex < 0 || activeIndex === (songs.length - 1)) return;
+        if (activeIndex < 0 || activeIndex >= (songs.length - 1)) return;
         setCurrentSong(songs[activeIndex + 1]);
-    }
+    };
 
     const value = {
-        currentSetlist, setCurrentSetlist,
+        currentSetlist, setCurrentSetlist, selectSetlist,
         currentSong, setCurrentSong, handleSetCurrent,
         currentSections, setCurrentSections,
         currentSection, setCurrentSection,
         prevSong, nextSong
-    }
+    };
 
     return (
         <SongContext.Provider value={value}>

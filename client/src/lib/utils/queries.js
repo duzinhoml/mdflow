@@ -25,6 +25,8 @@ export const QUERY_ME = gql`
         songs {
           _id
           title
+          bpm
+          timeSignature
           createdAt
           sections {
             _id
@@ -40,6 +42,8 @@ export const QUERY_ME = gql`
       songs {
         _id
         title
+        bpm
+        timeSignature
         createdAt
         sections {
           _id

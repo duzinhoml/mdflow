@@ -1,8 +1,62 @@
+@import url('https://fonts.googleapis.com/css2?family=Rubik:ital,wght@0,300..900;1,300..900&family=JetBrains+Mono:wght@400;500;600&display=swap');
+
 :root {
-    --bg-color-primary: #262731;
-    --color-primary: #A86FFF;
-    --border-color: #3A3B47;
-    --bg-color-hover: #C09AFF;
+    /* Backgrounds */
+    --bg-app: #12131a;
+    --bg-surface: #181a24;
+    --bg-surface-elevated: #202331;
+    --bg-surface-card: #1c1f2c;
+    --bg-surface-hover: #272a3c;
+    --bg-surface-active: #30354c;
+    --bg-input: #151722;
+
+    /* Accents */
+    --accent-primary: #7c4dff;
+    --accent-hover: #9269ff;
+    --accent-light: rgba(124, 77, 255, 0.14);
+    --accent-glow: rgba(124, 77, 255, 0.35);
+    --accent-gradient: linear-gradient(135deg, #7c4dff 0%, #a855f7 100%);
+
+    /* Borders */
+    --border-subtle: rgba(255, 255, 255, 0.07);
+    --border-default: #2a2e40;
+    --border-strong: #383d54;
+    --border-accent: #7c4dff;
+
+    /* Text */
+    --text-primary: #f8fafc;
+    --text-secondary: #cbd5e1;
+    --text-muted: #94a3b8;
+    --text-disabled: #64748b;
+    --text-placeholder: #64748b;
+
+    /* Status Colors */
+    --color-success: #10b981;
+    --color-danger: #ef4444;
+    --color-warning: #f59e0b;
+    --color-info: #38bdf8;
+
+    /* Shadows */
+    --shadow-sm: 0 1px 3px rgba(0, 0, 0, 0.3);
+    --shadow-md: 0 4px 14px rgba(0, 0, 0, 0.4);
+    --shadow-lg: 0 10px 30px rgba(0, 0, 0, 0.6);
+    --shadow-glow: 0 0 20px rgba(124, 77, 255, 0.35);
+
+    /* Radii */
+    --radius-sm: 6px;
+    --radius-md: 10px;
+    --radius-lg: 14px;
+    --radius-full: 9999px;
+
+    /* Transitions */
+    --transition-fast: 0.15s ease;
+    --transition-normal: 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+
+    /* Backward compatibility */
+    --bg-color-primary: var(--bg-app);
+    --color-primary: var(--accent-primary);
+    --border-color: var(--border-default);
+    --bg-color-hover: var(--accent-hover);
 }
 
 * {
@@ -12,20 +66,112 @@
 html, body {
     height: 100%;
     margin: 0;
-    font-family: "Rubik";
-    background-color: #262731;
-    /* background-color: hsl(210, 11%, 15%) */
-    /* overflow-y: hidden; */
+    font-family: "Rubik", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+    background-color: var(--bg-app);
+    color: var(--text-primary);
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
 }
 
+/* Global Text Contrast & Helper Overrides */
+.text-muted {
+    color: var(--text-muted) !important;
+}
+
+::placeholder,
+input::placeholder,
+textarea::placeholder {
+    color: var(--text-placeholder);
+    opacity: 1;
+}
+
+/* Ensure form-floating placeholder remains transparent so it never clashes with floating label */
+.form-floating > .form-control::placeholder,
+.form-floating > .form-control-plaintext::placeholder,
+.form-floating > .form-control:focus::placeholder,
+.form-floating > .form-control-plaintext:focus::placeholder {
+    color: transparent !important;
+    -webkit-text-fill-color: transparent !important;
+}
+
+/* Floating label and input horizontal inset for clean breathing room from borders */
+.form-floating > .form-control,
+.form-floating > .form-control-plaintext {
+    padding-left: 1.25rem !important;
+    padding-right: 1.25rem !important;
+}
+
+.form-floating > label {
+    padding-left: 1.25rem !important;
+    padding-right: 1.25rem !important;
+    color: var(--text-secondary);
+}
+
+/* Custom Scrollbars */
+::-webkit-scrollbar {
+    width: 6px;
+    height: 6px;
+}
+
+::-webkit-scrollbar-track {
+    background: transparent;
+}
+
+::-webkit-scrollbar-thumb {
+    background: var(--border-strong);
+    border-radius: var(--radius-full);
+}
+
+::-webkit-scrollbar-thumb:hover {
+    background: var(--text-muted);
+}
+
+/* Studio UI Helper Classes */
 .ml-bg {
-    background-color: #262731;
+    background-color: var(--bg-surface);
+}
+
+.studio-panel {
+    background-color: var(--bg-surface);
+    border: 1px solid var(--border-default);
+    border-radius: var(--radius-md);
+    box-shadow: var(--shadow-md);
+}
+
+.studio-card {
+    background-color: var(--bg-surface-card);
+    border: 1px solid var(--border-default);
+    border-radius: var(--radius-md);
+    transition: transform var(--transition-fast), border-color var(--transition-fast), box-shadow var(--transition-fast);
+}
+
+.studio-card:hover {
+    border-color: var(--border-strong);
+    background-color: var(--bg-surface-hover);
+}
+
+.badge-tag {
+    font-size: 11px;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    padding: 2px 8px;
+    border-radius: var(--radius-full);
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
+}
+
+/* Focus outline */
+button:focus-visible,
+input:focus-visible {
+    outline: 2px solid var(--accent-primary) !important;
+    outline-offset: 2px !important;
 }
 
 /* Media Queries */
-
 @media (min-width: 768px) {
     body {
-        font-size: 20px;
+        font-size: 16px;
     }
 }

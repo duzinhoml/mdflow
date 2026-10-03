@@ -1,39 +1,33 @@
 .options {
-    color: hsl(210, 17%, 88%);
-    box-shadow: 0px 0px 4px 2px hsl(235, 10%, 15%);
-    transition: color 0.3s ease-in-out, border-color 0.3s ease-in-out, background-color 0.3s ease-in-out;
+    color: var(--text-secondary);
+    background-color: var(--bg-surface-elevated);
+    border: 1px solid var(--border-default);
+    box-shadow: var(--shadow-sm);
+    transition: color var(--transition-fast), border-color var(--transition-fast), background-color var(--transition-fast), box-shadow var(--transition-fast);
+}
 
-    &.current {
-        background-color: hsl(235, 10%, 40%);
-        border-color: hsl(235, 10%, 40%);
-    }
+.options.current {
+    background-color: var(--accent-primary);
+    border-color: var(--accent-primary);
+    color: #ffffff;
+    box-shadow: 0 0 12px var(--accent-glow);
+}
 
-    &:hover {
-        color: hsl(210, 17%, 88%);
-        background-color: hsl(235, 10%, 45%);
-    }
-    
-    &:active {
-        color: hsl(210, 17%, 88%) !important;
-        background-color: hsl(235, 10%, 40%) !important;
-        border-color: hsl(235, 10%, 40%) !important;
-    }
+.options:hover {
+    color: var(--text-primary);
+    background-color: var(--bg-surface-hover);
+    border-color: var(--border-strong);
 }
 
 .log-out {
-    color: hsl(210, 17%, 88%);
-    background-color: hsl(235, 10%, 35%);
-    box-shadow: 0px 0px 4px 2px hsl(235, 10%, 15%);
-    transition: color 0.3s ease-in-out, border-color 0.3s ease-in-out, background-color 0.3s ease-in-out;
+    color: var(--color-danger);
+    background-color: rgba(239, 68, 68, 0.1);
+    border: 1px solid rgba(239, 68, 68, 0.25);
+    transition: color var(--transition-fast), border-color var(--transition-fast), background-color var(--transition-fast);
+}
 
-    &:hover {
-        color: hsl(210, 17%, 88%);
-        background-color: hsl(235, 10%, 30%);
-    }
-    
-    &:active {
-        color: hsl(210, 17%, 88%) !important;
-        background-color: hsl(235, 10%, 27%) !important;
-        border-color: hsl(235, 10%, 27%) !important;
-    }
+.log-out:hover {
+    color: #ffffff;
+    background-color: var(--color-danger);
+    border-color: var(--color-danger);
 }
