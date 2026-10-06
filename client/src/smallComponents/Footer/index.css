@@ -1,32 +1,60 @@
-.footer {
-    background-color: var(--bg-surface);
+/* Native Mobile Bottom Navigation Bar */
+.mobile-bottom-nav {
+    background-color: var(--bg-surface-elevated);
     border-top: 1px solid var(--border-default);
-    box-shadow: 0 -4px 16px rgba(0, 0, 0, 0.4);
+    box-shadow: 0 -4px 20px rgba(0, 0, 0, 0.45);
     z-index: 50;
+    min-height: 56px;
+    padding-bottom: calc(4px + env(safe-area-inset-bottom, 0px));
 }
 
-.foot-labels > button {
+.mobile-nav-item {
+    background: transparent;
+    border: none;
+    outline: none;
     color: var(--text-muted);
-    background-color: var(--bg-surface-elevated);
-    border: 1px solid var(--border-default);
-    width: 52px;
-    height: 44px;
-    border-radius: var(--radius-md);
-    display: inline-flex;
+    display: flex;
+    flex-direction: column;
     align-items: center;
     justify-content: center;
-    transition: color var(--transition-fast), background-color var(--transition-fast), border-color var(--transition-fast), box-shadow var(--transition-fast);
+    gap: 3px;
+    min-width: 64px;
+    min-height: 48px;
+    padding: 4px 8px;
+    border-radius: var(--radius-md);
+    cursor: pointer;
+    touch-action: manipulation;
+    user-select: none;
+    transition: color var(--transition-fast), transform var(--transition-fast);
 }
 
-.foot-labels > button:hover {
+.mobile-nav-item:active {
+    transform: scale(0.94);
+}
+
+.mobile-nav-icon {
+    font-size: 17px;
+    transition: transform var(--transition-fast), color var(--transition-fast);
+}
+
+.mobile-nav-label {
+    font-size: 10px;
+    font-weight: 600;
+    letter-spacing: 0.02em;
+    line-height: 1;
+}
+
+.mobile-nav-item.active {
+    color: var(--accent-primary);
+}
+
+.mobile-nav-item.active .mobile-nav-icon {
+    transform: translateY(-1px);
+    color: var(--accent-primary);
+    filter: drop-shadow(0 0 6px var(--accent-glow));
+}
+
+.mobile-nav-item.active .mobile-nav-label {
     color: var(--text-primary);
-    background-color: var(--bg-surface-hover);
-    border-color: var(--border-strong);
-}
-
-.foot-labels > button.current {
-    background-color: var(--accent-primary);
-    border-color: var(--accent-primary);
-    color: #ffffff !important;
-    box-shadow: 0 0 14px var(--accent-glow);
+    font-weight: 700;
 }

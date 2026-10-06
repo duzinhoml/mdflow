@@ -15,8 +15,8 @@ function SmallDashboard() {
     }, [user, userData, setUserData]);
 
     return (
-        <div className="d-flex flex-column vh-100">
-            <Header />
+        <div className="d-flex flex-column vh-100 h-100-dvh overflow-hidden" style={{ backgroundColor: 'var(--bg-app)' }}>
+            <Header setActivePage={setActivePage} />
             <Body activePage={activePage} setActivePage={setActivePage} />
             <Footer activePage={activePage} setActivePage={setActivePage} />
         </div>

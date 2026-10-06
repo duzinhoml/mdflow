@@ -21,6 +21,32 @@
     pointer-events: none;
 }
 
+/* Sidebar Touch & Backdrop Overlays */
+.sidebar-backdrop {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background-color: rgba(0, 0, 0, 0.55);
+    backdrop-filter: blur(2px);
+    -webkit-backdrop-filter: blur(2px);
+    z-index: 95;
+    animation: sidebarBackdropFade 0.2s ease;
+}
+
+@keyframes sidebarBackdropFade {
+    from { opacity: 0; }
+    to { opacity: 1; }
+}
+
+@media (max-width: 520px) {
+    .sidebar {
+        width: 100vw !important;
+        border-left: none;
+    }
+}
+
 /* Sidebar Header */
 .sidebar-header {
     display: flex;

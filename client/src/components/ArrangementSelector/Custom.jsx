@@ -2,6 +2,7 @@ import { useState } from 'react';
 import { useSectionNoteCreator } from '../../lib/constants';
 import { useSong } from '../../contexts/SongContext';
 
+import DraggablePaletteItem from './DraggablePaletteItem.jsx';
 import './index.css';
 
 const PRESET_COLORS = [
@@ -113,18 +114,45 @@ function Custom() {
                 <div className="d-flex align-items-center justify-content-between pt-2 border-top border-secondary border-opacity-10">
                     <div className="d-flex align-items-center gap-2">
                         <span className="text-muted" style={{ fontSize: '11px', textTransform: 'uppercase' }}>Preview:</span>
-                        {creationFormData.type === "Section" ? (
-                            <span 
-                                className="section-pill"
-                                style={{ backgroundColor: creationFormData.color || '#7c4dff', color: '#fff' }}
+                        {creationFormData.label.trim() ? (
+                            <DraggablePaletteItem
+                                type={creationFormData.type === "Section" ? "section" : "instrument"}
+                                item={{
+                                    label: creationFormData.label.trim(),
+                                    color: creationFormData.color || '#7c4dff'
+                                }}
+                                className="btn p-0 border-0 bg-transparent"
+                                onClick={handleFormSubmit}
+                                title="Tap or drag into song"
                             >
-                                {creationFormData.label.trim() || "Untitled Section"}
-                            </span>
+                                {creationFormData.type === "Section" ? (
+                                    <span 
+                                        className="section-pill"
+                                        style={{ backgroundColor: creationFormData.color || '#7c4dff', color: '#fff' }}
+                                    >
+                                        {creationFormData.label.trim()}
+                                    </span>
+                                ) : (
+                                    <span className="note-chip chip-instrument">
+                                        <i className="fa-solid fa-music text-info me-1"></i>
+                                        {creationFormData.label.trim()}
+                                    </span>
+                                )}
+                            </DraggablePaletteItem>
                         ) : (
-                            <span className="note-chip chip-instrument">
-                                <i className="fa-solid fa-music text-info me-1"></i>
-                                {creationFormData.label.trim() || "Untitled Note"}
-                            </span>
+                            creationFormData.type === "Section" ? (
+                                <span 
+                                    className="section-pill"
+                                    style={{ backgroundColor: creationFormData.color || '#7c4dff', color: '#fff', opacity: 0.6 }}
+                                >
+                                    Untitled Section
+                                </span>
+                            ) : (
+                                <span className="note-chip chip-instrument" style={{ opacity: 0.6 }}>
+                                    <i className="fa-solid fa-music text-info me-1"></i>
+                                    Untitled Note
+                                </span>
+                            )
                         )}
                     </div>
 

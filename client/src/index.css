@@ -71,6 +71,20 @@ html, body {
     color: var(--text-primary);
     -webkit-font-smoothing: antialiased;
     -moz-osx-font-smoothing: grayscale;
+    -webkit-tap-highlight-color: transparent;
+    touch-action: manipulation;
+}
+
+/* Modern mobile dynamic viewport height units with fallback */
+.vh-100,
+.h-100-dvh {
+    height: 100vh;
+    height: 100dvh;
+}
+
+.min-vh-100 {
+    min-height: 100vh;
+    min-height: 100dvh;
 }
 
 /* Global Text Contrast & Helper Overrides */
@@ -218,5 +232,36 @@ input[name*="SetlistTitle"]:focus-visible {
 @media (min-width: 768px) {
     body {
         font-size: 16px;
+    }
+}
+
+/* Responsive transport bar for tablets and screens <= 991px */
+@media (max-width: 991.98px) {
+    .session-transport-content {
+        flex-direction: column !important;
+        align-items: stretch !important;
+        gap: 8px !important;
+    }
+    .session-transport-primary {
+        width: 100% !important;
+        justify-content: flex-start !important;
+    }
+    .session-transport-secondary {
+        width: 100% !important;
+        justify-content: flex-start !important;
+        margin-left: 0 !important;
+    }
+}
+
+/* Ensure mobile text inputs never trigger iOS Safari auto-zoom */
+@media (max-width: 768px) {
+    input[type="text"],
+    input[type="password"],
+    input[type="email"],
+    input[type="number"],
+    .form-control,
+    .session-pill-input,
+    .session-song-input {
+        font-size: 16px !important;
     }
 }

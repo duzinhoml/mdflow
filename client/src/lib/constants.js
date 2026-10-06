@@ -2,7 +2,7 @@ import { useState, useEffect, useCallback } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { ApolloClient, InMemoryCache, createHttpLink } from '@apollo/client';
 import { setContext } from '@apollo/client/link/context';
-import { useSensors, useSensor, PointerSensor, KeyboardSensor } from '@dnd-kit/core';
+import { useSensors, useSensor, PointerSensor, MouseSensor, TouchSensor, KeyboardSensor } from '@dnd-kit/core';
 import { arrayMove, sortableKeyboardCoordinates } from '@dnd-kit/sortable';
 
 import { useUser } from '../contexts/UserContext.jsx';
@@ -377,11 +377,12 @@ export function useSectionNoteCreator() {
     const [createSong] = useMutation(CREATE_SONG, { refetchQueries: [QUERY_ME] });
     const [createSection] = useMutation(CREATE_SECTION, { refetchQueries: [QUERY_ME] });
     const [createNote] = useMutation(CREATE_NOTE, { refetchQueries: [QUERY_ME] });
+    const [updateSectionOrder] = useMutation(UPDATE_SECTION_ORDER, { refetchQueries: [QUERY_ME] });
 
     const { currentSetlist, setCurrentSetlist, currentSong, setCurrentSong, currentSections, setCurrentSections, currentSection } = useSong();
     
-    // Create Section
-    const handleCreateSection = async (child) => {
+    // Create Section with optional targetSectionId and position ('left' | 'right' | 'end')
+    const handleCreateSection = async (child, targetSectionId = null, position = 'end') => {
         if (!currentSetlist) return;
 
         try {
@@ -394,7 +395,7 @@ export function useSectionNoteCreator() {
                     }
                 });
                 if (!songData) return;
-                const newSong = songData.createSong
+                const newSong = songData.createSong;
                 
                 // Add section to new Song
                 const { data: sectionData } = await createSection({
@@ -407,7 +408,7 @@ export function useSectionNoteCreator() {
                     }
                 });
                 if (!sectionData) return;
-                const newSection = sectionData.createSection
+                const newSection = sectionData.createSection;
                 
                 // Update User Data
                 const updatedSong = {
@@ -423,7 +424,7 @@ export function useSectionNoteCreator() {
                 }));
                 setUserData(prev => ({ 
                     ...prev, 
-                    setlists: prev.setlists.map(setlist => setlist._id === currentSetlist?._id
+                    setlists: (prev.setlists || []).map(setlist => setlist._id === currentSetlist?._id
                         ? { ...setlist, songs: [...(setlist.songs || []), updatedSong] }
                         : setlist
                     ),
@@ -431,7 +432,9 @@ export function useSectionNoteCreator() {
                 }));
             }
             else {
-                if (currentSection) return;
+                // If desktop (no targetSectionId and currentSection exists and screen > 1024), block as original:
+                const isDesktop = typeof window !== 'undefined' && window.innerWidth > 1024;
+                if (isDesktop && !targetSectionId && currentSection) return;
                 
                 // Current Song    
                 const { data } = await createSection({
@@ -444,9 +447,38 @@ export function useSectionNoteCreator() {
                     }
                 });
                 if (!data) return;
-                const newSection = data.createSection
+                const newSection = data.createSection;
 
-                const updatedSections = [...(currentSections || []), newSection];
+                let updatedSections = [...(currentSections || [])];
+                const resolvedTargetId = targetSectionId || (currentSection?._id && !isDesktop ? currentSection._id : null);
+
+                if (resolvedTargetId && position !== 'end') {
+                    const targetIndex = updatedSections.findIndex(
+                        s => String(s._id) === String(resolvedTargetId)
+                    );
+                    if (targetIndex !== -1) {
+                        const insertIndex = position === 'left' ? targetIndex : targetIndex + 1;
+                        updatedSections.splice(insertIndex, 0, newSection);
+                    } else {
+                        updatedSections.push(newSection);
+                    }
+                } else {
+                    updatedSections.push(newSection);
+                }
+
+                // If inserted at a specific index, sync section order to backend
+                if (resolvedTargetId && position !== 'end') {
+                    try {
+                        await updateSectionOrder({
+                            variables: {
+                                songId: currentSong._id.toString(),
+                                sectionIds: updatedSections.map(s => s._id.toString())
+                            }
+                        });
+                    } catch (e) {
+                        console.error('Failed to sync section order:', e);
+                    }
+                }
                 
                 setCurrentSections(updatedSections);
                 setCurrentSong(prev => ({
@@ -455,38 +487,39 @@ export function useSectionNoteCreator() {
                 }));
                 setCurrentSetlist(prev => ({
                     ...prev,
-                    songs: prev.songs.map(song => song._id === currentSong._id
-                        ? { ...song, sections: [...(song.sections || []), newSection] }
+                    songs: (prev?.songs || []).map(song => String(song._id) === String(currentSong._id)
+                        ? { ...song, sections: updatedSections }
                         : song
                     )
                 }));
                 setUserData(prev => {
-                    const updatedSetlists = prev.setlists.map(setlist => {
-                        if (setlist._id === currentSetlist._id) {
+                    if (!prev) return prev;
+                    const updatedSetlists = (prev.setlists || []).map(setlist => {
+                        if (String(setlist._id) === String(currentSetlist?._id)) {
                             return {
                                 ...setlist,
-                                songs: setlist.songs.map(song => {
-                                    if (song._id === currentSong._id) {
+                                songs: (setlist.songs || []).map(song => {
+                                    if (String(song._id) === String(currentSong._id)) {
                                         return {
                                             ...song,
-                                            sections: [...(song.sections || []), newSection]
-                                        }
+                                            sections: updatedSections
+                                        };
                                     }
                                     return song;
                                 })
-                            }
+                            };
                         }
-                        return setlist
+                        return setlist;
                     });
 
                     return {
                         ...prev,
                         setlists: updatedSetlists,
-                        songs: prev.songs.map(song => song._id === currentSong._id
+                        songs: (prev.songs || []).map(song => String(song._id) === String(currentSong._id)
                             ? { ...song, sections: updatedSections }
                             : song
                         )
-                    }
+                    };
                 });
             }
         } 
@@ -497,14 +530,17 @@ export function useSectionNoteCreator() {
     };
 
     // Create Note
-    const handleCreateNote = async (child) => {
+    const handleCreateNote = async (child, targetSectionId = null) => {
         try {
             if (!currentSong) return;
-            if (!currentSection) return;
+            const targetSection = targetSectionId 
+                ? currentSections?.find(s => s._id?.toString() === targetSectionId?.toString())
+                : currentSection;
+            if (!targetSection) return;
 
             const { data } = await createNote({
                 variables: {
-                    sectionId: currentSection._id,
+                    sectionId: targetSection._id,
                     input: { label: child.label }
                 }
             });
@@ -521,7 +557,7 @@ export function useSectionNoteCreator() {
                                     return {
                                         ...song,
                                         sections: song.sections.map(section => {
-                                            if (section._id === currentSection._id) {
+                                            if (section._id === targetSection._id) {
                                                 return {
                                                     ...section,
                                                     notes: [...(section.notes || []), newNote]
@@ -544,7 +580,7 @@ export function useSectionNoteCreator() {
                     songs: prev.songs.map(song => song._id === currentSong._id
                         ? {
                             ...song,
-                            sections: song.sections.map(section => section._id === currentSection._id
+                            sections: song.sections.map(section => section._id === targetSection._id
                                 ? { ...section, notes: [...section.notes || [], newNote] }
                                 : section
                             )
@@ -555,14 +591,14 @@ export function useSectionNoteCreator() {
             });
 
             setCurrentSections(prev => 
-                prev.map(section => section._id === currentSection._id
+                prev.map(section => section._id === targetSection._id
                     ? { ...section, notes: [...section.notes || [], newNote] }
                     : section
                 ));
 
             setCurrentSong(prev => ({
                 ...prev,
-                sections: prev.sections.map(section => section._id === currentSection._id
+                sections: prev.sections.map(section => section._id === targetSection._id
                     ? { ...section, notes: [...section.notes || [], newNote ] }
                     : section
                 )
@@ -574,7 +610,7 @@ export function useSectionNoteCreator() {
                         return {
                             ...song,
                             sections: song.sections.map(section => {
-                                if (section._id === currentSection._id) {
+                                if (section._id === targetSection._id) {
                                     return {
                                         ...section,
                                         notes: [...(section.notes || []), newNote]
@@ -592,7 +628,7 @@ export function useSectionNoteCreator() {
                     songs: updatedSongs
                 }
             });
-        }
+        } 
         catch (err) {
             console.error(err);
         }
@@ -608,7 +644,12 @@ export function useSectionNoteCreator() {
         else handleCreateNote(data);
     }
 
-    return { handleInputSelection, handleCreateSelection };
+    return { 
+        handleInputSelection, 
+        handleCreateSelection, 
+        handleCreateSection, 
+        handleCreateNote 
+    };
 }
 
 // Delete Setlist
@@ -708,61 +749,74 @@ export function useDeleteSong() {
 // Deleting a Section
 export function useDeleteSection() {
     const { setUserData } = useUser();
-    const { currentSetlist, setCurrentSetlist, currentSong, setCurrentSong, currentSections, setCurrentSections } = useSong();
+    const { 
+        currentSetlist, 
+        setCurrentSetlist, 
+        currentSong, 
+        setCurrentSong, 
+        currentSections, 
+        setCurrentSections, 
+        currentSection, 
+        setCurrentSection 
+    } = useSong();
     const [deleteSectionById] = useMutation(DELETE_SECTION_BY_ID, { refetchQueries: [QUERY_ME] });
 
     const handleDeleteSection = async (sectionId) => {
-        if (!currentSong) return;
-        if (!currentSections.length) return;
+        if (!sectionId) return;
 
         try {
             await deleteSectionById({ variables: { sectionId } });
 
-            setCurrentSections(prev => prev.filter(section => section._id !== sectionId));
+            if (currentSection && String(currentSection._id) === String(sectionId)) {
+                setCurrentSection(null);
+            }
+
+            setCurrentSections(prev => (prev || []).filter(section => String(section._id) !== String(sectionId)));
             setCurrentSong(prev => ({ 
                 ...prev, 
-                sections: prev.sections.filter(section => section._id !== sectionId)
+                sections: (prev?.sections || []).filter(section => String(section._id) !== String(sectionId))
             }));
             setCurrentSetlist(prev => ({
                 ...prev,
-                songs: prev.songs.map(song => song._id === currentSong._id
-                    ? { ...song, sections: song.sections.filter(section => section._id !== sectionId) }
+                songs: (prev?.songs || []).map(song => String(song._id) === String(currentSong?._id)
+                    ? { ...song, sections: (song.sections || []).filter(section => String(section._id) !== String(sectionId)) }
                     : song
                 )
             }));
             setUserData(prev => {
-                const updatedSetlists = prev.setlists.map(setlist => {
-                    if (setlist._id === currentSetlist._id) {
+                if (!prev) return prev;
+                const updatedSetlists = (prev.setlists || []).map(setlist => {
+                    if (String(setlist._id) === String(currentSetlist?._id)) {
                         return {
                             ...setlist,
-                            songs: setlist.songs.map(song => {
-                                if (song._id === currentSong._id) {
+                            songs: (setlist.songs || []).map(song => {
+                                if (String(song._id) === String(currentSong?._id)) {
                                     return {
                                         ...song,
-                                        sections: song.sections.filter(section => section._id !== sectionId)
-                                    }
+                                        sections: (song.sections || []).filter(section => String(section._id) !== String(sectionId))
+                                    };
                                 }
                                 return song;
                             })
-                        }
+                        };
                     }
                     return setlist;
-                })
+                });
 
                 return {
                     ...prev,
                     setlists: updatedSetlists,
-                    songs: prev.songs.map(song => song._id === currentSong._id
-                        ? { ...song, sections: song.sections.filter(section => section._id !== sectionId) }
+                    songs: (prev.songs || []).map(song => String(song._id) === String(currentSong?._id)
+                        ? { ...song, sections: (song.sections || []).filter(section => String(section._id) !== String(sectionId)) }
                         : song
                     )
-                }
+                };
             });
         } 
         catch (err) {
-            console.error(err);
+            console.error('Error deleting section:', err);
         }
-    }
+    };
 
     return handleDeleteSection;
 }
@@ -770,91 +824,94 @@ export function useDeleteSection() {
 // Deleting a Note
 export function useDeleteNote() {
     const { setUserData } = useUser();
-    const { currentSetlist, setCurrentSetlist, currentSong, setCurrentSong, currentSection } = useSong();
+    const { currentSetlist, setCurrentSetlist, currentSong, setCurrentSong, currentSections, setCurrentSections, currentSection, setCurrentSection } = useSong();
 
     const [deleteNoteById] = useMutation(DELETE_NOTE_BY_ID, { refetchQueries: [QUERY_ME] });
 
     const handleDeleteNote = async (noteId, sectionId) => {
-        if (currentSection?._id !== sectionId) return;
-
         try {
             await deleteNoteById({ variables: { noteId } });
 
+            setCurrentSections(prev => (prev || []).map(section => 
+                String(section._id) === String(sectionId)
+                    ? { ...section, notes: (section.notes || []).filter(note => String(note._id) !== String(noteId)) }
+                    : section
+            ));
+
+            if (currentSection && String(currentSection._id) === String(sectionId)) {
+                setCurrentSection(prev => prev ? {
+                    ...prev,
+                    notes: (prev.notes || []).filter(note => String(note._id) !== String(noteId))
+                } : null);
+            }
+
+            setCurrentSong(prev => ({
+                ...prev,
+                sections: (prev.sections || []).map(section => 
+                    String(section._id) === String(sectionId)
+                        ? { ...section, notes: (section.notes || []).filter(note => String(note._id) !== String(noteId)) }
+                        : section
+                )
+            }));
+
+            setCurrentSetlist(prev => ({
+                ...prev,
+                songs: (prev.songs || []).map(song => song._id === currentSong?._id
+                    ? {
+                        ...song,
+                        sections: (song.sections || []).map(section => 
+                            String(section._id) === String(sectionId)
+                                ? { ...section, notes: (section.notes || []).filter(note => String(note._id) !== String(noteId)) }
+                                : section
+                        )
+                    }
+                    : song
+                )
+            }));
+
             setUserData(prev => {
-                const updatedSetlists = prev.setlists.map(setlist => {
-                    if (setlist._id === currentSetlist._id) {
+                const updatedSetlists = (prev.setlists || []).map(setlist => {
+                    if (setlist._id === currentSetlist?._id) {
                         return {
                             ...setlist,
-                            songs: setlist.songs.map(song => {
-                                if (song._id === currentSong._id) {
+                            songs: (setlist.songs || []).map(song => {
+                                if (song._id === currentSong?._id) {
                                     return {
                                         ...song,
-                                        sections: song.sections.map(section => {
-                                            if (section._id === currentSection._id) {
+                                        sections: (song.sections || []).map(section => {
+                                            if (String(section._id) === String(sectionId)) {
                                                 return {
                                                     ...section,
-                                                    notes: section.notes.filter(note => note._id !== noteId)
+                                                    notes: (section.notes || []).filter(note => String(note._id) !== String(noteId))
                                                 }
                                             }
-                                            return section
+                                            return section;
                                         })
                                     }
                                 }
-                                return song
+                                return song;
                             })
                         }
                     }
-                    return setlist
+                    return setlist;
                 });
 
                 return {
                     ...prev,
                     setlists: updatedSetlists,
-                    songs: prev.songs.map(song => song._id === currentSong._id
+                    songs: (prev.songs || []).map(song => song._id === currentSong?._id
                         ? {
                             ...song,
-                            sections: song.sections.map(section => section._id === sectionId
-                                ? { ...section, notes: section.notes.filter(note => note._id !== noteId) }
-                                : section
+                            sections: (song.sections || []).map(section => 
+                                String(section._id) === String(sectionId)
+                                    ? { ...section, notes: (section.notes || []).filter(note => String(note._id) !== String(noteId)) }
+                                    : section
                             )
                         }
                         : song
                     )
-                }
+                };
             });
-
-            setCurrentSetlist(prev => {
-                const updatedSongs = prev.songs.map(song => {
-                    if (song._id === currentSong._id) {
-                        return {
-                            ...song,
-                            sections: song.sections.map(section => {
-                                if (section._id === currentSection._id) {
-                                    return {
-                                        ...section,
-                                        notes: section.notes.filter(note => note._id !== noteId)
-                                    }
-                                }
-                                return section
-                            })
-                        }
-                    }
-                    return song
-                });
-
-                return {
-                    ...prev,
-                    songs: updatedSongs
-                }
-            })
-
-            setCurrentSong(prev => ({
-                ...prev,
-                sections: prev.sections.map(section => section._id === sectionId
-                    ? { ...section, notes: section.notes.filter(note => note._id !== noteId) }
-                    : section
-                )
-            }));
         } 
         catch (err) {
             console.error(err);
@@ -1079,10 +1136,16 @@ export const useDeleteUser = () => {
 
 // Sensors
 export function useDndSensors() {
-    const sensors = useSensors(
-        useSensor(PointerSensor, {
+    const sensorsList = useSensors(
+        useSensor(MouseSensor, {
             activationConstraint: {
                 distance: 5
+            }
+        }),
+        useSensor(TouchSensor, {
+            activationConstraint: {
+                delay: 180,
+                tolerance: 7
             }
         }),
         useSensor(KeyboardSensor, {
@@ -1090,7 +1153,7 @@ export function useDndSensors() {
         })
     );
 
-    return sensors;
+    return Object.assign(sensorsList, { sensors: sensorsList });
 }
 
 // Drag Function

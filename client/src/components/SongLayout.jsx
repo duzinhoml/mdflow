@@ -12,7 +12,7 @@ function SongLayout({ children }) {
     };
 
     return (
-        <div className="flex-grow-1 d-flex flex-column overflow-hidden px-4 py-2">
+        <div className="flex-grow-1 d-flex flex-column overflow-hidden px-2 px-md-3 px-lg-4 py-2">
             {/* Timeline Toolbar Header */}
             <div className="d-flex align-items-center justify-content-between mb-2 px-1">
                 <div className="d-flex align-items-center gap-2">
@@ -22,7 +22,7 @@ function SongLayout({ children }) {
                     </span>
 
                     {currentSong && currentSections?.length > 0 && (
-                        <div className="d-none d-md-flex align-items-center gap-1 ms-2">
+                        <div className="d-none d-md-flex align-items-center gap-1 ms-2" style={{ maxWidth: '45vw', overflowX: 'auto', scrollbarWidth: 'none' }}>
                             {currentSections.map((sec, idx) => (
                                 <span 
                                     key={sec._id || idx}
@@ -65,7 +65,9 @@ function SongLayout({ children }) {
                             borderRadius: 'var(--radius-sm)',
                             fontSize: '12px',
                             fontWeight: 500,
-                            padding: '4px 10px'
+                            padding: '6px 12px',
+                            minHeight: '36px',
+                            touchAction: 'manipulation'
                         }}
                         onClick={handleOpenArrangement}
                         title="Toggle Arrangement Palette"
@@ -83,8 +85,9 @@ function SongLayout({ children }) {
                     backgroundColor: 'var(--bg-surface)',
                     border: '1px solid var(--border-default)',
                     borderRadius: 'var(--radius-lg)',
-                    minHeight: '260px',
-                    boxShadow: 'inset 0 2px 8px rgba(0, 0, 0, 0.4)'
+                    minHeight: 'clamp(180px, 28vh, 260px)',
+                    boxShadow: 'inset 0 2px 8px rgba(0, 0, 0, 0.4)',
+                    touchAction: 'pan-x pan-y'
                 }}
             >
                 <div className="d-flex align-items-stretch">

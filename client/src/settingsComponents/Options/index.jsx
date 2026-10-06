@@ -11,8 +11,8 @@ function Options() {
     const [option, setOption] = useState("update");
 
     return (
-        <>
-            <div className="d-flex flex-column h-100" style={{ borderRight: "4px solid #3a3b47", width: '25vw' }}>
+        <div className="settings-layout-wrapper d-flex flex-grow-1 overflow-hidden w-100">
+            <div className="settings-nav-sidebar d-flex flex-column">
                 <button 
                     className={`btn d-flex align-items-center rounded-2 mx-4 mt-3 py-2 options ${option === "update" && "current"}`}
                     onClick={() => setOption("update")}
@@ -36,10 +36,12 @@ function Options() {
                 </button>
             </div>
 
-            {option === "update" 
-                ? <UpdatePassword />
-                : <DeleteUser />}
-        </>
+            <div className="settings-content-pane flex-grow-1 overflow-y-auto">
+                {option === "update" 
+                    ? <UpdatePassword />
+                    : <DeleteUser />}
+            </div>
+        </div>
     );
 };
 

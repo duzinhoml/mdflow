@@ -1,7 +1,7 @@
 /* Studio Arrangement Section Cards */
 
 .section-card {
-    touch-action: none;
+    touch-action: pan-x pan-y;
     width: 280px;
     min-width: 270px;
     max-width: 300px;
@@ -29,6 +29,13 @@
     border-color: var(--accent-primary);
     background-color: #212437;
     box-shadow: 0 0 0 1.5px var(--accent-primary), 0 4px 20px rgba(124, 77, 255, 0.25);
+}
+
+/* Drop Target Highlight when hovering with Dynamic or Instrument from Palette */
+.section-card.is-drop-target {
+    border-color: var(--color-info) !important;
+    box-shadow: 0 0 0 2px var(--color-info), 0 0 24px rgba(56, 189, 248, 0.45) !important;
+    transform: scale(1.02);
 }
 
 /* Picked up / Dragging Placeholder */
@@ -135,6 +142,11 @@
 .section-btn.btn-delete:hover {
     color: var(--color-danger);
     background-color: rgba(239, 68, 68, 0.15);
+}
+
+.section-btn.btn-delete.is-confirming {
+    color: var(--color-danger) !important;
+    background-color: rgba(239, 68, 68, 0.22) !important;
 }
 
 /* Dedicated Drag Handle */
@@ -287,14 +299,97 @@
 
 /* Mobile section card adjustments */
 .sm-section-card {
-    touch-action: none;
-    min-width: 250px;
-    max-width: 280px;
+    touch-action: pan-x pan-y;
+    width: clamp(240px, 78vw, 290px);
+    min-width: 230px;
     background-color: var(--bg-surface-card);
     border: 1px solid var(--border-default);
     border-radius: var(--radius-lg);
     display: flex;
     flex-direction: column;
-    margin: 8px;
+    margin: 8px 6px;
     padding: 12px;
+}
+
+@media (max-width: 1024px) {
+    .section-btn {
+        min-width: 36px;
+        min-height: 36px;
+        touch-action: manipulation;
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+    }
+    .note-chip-delete {
+        opacity: 0.9 !important;
+        min-width: 32px;
+        min-height: 32px;
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        touch-action: manipulation;
+    }
+}
+
+@media (max-width: 768px) {
+    .section-card {
+        width: clamp(240px, 80vw, 280px);
+        min-width: 230px;
+        margin: 6px 6px;
+        padding: 12px;
+    }
+    .drag-handle {
+        min-width: 38px;
+        min-height: 38px;
+        padding: 8px;
+    }
+}
+
+@media (hover: none) {
+    .note-chip-delete {
+        opacity: 0.9 !important;
+        min-width: 32px;
+        min-height: 32px;
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+    }
+}
+
+/* Section Drag Insertion Pills */
+.section-insert-pill {
+    position: absolute;
+    top: 50%;
+    transform: translateY(-50%);
+    background: var(--accent-primary, #7c4dff);
+    color: #ffffff;
+    font-size: 11px;
+    font-weight: 700;
+    padding: 6px 12px;
+    border-radius: 9999px;
+    box-shadow: 0 4px 14px rgba(0, 0, 0, 0.5), 0 0 16px var(--accent-glow, rgba(124, 77, 255, 0.7));
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    white-space: nowrap;
+    z-index: 30;
+    pointer-events: none;
+    animation: pulseInsertPill 1.2s infinite ease-in-out;
+}
+
+.section-insert-pill.left-pill {
+    left: 8px;
+}
+
+.section-insert-pill.right-pill {
+    right: 8px;
+}
+
+@keyframes pulseInsertPill {
+    0%, 100% {
+        transform: translateY(-50%) scale(1);
+    }
+    50% {
+        transform: translateY(-50%) scale(1.06);
+    }
 }

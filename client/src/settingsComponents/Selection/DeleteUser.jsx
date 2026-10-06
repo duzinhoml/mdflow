@@ -32,7 +32,7 @@ function DeleteUser() {
                         onChange={handleInputChange}
                         placeholder={userData?.username ? `To confirm, type "${userData.username}"` : "Enter username to confirm"}
                         autoComplete="off"
-                        style={{ width: '60%' }}
+                        style={{ width: 'clamp(280px, 80%, 460px)', maxWidth: '100%' }}
                         required
                     />
                     <label htmlFor="confirmDeleteInput" className="fs-6">{userData?.username ? `To confirm, type "${userData.username}"` : "Enter username to confirm"}</label>

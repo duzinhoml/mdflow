@@ -1,5 +1,5 @@
 .sm-section-card {
-    touch-action: none;
+    touch-action: pan-x pan-y;
     min-width: calc(100vw - 74px);
     border: 5px solid hsl(235, 13%, 62%);
     box-shadow: 0px 0px 2px 1px hsl(235, 13%, 42%);
@@ -9,4 +9,29 @@
     border-radius: 16px;
     margin: 16px;
     padding: 16px;
+}
+
+.sm-section-card .drag-handle {
+    touch-action: none;
+}
+
+.sm-section-card .note-chip-delete {
+    opacity: 0.9 !important;
+    min-width: 32px;
+    min-height: 32px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    touch-action: manipulation;
+}
+
+.sm-section-card .section-btn {
+    min-width: 36px;
+    min-height: 36px;
+    touch-action: manipulation;
+}
+
+.sm-section-card .section-btn.btn-delete.is-confirming {
+    color: var(--color-danger) !important;
+    background-color: rgba(239, 68, 68, 0.22) !important;
 }

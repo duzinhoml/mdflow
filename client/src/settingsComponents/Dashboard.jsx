@@ -7,7 +7,7 @@ function Dashboard() {
             <Nav />
             <div className="rounded-bottom-2" style={{ borderBottom: '4px solid #3a3b47'}}></div>
 
-            <div className="vh-100 d-flex">
+            <div className="flex-grow-1 d-flex overflow-hidden">
                 <Options />   
             </div>
         </div>

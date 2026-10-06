@@ -31,3 +31,39 @@
     background-color: var(--color-danger);
     border-color: var(--color-danger);
 }
+
+/* Settings Responsive Layout */
+.settings-nav-sidebar {
+    width: 25vw;
+    border-right: 4px solid #3a3b47;
+    height: 100%;
+    flex-shrink: 0;
+}
+
+@media (max-width: 820px) {
+    .settings-layout-wrapper {
+        flex-direction: column !important;
+    }
+    .settings-nav-sidebar {
+        width: 100% !important;
+        border-right: none !important;
+        border-bottom: 2px solid var(--border-default) !important;
+        height: auto !important;
+        flex-direction: row !important;
+        overflow-x: auto !important;
+        padding: 10px 14px !important;
+        gap: 8px !important;
+    }
+    .settings-nav-sidebar .options,
+    .settings-nav-sidebar .log-out {
+        margin: 0 !important;
+        white-space: nowrap !important;
+        font-size: 13px !important;
+        padding: 8px 14px !important;
+        min-height: 40px !important;
+        touch-action: manipulation !important;
+    }
+    .settings-nav-sidebar hr {
+        display: none !important;
+    }
+}

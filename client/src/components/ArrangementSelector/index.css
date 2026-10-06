@@ -26,6 +26,26 @@
   width: 100%;
 }
 
+/* While dragging a palette item on tablet/mobile, minimize palette to expose timeline */
+@media (max-width: 1024px) {
+  .selector.is-dragging-item {
+    opacity: 0.28 !important;
+    transform: translateY(65%) !important;
+    pointer-events: none !important;
+    transition: transform 0.22s cubic-bezier(0.18, 0.67, 0.6, 1.22), opacity 0.2s ease !important;
+  }
+}
+
+.palette-swipe-indicator-bar {
+  touch-action: none;
+  cursor: grab;
+  user-select: none;
+}
+
+.palette-swipe-indicator-bar:active {
+  cursor: grabbing;
+}
+
 /* Palette Target Section Banner */
 .palette-target-banner {
   display: flex;
@@ -73,6 +93,19 @@
   justify-content: center;
   gap: 6px;
   padding: 10px 16px 6px;
+}
+
+@media (max-width: 520px) {
+  .palette-tabs-container {
+    overflow-x: auto;
+    justify-content: flex-start;
+    padding: 8px 12px 6px;
+    scrollbar-width: none;
+    -webkit-overflow-scrolling: touch;
+  }
+  .palette-tabs-container::-webkit-scrollbar {
+    display: none;
+  }
 }
 
 .palette-tab-btn {

@@ -38,7 +38,7 @@ function SongTitle() {
     return (
         <div className="d-flex flex-column align-items-center my-2 px-2 gap-2">
             {/* Song Transport Row */}
-            <div className="d-flex align-items-center justify-content-center w-100" style={{ maxWidth: '420px' }}>
+            <div className="d-flex align-items-center justify-content-center w-100" style={{ maxWidth: '440px' }}>
                 <button 
                     type="button"
                     className="btn btn-sm text-light p-1 px-2 me-2"
@@ -48,8 +48,10 @@ function SongTitle() {
                         borderRadius: 'var(--radius-sm)',
                         opacity: hasPrev ? 1 : 0.35,
                         cursor: hasPrev ? 'pointer' : 'not-allowed',
-                        height: '36px',
-                        width: '34px'
+                        height: '38px',
+                        width: '38px',
+                        minWidth: '38px',
+                        touchAction: 'manipulation'
                     }}
                     onClick={() => prevSong(currentSong)}
                     disabled={!hasPrev}
@@ -63,12 +65,12 @@ function SongTitle() {
                     style={{ 
                         backgroundColor: 'var(--bg-input)', 
                         border: '1px solid var(--border-default)',
-                        height: '36px'
+                        height: '38px'
                     }}
                 >
                     <i 
                         className="fa-solid fa-music me-2" 
-                        style={{ color: currentSong ? 'var(--color-info)' : 'var(--text-muted)', fontSize: '12px' }}
+                        style={{ color: currentSong ? 'var(--color-info)' : 'var(--text-muted)', fontSize: '13px' }}
                     ></i>
                     <input 
                         name={currentSong ? 'currentSongTitle' : 'songTitle'}
@@ -81,7 +83,7 @@ function SongTitle() {
                             border: 'none', 
                             backgroundColor: 'transparent', 
                             outline: 'none', 
-                            fontSize: '13px',
+                            fontSize: '16px',
                             textOverflow: 'ellipsis'
                         }}
                         autoComplete="off"
@@ -106,8 +108,10 @@ function SongTitle() {
                         borderRadius: 'var(--radius-sm)',
                         opacity: hasNext ? 1 : 0.35,
                         cursor: hasNext ? 'pointer' : 'not-allowed',
-                        height: '36px',
-                        width: '34px'
+                        height: '38px',
+                        width: '38px',
+                        minWidth: '38px',
+                        touchAction: 'manipulation'
                     }}
                     onClick={() => nextSong(currentSong)}
                     disabled={!hasNext}
@@ -124,11 +128,11 @@ function SongTitle() {
                     <div 
                         className="d-flex align-items-center px-2"
                         style={{
-                            height: '30px',
+                            height: '34px',
                             backgroundColor: 'var(--bg-input)',
                             border: '1px solid var(--border-default)',
                             borderRadius: 'var(--radius-sm)',
-                            fontSize: '11px'
+                            fontSize: '12px'
                         }}
                     >
                         <i className="fa-solid fa-gauge-high me-1 text-muted" style={{ fontSize: '10px' }}></i>
@@ -160,16 +164,17 @@ function SongTitle() {
                             onClick={() => currentSong && setIsTimeSigOpen(!isTimeSigOpen)}
                             disabled={!currentSong}
                             style={{
-                                height: '30px',
+                                height: '34px',
                                 backgroundColor: 'var(--bg-input)',
                                 border: '1px solid var(--border-default)',
                                 borderRadius: 'var(--radius-sm)',
-                                fontSize: '11px',
-                                fontFamily: "'JetBrains Mono', monospace"
+                                fontSize: '12px',
+                                fontFamily: "'JetBrains Mono', monospace",
+                                touchAction: 'manipulation'
                             }}
                         >
                             <span style={{ color: 'var(--color-info)' }}>{timeSignature || '4/4'}</span>
-                            <i className="fa-solid fa-chevron-down text-muted" style={{ fontSize: '8px' }}></i>
+                            <i className="fa-solid fa-chevron-down text-muted" style={{ fontSize: '9px' }}></i>
                         </button>
 
                         {isTimeSigOpen && (
@@ -187,7 +192,7 @@ function SongTitle() {
                                         key={sig}
                                         type="button"
                                         className={`dropdown-item px-2 py-1 text-center ${timeSignature === sig ? 'text-primary fw-bold' : 'text-light'}`}
-                                        style={{ fontSize: '11px', fontFamily: "'JetBrains Mono', monospace" }}
+                                        style={{ fontSize: '11px', fontFamily: "'JetBrains Mono', monospace", minHeight: '32px' }}
                                         onClick={() => {
                                             handleTimeSignatureChange(sig);
                                             setIsTimeSigOpen(false);
@@ -206,11 +211,12 @@ function SongTitle() {
                         className="btn btn-sm d-flex align-items-center gap-1 text-light py-0 px-2"
                         onClick={handleCreateNewSong}
                         style={{
-                            height: '30px',
+                            height: '34px',
                             backgroundColor: 'var(--accent-light)',
                             border: '1px solid rgba(124, 77, 255, 0.4)',
                             borderRadius: 'var(--radius-sm)',
-                            fontSize: '11px'
+                            fontSize: '12px',
+                            touchAction: 'manipulation'
                         }}
                     >
                         <i className="fa-solid fa-plus text-primary"></i>

@@ -3,10 +3,11 @@ import { useSectionNoteCreator } from "../../lib/constants";
 import { useSong } from "../../contexts/SongContext.jsx";
 
 import Custom from "./Custom.jsx";
+import DraggablePaletteItem from "./DraggablePaletteItem.jsx";
 import './index.css';
 
 // Dynamic helper for visual levels
-const DYNAMIC_LEVELS = {
+export const DYNAMIC_LEVELS = {
     'Soft': { bars: 1, color: '#38bdf8', musicalSymbol: 'p' },
     'Low': { bars: 2, color: '#60a5fa', musicalSymbol: 'mp' },
     'Mid': { bars: 3, color: '#f59e0b', musicalSymbol: 'mf' },
@@ -48,18 +49,19 @@ function CurrentTab({ currentTab }) {
             {currentTab.id === 1 && (
                 <div className="section-palette-grid">
                     {currentTab.children?.map(child => (
-                        <button 
+                        <DraggablePaletteItem 
                             key={child.label} 
-                            type="button"
+                            type="section"
+                            item={child}
                             className="section-item-chip"
                             style={{ borderColor: child.color }}
                             onClick={() => onSelectElement(child)}
-                            title={`Add ${child.label} section to song`}
+                            title={`Add or drag ${child.label} section to song`}
                         >
                             <span className="section-dot" style={{ backgroundColor: child.color, color: child.color }}></span>
                             <span>{child.label}</span>
                             <i className="fa-solid fa-plus text-muted ms-auto" style={{ fontSize: '10px' }}></i>
-                        </button>
+                        </DraggablePaletteItem>
                     ))}
                 </div>
             )}
@@ -101,12 +103,13 @@ function CurrentTab({ currentTab }) {
                             .map(child => {
                                 const level = DYNAMIC_LEVELS[child.label] || { bars: 3, color: '#f59e0b', musicalSymbol: 'mf' };
                                 return (
-                                    <button
+                                    <DraggablePaletteItem
                                         key={child.label}
-                                        type="button"
+                                        type="dynamic"
+                                        item={{ ...child, level }}
                                         className="dynamic-item-card"
                                         onClick={() => onSelectElement(child)}
-                                        title={`Add dynamic: ${child.label} (${level.musicalSymbol})`}
+                                        title={`Add or drag dynamic: ${child.label} (${level.musicalSymbol})`}
                                     >
                                         <span className="fw-bold" style={{ color: level.color, fontSize: '16px' }}>
                                             {level.musicalSymbol}
@@ -116,7 +119,7 @@ function CurrentTab({ currentTab }) {
                                         </span>
                                         <div className="dynamic-meters">
                                             {[1, 2, 3, 4, 5].map(b => (
-                                                <div 
+                                                 <div 
                                                     key={b} 
                                                     className={`dynamic-bar ${b <= level.bars ? 'active' : ''}`}
                                                     style={{
@@ -126,7 +129,7 @@ function CurrentTab({ currentTab }) {
                                                 ></div>
                                             ))}
                                         </div>
-                                    </button>
+                                    </DraggablePaletteItem>
                                 );
                             })}
                     </div>
@@ -152,15 +155,16 @@ function CurrentTab({ currentTab }) {
                                     </div>
                                     <div className="d-flex flex-wrap gap-1">
                                         {category.children?.map(sub => (
-                                            <button
+                                            <DraggablePaletteItem
                                                 key={sub.label}
-                                                type="button"
+                                                type="instrument"
+                                                item={sub}
                                                 className="sub-instrument-chip flex-grow-1"
                                                 onClick={() => onSelectElement(sub)}
-                                                title={`Add ${sub.label}`}
+                                                title={`Add or drag ${sub.label}`}
                                             >
                                                 {sub.label}
-                                            </button>
+                                            </DraggablePaletteItem>
                                         ))}
                                     </div>
                                 </div>

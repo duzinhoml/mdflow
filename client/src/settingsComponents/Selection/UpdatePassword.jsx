@@ -31,7 +31,7 @@ function UpdatePassword() {
                         onChange={handleInputChange}
                         placeholder='Enter old password'
                         autoComplete="off"
-                        style={{ width: '40%' }}
+                        style={{ width: 'clamp(280px, 80%, 460px)', maxWidth: '100%' }}
                         required
                     />
                     <label htmlFor="currentPWInput" className="fs-6" style={{ color: 'var(--text-secondary)' }}>Enter old password</label>
@@ -47,7 +47,7 @@ function UpdatePassword() {
                         onChange={handleInputChange}
                         placeholder='Enter new password'
                         autoComplete="off"
-                        style={{ width: '40%' }}
+                        style={{ width: 'clamp(280px, 80%, 460px)', maxWidth: '100%' }}
                         required
                     />
                     <label htmlFor="newPWInput" className="fs-6" style={{ color: 'var(--text-secondary)' }}>Enter new password</label>
@@ -65,7 +65,7 @@ function UpdatePassword() {
                         onChange={handleInputChange}
                         placeholder='Confirm new password'
                         autoComplete="off"
-                        style={{ width: '40%' }}
+                        style={{ width: 'clamp(280px, 80%, 460px)', maxWidth: '100%' }}
                         required
                     />
                     <label htmlFor="confirmPWInput" className="fs-6" style={{ color: 'var(--text-secondary)' }}>Confirm new password</label>

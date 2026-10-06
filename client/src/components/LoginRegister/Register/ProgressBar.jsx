@@ -1,7 +1,7 @@
 function ProgressBar({ currentStep }) {
 
     return (
-        <div className={`position-relative m-4 mx-auto`} style={{ width: '50%' }}>
+        <div className={`position-relative m-4 mx-auto`} style={{ width: 'clamp(160px, 60%, 280px)' }}>
             <div 
                 className="progress" 
                 role="progressbar" 

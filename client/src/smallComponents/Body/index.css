@@ -1,7 +1,9 @@
 .setlist-input {
     width: 60vw;
+    font-size: 16px !important;
 }
 
 .song-input {
     width: 50vw;
+    font-size: 16px !important;
 }

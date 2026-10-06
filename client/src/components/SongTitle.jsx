@@ -69,10 +69,10 @@ function SongTitle() {
         minHeight: "52px",
       }}
     >
-      <div className="d-flex align-items-center justify-content-between flex-wrap gap-2 w-100">
+      <div className="d-flex align-items-center justify-content-between flex-wrap gap-2 w-100 session-transport-content">
         {/* LEFT & CENTER WRAPPER: SETLIST TITLE + DIVIDER + SONG TITLE */}
         <div
-          className="d-flex align-items-center flex-wrap gap-2 flex-grow-1"
+          className="d-flex align-items-center flex-wrap gap-2 flex-grow-1 session-transport-primary"
           style={{ minWidth: "0" }}
         >
           {/* 1. SETLIST TITLE PILL */}
@@ -285,7 +285,7 @@ function SongTitle() {
         </div>
 
         {/* RIGHT CONTROLS: BPM + TIME SIGNATURE + "+ NEW SONG" */}
-        <div className="d-flex align-items-center gap-2 flex-wrap ms-auto">
+        <div className="d-flex align-items-center gap-2 flex-wrap ms-auto session-transport-secondary">
           {/* 3. BPM METRONOME WIDGET */}
           <div
             className="d-flex align-items-center px-2"
