@@ -49,7 +49,7 @@ function Custom() {
     return (
         <div className="custom-creator-box">
             {/* Type Switcher */}
-            <div className="d-flex align-items-center justify-content-between mb-3">
+            <div className="custom-type-switcher d-flex align-items-center justify-content-between mb-3">
                 <span className="text-secondary fw-semibold" style={{ fontSize: '13px' }}>
                     Create Custom Element:
                 </span>

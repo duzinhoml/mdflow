@@ -164,9 +164,54 @@ textarea::placeholder {
 
 /* Focus outline */
 button:focus-visible,
-input:focus-visible {
+input:focus-visible:not(.sidebar-search-input):not(.session-pill-input):not(.setlist-input):not(.session-song-input):not([name*="Title"]):not([name*="title"]) {
     outline: 2px solid var(--accent-primary) !important;
     outline-offset: 2px !important;
+}
+
+/* Custom header/transport inputs with borderless or pill designs - remove focus outline */
+.sidebar-search-input:focus,
+.sidebar-search-input:focus-visible,
+.session-pill-input:focus,
+.session-pill-input:focus-visible,
+.setlist-input:focus,
+.setlist-input:focus-visible,
+.session-song-input:focus,
+.session-song-input:focus-visible,
+input[name*="songTitle"]:focus,
+input[name*="songTitle"]:focus-visible,
+input[name*="SongTitle"]:focus-visible,
+input[name*="setlistTitle"]:focus,
+input[name*="setlistTitle"]:focus-visible,
+input[name*="SetlistTitle"]:focus-visible {
+    outline: none !important;
+    outline-offset: 0 !important;
+    box-shadow: none !important;
+}
+
+/* Container focus-within highlight for setlist and song title boxes */
+.session-pill-box,
+.session-song-strip,
+.session-song-pill,
+.setlist-pill-box {
+    transition: border-color var(--transition-fast), box-shadow var(--transition-fast);
+}
+
+.session-pill-box:focus-within,
+.setlist-pill-box:focus-within,
+.session-song-pill:focus-within,
+.session-song-strip:focus-within {
+    border-color: var(--accent-primary) !important;
+    box-shadow: 0 0 0 1px var(--accent-primary), 0 0 12px var(--accent-glow) !important;
+}
+
+.session-song-strip .session-song-stepper-btn {
+    box-shadow: none !important;
+}
+
+.session-song-strip .session-song-stepper-btn:hover:not(:disabled) {
+    background-color: var(--bg-surface-hover) !important;
+    color: var(--text-primary) !important;
 }
 
 /* Media Queries */

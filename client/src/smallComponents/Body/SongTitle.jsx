@@ -59,7 +59,7 @@ function SongTitle() {
                 </button>
 
                 <div 
-                    className="d-flex align-items-center px-3 py-1 rounded-pill flex-grow-1" 
+                    className="d-flex align-items-center px-3 py-1 rounded-pill flex-grow-1 session-song-pill" 
                     style={{ 
                         backgroundColor: 'var(--bg-input)', 
                         border: '1px solid var(--border-default)',
@@ -73,7 +73,7 @@ function SongTitle() {
                     <input 
                         name={currentSong ? 'currentSongTitle' : 'songTitle'}
                         type="text" 
-                        className="w-100 text-center fw-semibold text-light"
+                        className="w-100 text-center fw-semibold text-light session-song-input"
                         placeholder={currentSetlist ? "Enter song title..." : "Need setlist first"}
                         onChange={handleInputChange} 
                         value={songData.title}

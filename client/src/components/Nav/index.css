@@ -90,6 +90,13 @@
     width: 180px;
 }
 
+.setlist-input:focus,
+.setlist-input:focus-visible {
+    outline: none !important;
+    outline-offset: 0 !important;
+    box-shadow: none !important;
+}
+
 .setlist-input::placeholder {
     color: var(--text-muted);
     font-weight: 400;

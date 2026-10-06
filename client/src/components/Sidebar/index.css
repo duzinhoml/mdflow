@@ -68,6 +68,13 @@
     width: 100%;
 }
 
+.sidebar-search-input:focus,
+.sidebar-search-input:focus-visible {
+    outline: none !important;
+    outline-offset: 0 !important;
+    box-shadow: none !important;
+}
+
 .sidebar-search-input::placeholder {
     color: var(--text-muted);
 }

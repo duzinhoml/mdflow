@@ -12,8 +12,10 @@ function ArrangementSelector() {
     const { visible, toggleVisible } = useToggleVisible();
     const { currentSection, setCurrentSection } = useSong();
 
+    const isCreateTab = currentTab?.id === 4;
+
     return (
-        <div className={`selector ${visible.selector ? 'show' : 'hide'}`}>
+        <div className={`selector ${visible.selector ? 'show' : 'hide'} ${isCreateTab ? 'is-create-tab' : ''}`}>
             {/* Target Section Banner & Quick Close */}
             <div className={`palette-target-banner ${currentSection ? 'active' : 'idle'}`}>
                 <div className="d-flex align-items-center gap-2 text-truncate">
