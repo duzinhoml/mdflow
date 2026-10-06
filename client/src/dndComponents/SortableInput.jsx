@@ -3,8 +3,9 @@ import { useSortable } from '@dnd-kit/sortable';
 import { useDroppable } from '@dnd-kit/core';
 import { CSS } from '@dnd-kit/utilities';
 
-import { useDelete, useDeleteNote } from '../lib/constants';
+import { useDelete, useDeleteNote, parseSectionRepetition, useUpdateSectionRepetition } from '../lib/constants';
 import { useSong } from '../contexts/SongContext';
+import { useToggleVisible } from '../contexts/ToggleVisibleContext';
 import { usePaletteDrag } from '../contexts/PaletteDragContext';
 
 import './index.css';
@@ -57,6 +58,15 @@ function SortableInput({ id, labelStyle, notes = [], children, index }) {
 
     const { activePaletteItem } = usePaletteDrag?.() || {};
 
+    const { baseLabel, repeatCount } = parseSectionRepetition(children);
+    const handleUpdateRepetition = useUpdateSectionRepetition();
+
+    const handleCycleRepetition = (e) => {
+        e?.stopPropagation?.();
+        const nextCount = repeatCount >= 4 ? 1 : repeatCount + 1;
+        handleUpdateRepetition(id, nextCount);
+    };
+
     const {
         attributes,
         listeners,
@@ -92,6 +102,7 @@ function SortableInput({ id, labelStyle, notes = [], children, index }) {
     const handleDelete = useDelete();
     const handleDeleteNote = useDeleteNote();
     const { currentSections, currentSection, setCurrentSection } = useSong();
+    const { visible, toggleVisible } = useToggleVisible();
 
     const isCurrent = currentSection?._id === id;
     const isDropTarget = isOver && activePaletteItem && (activePaletteItem.category === 'dynamic' || activePaletteItem.category === 'instrument');
@@ -109,6 +120,33 @@ function SortableInput({ id, labelStyle, notes = [], children, index }) {
         } else {
             const found = currentSections.find(section => section._id === id);
             if (found) setCurrentSection(found);
+        }
+    };
+
+    const handleEditButtonClick = (e) => {
+        e?.stopPropagation?.();
+        if (isCurrent) {
+            if (visible.selector) {
+                setCurrentSection(null);
+                toggleVisible('selector');
+            } else {
+                toggleVisible('selector');
+            }
+        } else {
+            const found = currentSections.find(section => section._id === id);
+            if (found) setCurrentSection(found);
+            if (!visible.selector) {
+                toggleVisible('selector');
+            }
+        }
+    };
+
+    const handleEmptyHintClick = (e) => {
+        e?.stopPropagation?.();
+        const found = currentSections.find(section => section._id === id);
+        if (found) setCurrentSection(found);
+        if (!visible.selector) {
+            toggleVisible('selector');
         }
     };
 
@@ -218,31 +256,44 @@ function SortableInput({ id, labelStyle, notes = [], children, index }) {
                 </div>
             )}
 
-            {/* Header: Index, Label Pill, Actions & Drag Handle */}
+            {/* Header: Single Row with index, section title, repetition, edit, delete, drag */}
             <div className="section-header" onClick={(e) => e.stopPropagation()}>
-                <div className="section-badge-container">
-                    {typeof index === 'number' && (
-                        <span className="section-index">{String(index + 1).padStart(2, '0')}</span>
-                    )}
-                    <span 
-                        className="section-pill"
-                        style={{ 
-                            backgroundColor: sectionColor,
-                            color: '#ffffff'
-                        }}
-                        title={children}
-                    >
-                        {children}
-                    </span>
-                </div>
+                {/* 1. Index number */}
+                {typeof index === 'number' && (
+                    <span className="section-index">{String(index + 1).padStart(2, '0')}</span>
+                )}
 
+                {/* 2. Section title */}
+                <span 
+                    className="section-pill"
+                    style={{ 
+                        backgroundColor: sectionColor,
+                        color: '#ffffff'
+                    }}
+                    title={baseLabel}
+                >
+                    {baseLabel}
+                </span>
+
+                {/* 3. Repetition */}
+                <button 
+                    type="button"
+                    className={`section-repeat-btn ${repeatCount > 1 ? 'is-repeated' : ''}`}
+                    title={`Repeats: ${repeatCount}x. Click to change repetitions (1x - 4x)`}
+                    onClick={handleCycleRepetition}
+                >
+                    <i className="fa-solid fa-repeat" style={{ fontSize: '8.5px', opacity: repeatCount > 1 ? 1 : 0.6 }}></i>
+                    <span>{repeatCount}x</span>
+                </button>
+
+                {/* Actions: 4. Edit, 5. Delete, 6. Drag */}
                 <div className="section-actions">
                     {/* Active/Select Toggle */}
                     <button 
                         type="button"
                         className={`section-btn ${isCurrent ? 'btn-active-edit' : ''}`}
-                        title={isCurrent ? "Finish editing section" : "Select section to add instruments/dynamics"}
-                        onClick={handleSelectSection}
+                        title={isCurrent ? "Finish editing section" : "Edit section & open palette"}
+                        onClick={handleEditButtonClick}
                     >
                         <i className={`fa-solid fa-${isCurrent ? 'circle-check' : 'pen-to-square'}`}></i>
                     </button>
@@ -271,7 +322,7 @@ function SortableInput({ id, labelStyle, notes = [], children, index }) {
                     {/* Dedicated Drag Handle */}
                     <button 
                         type="button"
-                        className="drag-handle ms-1"
+                        className="section-btn drag-handle"
                         title="Drag to reorder section"
                         {...attributes}
                         {...listeners}
@@ -322,7 +373,7 @@ function SortableInput({ id, labelStyle, notes = [], children, index }) {
                 ) : (
                     <div 
                         className="empty-notes-hint"
-                        onClick={handleSelectSection}
+                        onClick={handleEmptyHintClick}
                         style={{ cursor: 'pointer' }}
                     >
                         <i className={isCurrent ? "fa-solid fa-plus-circle text-primary" : "fa-solid fa-layer-group"}></i>
@@ -342,16 +393,16 @@ export function SortableInputOverlay({ section }) {
     return (
         <div className="section-card-overlay">
             <div className="section-header">
-                <div className="section-badge-container">
-                    <span 
-                        className="section-pill"
-                        style={{ backgroundColor: section.color || '#7c4dff', color: '#ffffff' }}
-                    >
-                        {section.label}
-                    </span>
-                </div>
-                <div className="drag-handle text-primary">
-                    <i className="fa-solid fa-grip-vertical"></i>
+                <span 
+                    className="section-pill"
+                    style={{ backgroundColor: section.color || '#7c4dff', color: '#ffffff' }}
+                >
+                    {section.label}
+                </span>
+                <div className="section-actions">
+                    <div className="drag-handle text-primary">
+                        <i className="fa-solid fa-grip-vertical"></i>
+                    </div>
                 </div>
             </div>
 

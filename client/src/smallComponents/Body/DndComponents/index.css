@@ -1,18 +1,67 @@
 .sm-section-card {
     touch-action: pan-x pan-y;
-    min-width: calc(100vw - 74px);
-    border: 5px solid hsl(235, 13%, 62%);
-    box-shadow: 0px 0px 2px 1px hsl(235, 13%, 42%);
+    width: clamp(250px, 80vw, 300px);
+    min-width: 240px;
+    max-width: 320px;
+    height: calc(100% - 12px);
+    max-height: calc(100% - 12px);
+    background-color: var(--bg-surface-card);
+    border: 1px solid var(--border-default);
+    box-shadow: var(--shadow-sm);
     display: flex;
     flex-direction: column;
-    align-items: center;
-    border-radius: 16px;
-    margin: 16px;
-    padding: 16px;
+    align-items: stretch;
+    border-radius: var(--radius-lg);
+    margin: 6px 8px;
+    padding: 10px 10px;
+    position: relative;
+    user-select: none;
+    box-sizing: border-box;
+    overflow: hidden;
+    transition: border-color var(--transition-fast), box-shadow var(--transition-fast), background-color var(--transition-fast);
+}
+
+.sm-section-card:hover {
+    border-color: var(--border-strong);
+    background-color: var(--bg-surface-elevated);
+}
+
+.sm-section-card.is-active {
+    border-color: var(--accent-primary) !important;
+    background-color: #212437 !important;
+    box-shadow: 0 0 0 1.5px var(--accent-primary), 0 4px 16px rgba(124, 77, 255, 0.3) !important;
 }
 
 .sm-section-card .drag-handle {
+    background: transparent;
+    border: none;
+    outline: none;
+    cursor: grab;
+    color: var(--text-muted);
+    padding: 2px;
+    width: 20px;
+    height: 26px;
+    min-width: 20px;
+    min-height: 26px;
+    border-radius: var(--radius-sm);
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 13px;
+    transition: color var(--transition-fast), background-color var(--transition-fast);
     touch-action: none;
+    user-select: none;
+}
+
+.sm-section-card .drag-handle:hover {
+    color: var(--text-primary);
+    background-color: rgba(255, 255, 255, 0.08);
+}
+
+.sm-section-card .drag-handle:active {
+    cursor: grabbing;
+    color: var(--accent-primary);
+    background-color: rgba(124, 77, 255, 0.15);
 }
 
 .sm-section-card .note-chip-delete {
@@ -26,12 +75,143 @@
 }
 
 .sm-section-card .section-btn {
-    min-width: 36px;
-    min-height: 36px;
+    background: transparent;
+    border: none;
+    color: var(--text-muted);
+    width: 26px;
+    height: 26px;
+    min-width: 26px;
+    min-height: 26px;
+    border-radius: var(--radius-sm);
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 12px;
+    cursor: pointer;
     touch-action: manipulation;
 }
 
 .sm-section-card .section-btn.btn-delete.is-confirming {
     color: var(--color-danger) !important;
     background-color: rgba(239, 68, 68, 0.22) !important;
+}
+
+.sm-section-card .section-notes-container {
+    flex: 1 1 auto;
+    min-height: 0;
+    overflow-y: auto;
+    overflow-x: hidden;
+    scrollbar-width: thin;
+    scrollbar-color: rgba(255, 255, 255, 0.25) transparent;
+    -webkit-overflow-scrolling: touch;
+    padding-right: 2px;
+}
+
+.sm-section-card .section-notes-container::-webkit-scrollbar {
+    width: 4px;
+}
+
+.sm-section-card .section-notes-container::-webkit-scrollbar-thumb {
+    background-color: rgba(255, 255, 255, 0.25);
+    border-radius: 4px;
+}
+
+.sm-section-card .section-header {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    gap: 4px;
+    width: 100%;
+    margin-bottom: 8px;
+    padding-bottom: 6px;
+    border-bottom: 1px solid var(--border-subtle);
+    flex-shrink: 0;
+    min-width: 0;
+}
+
+.sm-section-card .section-index {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 10px;
+    font-weight: 700;
+    color: var(--text-muted);
+    background-color: rgba(255, 255, 255, 0.05);
+    padding: 2px 5px;
+    border-radius: var(--radius-sm);
+    line-height: 1;
+    flex-shrink: 0;
+}
+
+.sm-section-card .section-pill {
+    font-size: 10.5px;
+    font-weight: 700;
+    letter-spacing: 0.03em;
+    text-transform: uppercase;
+    padding: 2px 7px;
+    border-radius: var(--radius-full);
+    color: #ffffff;
+    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.25);
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    flex: 0 1 auto;
+    min-width: 0;
+    max-width: 100%;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    line-height: 1.2;
+}
+
+.sm-section-card .section-repeat-btn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 2px;
+    padding: 2px 5px;
+    font-size: 9.5px;
+    font-weight: 600;
+    font-family: 'JetBrains Mono', monospace;
+    border-radius: var(--radius-full);
+    border: 1px solid rgba(255, 255, 255, 0.15);
+    background-color: rgba(255, 255, 255, 0.06);
+    color: var(--text-secondary);
+    cursor: pointer;
+    line-height: 1.2;
+    user-select: none;
+    touch-action: manipulation;
+    flex-shrink: 0;
+}
+
+.sm-section-card .section-actions {
+    display: flex;
+    align-items: center;
+    gap: 2px;
+    margin-left: auto;
+    flex-shrink: 0;
+}
+
+.sm-section-card .empty-notes-hint {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    padding: 12px 8px;
+    border: 1px dashed var(--border-default);
+    border-radius: var(--radius-md);
+    text-align: center;
+    color: var(--text-muted);
+    font-size: 11.5px;
+    gap: 6px;
+    min-height: 70px;
+    background-color: rgba(255, 255, 255, 0.015);
+    cursor: pointer;
+    flex: 1 1 auto;
+    transition: all var(--transition-fast);
+}
+
+.sm-section-card .empty-notes-hint:hover,
+.sm-section-card .empty-notes-hint:active {
+    border-color: var(--accent-primary);
+    color: var(--text-primary);
+    background-color: rgba(124, 77, 255, 0.05);
 }

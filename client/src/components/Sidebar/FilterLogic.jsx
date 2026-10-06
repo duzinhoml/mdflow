@@ -74,7 +74,7 @@ function FilterLogic() {
                     <i className="fa-solid fa-music text-muted mb-2" style={{ fontSize: '22px' }}></i>
                     <p className="text-light fw-medium mb-1" style={{ fontSize: '14px' }}>Empty Setlist</p>
                     <p className="text-muted" style={{ fontSize: '12px' }}>
-                        Enter a song name above to add songs to "{currentSetlist.title}".
+                        Add a new song to "{currentSetlist.title}".
                     </p>
                 </div>
             );

@@ -49,7 +49,9 @@ function Body({ activePage, setActivePage }) {
             const { category, item } = active.data.current;
             if (category === 'section') {
                 const overId = over.id?.toString() || '';
-                if (overId.startsWith('section-insert-')) {
+                if (overId === 'empty-song-arrangement-dropzone') {
+                    await handleCreateSection(item);
+                } else if (overId.startsWith('section-insert-')) {
                     const isLeft = overId.endsWith('-left');
                     const targetSectionId = overId.replace('section-insert-', '').replace('-left', '').replace('-right', '');
                     const position = isLeft ? 'left' : 'right';

@@ -1,14 +1,17 @@
 import { useToggleVisible } from '../../contexts/ToggleVisibleContext.jsx';
+import { useSong } from '../../contexts/SongContext.jsx';
 import './index.css';
 
 function Footer({ activePage, setActivePage }) {
     const { visible, toggleVisible, setVisible } = useToggleVisible();
+    const { currentSong } = useSong();
 
     const handleNav = (target) => {
         if (target === 'arranger') {
             setActivePage('Home');
             setVisible(prev => ({ ...prev, selector: false, sidebar: false }));
         } else if (target === 'palette') {
+            if (!currentSong) return;
             if (activePage !== 'Home') setActivePage('Home');
             toggleVisible('selector');
         } else if (target === 'library') {
@@ -42,7 +45,12 @@ function Footer({ activePage, setActivePage }) {
                 type="button"
                 className={`mobile-nav-item ${visible.selector ? 'active' : ''}`}
                 onClick={() => handleNav('palette')}
-                title="Arrangement Palette"
+                disabled={!currentSong}
+                style={{
+                    opacity: currentSong ? 1 : 0.38,
+                    cursor: currentSong ? 'pointer' : 'not-allowed'
+                }}
+                title={currentSong ? "Arrangement Palette" : "Select a song first to open arrangement palette"}
             >
                 <i className="fa-solid fa-shapes mobile-nav-icon"></i>
                 <span className="mobile-nav-label">Palette</span>

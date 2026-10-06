@@ -1,8 +1,10 @@
 import { useToggleVisible } from '../../contexts/ToggleVisibleContext.jsx';
+import { useSong } from '../../contexts/SongContext.jsx';
 import './index.css';
 
 function Tools() {
     const { visible, toggleVisible } = useToggleVisible();
+    const { currentSong } = useSong();
 
     return (
         <div className="d-flex align-items-center gap-2">
@@ -10,8 +12,13 @@ function Tools() {
             <button 
                 type="button"
                 className={`nav-toggle-btn ${visible.selector ? 'active' : ''}`}
-                onClick={() => toggleVisible('selector')}
-                title="Toggle Element Palette (Sections, Dynamics, Instruments)"
+                onClick={() => currentSong && toggleVisible('selector')}
+                disabled={!currentSong}
+                style={{
+                    opacity: currentSong ? 1 : 0.45,
+                    cursor: currentSong ? 'pointer' : 'not-allowed'
+                }}
+                title={currentSong ? "Toggle Element Palette (Sections, Dynamics, Instruments)" : "Select a song first to open arrangement palette"}
             >
                 <i className="fa-solid fa-sliders"></i>
                 <span className="d-none d-md-inline">Palette</span>

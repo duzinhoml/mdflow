@@ -1,11 +1,13 @@
 import { useSong } from '../contexts/SongContext.jsx';
 import { useToggleVisible } from '../contexts/ToggleVisibleContext.jsx';
+import { parseSectionRepetition } from '../lib/constants.js';
 
 function SongLayout({ children }) {
     const { currentSong, currentSections, currentSection } = useSong();
     const { visible, toggleVisible } = useToggleVisible();
 
     const handleOpenArrangement = () => {
+        if (!currentSong) return;
         if (!visible.selector) {
             toggleVisible('selector');
         }
@@ -23,28 +25,36 @@ function SongLayout({ children }) {
 
                     {currentSong && currentSections?.length > 0 && (
                         <div className="d-none d-md-flex align-items-center gap-1 ms-2" style={{ maxWidth: '45vw', overflowX: 'auto', scrollbarWidth: 'none' }}>
-                            {currentSections.map((sec, idx) => (
-                                <span 
-                                    key={sec._id || idx}
-                                    className="d-flex align-items-center gap-1 text-light"
-                                    style={{ fontSize: '11px', opacity: currentSection?._id === sec._id ? 1 : 0.7 }}
-                                >
+                            {currentSections.map((sec, idx) => {
+                                const { baseLabel, repeatCount } = parseSectionRepetition(sec.label);
+                                return (
                                     <span 
-                                        className="rounded-pill px-2 py-0 fw-semibold"
-                                        style={{ 
-                                            backgroundColor: sec.color || '#7c4dff',
-                                            fontSize: '10px',
-                                            color: '#fff',
-                                            boxShadow: currentSection?._id === sec._id ? '0 0 8px rgba(124, 77, 255, 0.6)' : 'none'
-                                        }}
+                                        key={sec._id || idx}
+                                        className="d-flex align-items-center gap-1 text-light"
+                                        style={{ fontSize: '11px', opacity: currentSection?._id === sec._id ? 1 : 0.7 }}
                                     >
-                                        {sec.label}
+                                        <span 
+                                            className="rounded-pill px-2 py-0 fw-semibold"
+                                            style={{ 
+                                                backgroundColor: sec.color || '#7c4dff',
+                                                fontSize: '10px',
+                                                color: '#fff',
+                                                boxShadow: currentSection?._id === sec._id ? '0 0 8px rgba(124, 77, 255, 0.6)' : 'none'
+                                            }}
+                                        >
+                                            {baseLabel}
+                                            {repeatCount > 1 && (
+                                                <span className="ms-1 opacity-75" style={{ fontSize: '9px' }}>
+                                                    ({repeatCount}x)
+                                                </span>
+                                            )}
+                                        </span>
+                                        {idx < currentSections.length - 1 && (
+                                            <i className="fa-solid fa-angle-right text-muted" style={{ fontSize: '9px' }}></i>
+                                        )}
                                     </span>
-                                    {idx < currentSections.length - 1 && (
-                                        <i className="fa-solid fa-angle-right text-muted" style={{ fontSize: '9px' }}></i>
-                                    )}
-                                </span>
-                            ))}
+                                );
+                            })}
                         </div>
                     )}
                 </div>
@@ -67,10 +77,13 @@ function SongLayout({ children }) {
                             fontWeight: 500,
                             padding: '6px 12px',
                             minHeight: '36px',
-                            touchAction: 'manipulation'
+                            touchAction: 'manipulation',
+                            opacity: currentSong ? 1 : 0.45,
+                            cursor: currentSong ? 'pointer' : 'not-allowed'
                         }}
                         onClick={handleOpenArrangement}
-                        title="Toggle Arrangement Palette"
+                        disabled={!currentSong}
+                        title={currentSong ? "Toggle Arrangement Palette" : "Select a song first to open arrangement palette"}
                     >
                         <i className="fa-solid fa-plus"></i>
                         <span className="d-none d-sm-inline">Add Elements</span>
@@ -90,7 +103,7 @@ function SongLayout({ children }) {
                     touchAction: 'pan-x pan-y'
                 }}
             >
-                <div className="d-flex align-items-stretch">
+                <div className="d-flex align-items-stretch h-100">
                     {children}
                 </div>
             </div>

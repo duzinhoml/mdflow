@@ -11,7 +11,7 @@ import './index.css';
 function ArrangementSelector() {
     const [currentTab, setCurrentTab] = useState(INPUT_POOL[0]);
     const { visible, toggleVisible, setVisible } = useToggleVisible();
-    const { currentSection, setCurrentSection } = useSong();
+    const { currentSong, currentSection, setCurrentSection } = useSong();
     const { isDraggingPalette, setIsSwipingPalette } = usePaletteDrag();
 
     const [swipeOffset, setSwipeOffset] = useState(0);
@@ -21,6 +21,13 @@ function ArrangementSelector() {
 
     const isCreateTab = currentTab?.id === 4;
 
+    // Auto-close and prevent opening palette when no active song is selected
+    useEffect(() => {
+        if (!currentSong && visible.selector) {
+            setVisible(prev => ({ ...prev, selector: false }));
+        }
+    }, [currentSong, visible.selector, setVisible]);
+
     // Reset swipe offset when visibility changes
     useEffect(() => {
         if (!visible.selector) {
@@ -29,6 +36,9 @@ function ArrangementSelector() {
             setIsSwipingPalette(false);
         }
     }, [visible.selector, setIsSwipingPalette]);
+
+    // Do not render the Arrangement Palette unless a song is active
+    if (!currentSong) return null;
 
     // Touch Swipe-to-Close Gestures for Tablet and Mobile
     const handleTouchStart = (e) => {

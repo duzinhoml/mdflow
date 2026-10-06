@@ -15,11 +15,14 @@ function Custom() {
     const [creationFormData, setCreationFormData] = useState({
         type: "Section",
         label: "",
-        color: "#7c4dff"
+        color: "#7c4dff",
+        repeats: 1
     });
 
     const { currentSection } = useSong();
     const { handleCreateSelection } = useSectionNoteCreator();
+
+    const isNoteWithoutSection = creationFormData.type === "Note" && !currentSection;
 
     const handleSelectType = (type) => setCreationFormData(prev => ({ ...prev, type }));
 
@@ -34,18 +37,23 @@ function Custom() {
     const handleFormSubmit = (e) => {
         e?.preventDefault?.();
         if (!creationFormData.label.trim()) return;
+        if (isNoteWithoutSection) return;
 
-        if (creationFormData.type === "Note" && !currentSection) {
-            alert("Please select a section card first before adding a note.");
-            return;
-        }
+        const submissionData = {
+            ...creationFormData,
+            label: creationFormData.type === "Section" && creationFormData.repeats > 1
+                ? `${creationFormData.label.trim()} (${creationFormData.repeats}x)`
+                : creationFormData.label.trim()
+        };
 
-        handleCreateSelection(creationFormData);
+        handleCreateSelection(submissionData);
         setCreationFormData(prev => ({
             ...prev,
             label: ""
         }));
     };
+
+    const canSubmit = creationFormData.label.trim() && !isNoteWithoutSection;
 
     return (
         <div className="custom-creator-box">
@@ -87,28 +95,62 @@ function Custom() {
                     />
 
                     {creationFormData.type === "Section" && (
-                        <div className="d-flex align-items-center gap-1">
-                            {PRESET_COLORS.map(c => (
-                                <span 
-                                    key={c}
-                                    className={`color-swatch ${creationFormData.color === c ? 'selected' : ''}`}
-                                    style={{ backgroundColor: c }}
-                                    onClick={() => setCreationFormData(prev => ({ ...prev, color: c }))}
-                                    title={c}
-                                ></span>
-                            ))}
-                            <input 
-                                type="color" 
-                                name="color"
-                                value={creationFormData.color}
-                                className="colorInput ms-1"
-                                style={{ width: '28px', height: '28px', borderRadius: '50%', padding: '0', cursor: 'pointer', border: 'none' }}
-                                onChange={handleInputChange}
-                                title="Custom Color Picker"
-                            />
+                        <div className="d-flex align-items-center gap-2 flex-wrap">
+                            {/* Repetition Stepper/Selector */}
+                            <div className="d-flex align-items-center gap-1 bg-dark bg-opacity-50 px-2 py-1 rounded border border-secondary border-opacity-25" title="Section repetitions">
+                                <span className="text-muted me-1" style={{ fontSize: '11px' }}>Repeats:</span>
+                                {[1, 2, 3, 4].map(num => (
+                                    <button
+                                        key={num}
+                                        type="button"
+                                        className={`btn btn-sm py-0 px-2 fw-semibold ${creationFormData.repeats === num ? 'btn-primary' : 'btn-outline-secondary text-light'}`}
+                                        style={{ fontSize: '11px', borderRadius: '4px', minWidth: '26px' }}
+                                        onClick={() => setCreationFormData(prev => ({ ...prev, repeats: num }))}
+                                    >
+                                        {num}x
+                                    </button>
+                                ))}
+                            </div>
+
+                            <div className="d-flex align-items-center gap-1">
+                                {PRESET_COLORS.map(c => (
+                                    <span 
+                                        key={c}
+                                        className={`color-swatch ${creationFormData.color === c ? 'selected' : ''}`}
+                                        style={{ backgroundColor: c }}
+                                        onClick={() => setCreationFormData(prev => ({ ...prev, color: c }))}
+                                        title={c}
+                                    ></span>
+                                ))}
+                                <input 
+                                    type="color" 
+                                    name="color"
+                                    value={creationFormData.color}
+                                    className="colorInput ms-1"
+                                    style={{ width: '28px', height: '28px', borderRadius: '50%', padding: '0', cursor: 'pointer', border: 'none' }}
+                                    onChange={handleInputChange}
+                                    title="Custom Color Picker"
+                                />
+                            </div>
                         </div>
                     )}
                 </div>
+
+                {/* Inline Section Required Warning for Custom Notes */}
+                {isNoteWithoutSection && (
+                    <div 
+                        className="d-flex align-items-center gap-2 px-3 py-2 rounded-2" 
+                        style={{ 
+                            fontSize: '12px', 
+                            color: '#fbbf24', 
+                            backgroundColor: 'rgba(245, 158, 11, 0.12)', 
+                            border: '1px solid rgba(245, 158, 11, 0.25)' 
+                        }}
+                    >
+                        <i className="fa-solid fa-circle-exclamation flex-shrink-0"></i>
+                        <span>A section card must be selected in the arrangement before adding a note.</span>
+                    </div>
+                )}
 
                 {/* Live Preview & Add Button */}
                 <div className="d-flex align-items-center justify-content-between pt-2 border-top border-secondary border-opacity-10">
@@ -118,12 +160,14 @@ function Custom() {
                             <DraggablePaletteItem
                                 type={creationFormData.type === "Section" ? "section" : "instrument"}
                                 item={{
-                                    label: creationFormData.label.trim(),
+                                    label: creationFormData.type === "Section" && creationFormData.repeats > 1
+                                        ? `${creationFormData.label.trim()} (${creationFormData.repeats}x)`
+                                        : creationFormData.label.trim(),
                                     color: creationFormData.color || '#7c4dff'
                                 }}
                                 className="btn p-0 border-0 bg-transparent"
-                                onClick={handleFormSubmit}
-                                title="Tap or drag into song"
+                                onClick={canSubmit ? handleFormSubmit : undefined}
+                                title={canSubmit ? "Tap or drag into song" : "Select a section card first"}
                             >
                                 {creationFormData.type === "Section" ? (
                                     <span 
@@ -131,6 +175,11 @@ function Custom() {
                                         style={{ backgroundColor: creationFormData.color || '#7c4dff', color: '#fff' }}
                                     >
                                         {creationFormData.label.trim()}
+                                        {creationFormData.repeats > 1 && (
+                                            <span className="ms-1 opacity-75 fw-normal" style={{ fontSize: '10px' }}>
+                                                ({creationFormData.repeats}x)
+                                            </span>
+                                        )}
                                     </span>
                                 ) : (
                                     <span className="note-chip chip-instrument">
@@ -160,12 +209,14 @@ function Custom() {
                         type="submit" 
                         className="btn btn-sm text-light fw-medium d-flex align-items-center gap-2"
                         style={{
-                            backgroundColor: 'var(--accent-primary)',
+                            backgroundColor: canSubmit ? 'var(--accent-primary)' : 'rgba(255, 255, 255, 0.1)',
                             borderRadius: 'var(--radius-sm)',
                             padding: '6px 16px',
-                            opacity: creationFormData.label.trim() ? 1 : 0.6
+                            cursor: canSubmit ? 'pointer' : 'not-allowed',
+                            opacity: canSubmit ? 1 : 0.5
                         }}
-                        disabled={!creationFormData.label.trim()}
+                        disabled={!canSubmit}
+                        title={isNoteWithoutSection ? "Select a section card to attach note" : undefined}
                     >
                         <i className="fa-solid fa-plus"></i>
                         <span>Add {creationFormData.type}</span>

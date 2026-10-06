@@ -652,15 +652,103 @@ export function useSectionNoteCreator() {
     };
 }
 
+// Section Repetition Helpers
+export function parseSectionRepetition(rawLabel = '') {
+    if (!rawLabel || typeof rawLabel !== 'string') return { baseLabel: '', repeatCount: 1 };
+    const trimmed = rawLabel.trim();
+    // Matches "Chorus (2x)", "Chorus [3x]", "Chorus 2x", "Chorus x2", "Chorus (x2)"
+    const match = trimmed.match(/^(.*?)(?:\s*(?:\((\d+)x\)|\[(\d+)x\]|\((\d+)\)|(\d+)x|x(\d+)))?$/i);
+    if (!match) return { baseLabel: trimmed, repeatCount: 1 };
+    const num = match[2] || match[3] || match[4] || match[5] || match[6];
+    const repeatCount = num ? Math.max(1, parseInt(num, 10)) : 1;
+    const baseLabel = (match[1] || trimmed).trim();
+    return { baseLabel: baseLabel || trimmed, repeatCount };
+}
+
+export function formatSectionLabel(baseLabel = '', repeatCount = 1) {
+    const cleanBase = baseLabel.trim();
+    if (repeatCount <= 1) return cleanBase;
+    return `${cleanBase} (${repeatCount}x)`;
+}
+
+// Hook to update section repetition count in local & active session state
+export function useUpdateSectionRepetition() {
+    const { currentSong, setCurrentSong, currentSections, setCurrentSections, currentSetlist, setCurrentSetlist } = useSong();
+    const { setUserData } = useUser();
+
+    const handleUpdateRepetition = (sectionId, newRepeatCount) => {
+        const strId = String(sectionId);
+        const target = currentSections.find(s => String(s._id) === strId);
+        if (!target) return;
+        const { baseLabel } = parseSectionRepetition(target.label);
+        const newLabel = formatSectionLabel(baseLabel, newRepeatCount);
+
+        const updatedSections = currentSections.map(s => 
+            String(s._id) === strId ? { ...s, label: newLabel } : s
+        );
+
+        setCurrentSections(updatedSections);
+        setCurrentSong(prev => prev ? {
+            ...prev,
+            sections: updatedSections
+        } : prev);
+
+        if (currentSetlist) {
+            setCurrentSetlist(prev => prev ? {
+                ...prev,
+                songs: (prev.songs || []).map(song => 
+                    String(song._id) === String(currentSong?._id) 
+                        ? { ...song, sections: updatedSections }
+                        : song
+                )
+            } : prev);
+        }
+
+        setUserData(prev => {
+            if (!prev) return prev;
+            return {
+                ...prev,
+                songs: (prev.songs || []).map(song => 
+                    String(song._id) === String(currentSong?._id) 
+                        ? { ...song, sections: updatedSections }
+                        : song
+                ),
+                setlists: (prev.setlists || []).map(setlist => ({
+                    ...setlist,
+                    songs: (setlist.songs || []).map(song => 
+                        String(song._id) === String(currentSong?._id) 
+                            ? { ...song, sections: updatedSections }
+                            : song
+                    )
+                }))
+            };
+        });
+    };
+
+    return handleUpdateRepetition;
+}
+
 // Delete Setlist
 export function useDeleteSetlist() {
-    const { setUserData } = useUser();
-    const { setSetlistData } = useSongData();
-    const { currentSetlist, setCurrentSetlist, currentSong, setCurrentSong } = useSong();
+    const { setUserData, userData } = useUser();
+    const { setSetlistData, setSongData } = useSongData();
+    const { currentSetlist, setCurrentSetlist, currentSong, setCurrentSong, setCurrentSections, setCurrentSection } = useSong();
     const [deleteSetlistById] = useMutation(DELETE_SETLIST_BY_ID, { refetchQueries: [QUERY_ME] });
 
     const handleDeleteSetlist = async (setlistId) => {
         try {
+            const strSetlistId = String(setlistId);
+            const deletedSetlist = (userData?.setlists || []).find(s => String(s._id) === strSetlistId) || 
+                                   (String(currentSetlist?._id) === strSetlistId ? currentSetlist : null);
+
+            const isCurrentSetlist = Boolean(currentSetlist && String(currentSetlist._id) === strSetlistId);
+            const isCurrentSongInDeletedSetlist = Boolean(
+                currentSong && (
+                    (deletedSetlist?.songs || []).some(s => String(s._id) === String(currentSong._id)) ||
+                    (isCurrentSetlist && (currentSetlist?.songs || []).some(s => String(s._id) === String(currentSong._id)))
+                )
+            );
+
             await deleteSetlistById({
                 variables: {
                     setlistId
@@ -668,24 +756,30 @@ export function useDeleteSetlist() {
             });
 
             setUserData(prev => {
-                const deletedSetlist = prev.setlists.find(setlist => setlist._id === setlistId);
-                const updatedSetlists = prev.setlists.filter(setlist => setlist._id !== setlistId);
-
-                const updatedSongs = prev.songs.filter(song => !(deletedSetlist.songs || []).some(dsSong => dsSong._id === song._id));
+                if (!prev) return prev;
+                const targetDeleted = (prev.setlists || []).find(s => String(s._id) === strSetlistId) || deletedSetlist;
+                const updatedSetlists = (prev.setlists || []).filter(s => String(s._id) !== strSetlistId);
+                const updatedSongs = (prev.songs || []).filter(song => 
+                    !(targetDeleted?.songs || []).some(dsSong => String(dsSong._id) === String(song._id))
+                );
 
                 return {
                     ...prev,
                     songs: updatedSongs,
                     setlists: updatedSetlists
-                }
+                };
             });
 
-            if (currentSetlist && setlistId === currentSetlist._id) {
+            // If deleting the active setlist or if the current song belonged to the deleted setlist,
+            // reset all workspace state so the default empty screen appears
+            if (isCurrentSetlist || isCurrentSongInDeletedSetlist) {
                 setCurrentSetlist(null);
                 setSetlistData({ title: "" });
+                setCurrentSong(null);
+                setSongData({ title: "", bpm: 120, timeSignature: "4/4", sections: [] });
+                setCurrentSections([]);
+                if (setCurrentSection) setCurrentSection(null);
             }
-
-            if (currentSong && currentSetlist.songs.includes(currentSong)) setCurrentSong(null);
         } 
         catch (err) {
             console.error(err);
