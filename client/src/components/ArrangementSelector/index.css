@@ -5,6 +5,7 @@
   border-top: 1px solid var(--border-default);
   box-shadow: 0 -8px 25px rgba(0, 0, 0, 0.45);
   transition:
+    margin-bottom var(--transition-normal),
     transform var(--transition-normal),
     opacity var(--transition-normal);
   z-index: 10;
@@ -37,9 +38,19 @@
 }
 
 .palette-swipe-indicator-bar {
+  display: flex !important;
+  justify-content: center;
+  align-items: center;
+  padding: 6px 0 4px;
   touch-action: none;
   cursor: grab;
   user-select: none;
+}
+
+@media (min-width: 1201px) and (hover: hover) and (pointer: fine) {
+  .palette-swipe-indicator-bar {
+    display: none !important;
+  }
 }
 
 .palette-swipe-indicator-bar:active {
@@ -56,6 +67,9 @@
   font-weight: 500;
   border-bottom: 1px solid var(--border-subtle);
   transition: background-color var(--transition-fast);
+  touch-action: none;
+  cursor: grab;
+  user-select: none;
 }
 
 .palette-target-banner.active {
