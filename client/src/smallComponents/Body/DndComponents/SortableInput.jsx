@@ -130,9 +130,12 @@ function SortableInput({ id, labelStyle, notes = [], children, index }) {
         <div 
             ref={setNodeRef} 
             style={style} 
-            className={`section-card sm-section-card ${isCurrent ? 'is-active' : ''} ${isDragging ? 'is-dragging' : ''} ${isDropTarget ? 'is-drop-target' : ''}`}
-            onClick={handleSelectSection}
+            className={`mobile-reel-slide ${isDragging ? 'is-dragging' : ''}`}
         >
+            <div 
+                className={`section-card sm-section-card ${isCurrent ? 'is-active' : ''} ${isDropTarget ? 'is-drop-target' : ''}`}
+                onClick={handleSelectSection}
+            >
             {/* Section Insertion Left Indicator */}
             {(isOverLeft || (isSectionInsert && !isOverRight)) && isSectionPaletteDrag && (
                 <div 
@@ -325,7 +328,8 @@ function SortableInput({ id, labelStyle, notes = [], children, index }) {
                 )}
             </div>
         </div>
-    );
+    </div>
+);
 }
 
 export default SortableInput;

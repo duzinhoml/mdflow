@@ -4,7 +4,7 @@ import { useDroppable } from '@dnd-kit/core';
 
 import { useSong } from '../../../contexts/SongContext.jsx';
 import { usePaletteDrag } from '../../../contexts/PaletteDragContext.jsx';
-import SongLayout from '../../../components/SongLayout.jsx';
+import MobileSongLayout from './MobileSongLayout.jsx';
 import SortableInput from './SortableInput.jsx';
 
 function EmptyArrangementDropzone({ currentSong }) {
@@ -63,7 +63,7 @@ function DndDashboard() {
     }, [currentSong, setCurrentSections]);
 
     return (
-        <SongLayout>
+        <MobileSongLayout>
             <SortableContext items={currentSections.map(section => section._id.toString())} strategy={horizontalListSortingStrategy}>
                 {currentSections && currentSections.length ? 
                     currentSections.map((section, idx) => (
@@ -77,11 +77,13 @@ function DndDashboard() {
                             {section.label}
                         </SortableInput>
                     )) : (
-                        <EmptyArrangementDropzone currentSong={currentSong} />
+                        <div className="w-100 h-100 d-flex align-items-center justify-content-center p-2">
+                            <EmptyArrangementDropzone currentSong={currentSong} />
+                        </div>
                     )
                 }
             </SortableContext>
-        </SongLayout>
+        </MobileSongLayout>
     );
 };
 
