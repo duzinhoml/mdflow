@@ -37,10 +37,19 @@ export const SearchTermProvider = ({ children }) => {
       ) || []
     );
   };
+
   const filteredItems = (filter) =>
     userData?.[filter.toLowerCase()]
       ?.filter((filteredItem) => filteredItem)
-      .sort((a, b) => b.title.localeCompare(a.title)) || [];
+      .sort((a, b) => {
+        const dateA = new Date(Number(a.createdAt)).toDateString();
+        const dateB = new Date(Number(b.createdAt)).toDateString();
+
+        if (dateA === dateB) {
+          return a.title.localeCompare(b.title);
+        }
+        return Number(b.createdAt) - Number(a.createdAt);
+      }) || [];
 
   const value = {
     searchTerm,
